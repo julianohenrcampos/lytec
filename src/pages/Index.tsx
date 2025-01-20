@@ -1,30 +1,22 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const navigate = useNavigate();
 
-  if (showForgotPassword) {
-    return (
-      <div className="container flex items-center justify-center min-h-screen py-8">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Recuperar Senha</CardTitle>
-            <CardDescription>
-              Digite seu email para receber um link de recuperação
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ForgotPasswordForm onBack={() => setShowForgotPassword(false)} />
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const handleForgotPassword = () => {
+    setShowForgotPassword(true);
+  };
+
+  const handleBack = () => {
+    setShowForgotPassword(false);
+  };
 
   return (
     <div className="container flex items-center justify-center min-h-screen py-8">
@@ -36,18 +28,22 @@ const Index = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Cadastro</TabsTrigger>
-            </TabsList>
-            <TabsContent value="login">
-              <LoginForm onForgotPassword={() => setShowForgotPassword(true)} />
-            </TabsContent>
-            <TabsContent value="register">
-              <RegisterForm />
-            </TabsContent>
-          </Tabs>
+          {showForgotPassword ? (
+            <ForgotPasswordForm onBack={handleBack} />
+          ) : (
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">Login</TabsTrigger>
+                <TabsTrigger value="register">Cadastro</TabsTrigger>
+              </TabsList>
+              <TabsContent value="login">
+                <LoginForm onForgotPassword={handleForgotPassword} />
+              </TabsContent>
+              <TabsContent value="register">
+                <RegisterForm />
+              </TabsContent>
+            </Tabs>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -18,24 +18,22 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Index />,
-    children: [
-      {
-        path: "/",
-        element: <Dashboard />,
-      },
-      {
-        path: "profile",
-        element: <Profile />,
-      },
-      {
-        path: "settings",
-        element: <Settings />,
-      },
-      {
-        path: "employees",
-        element: <EmployeeManagement />,
-      },
-    ],
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
+  },
+  {
+    path: "/employees",
+    element: <EmployeeManagement />,
   },
   {
     path: "login",
