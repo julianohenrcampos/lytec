@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import FunctionManagement from "./pages/FunctionManagement";
 import DepartmentManagement from "./pages/DepartmentManagement";
+import CostCenterManagement from "./pages/CostCenterManagement";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/functions" element={<FunctionManagement />} />
             <Route path="/departments" element={<DepartmentManagement />} />
+            <Route path="/cost-centers" element={<CostCenterManagement />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
