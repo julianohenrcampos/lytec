@@ -72,10 +72,10 @@ export default function DepartmentManagement() {
   });
 
   const createMutation = useMutation({
-    mutationFn: async (values: z.infer<typeof formSchema>) => {
+    mutationFn: async (values: { nome: string }) => {
       const { data, error } = await supabase
         .from("bd_departamento")
-        .insert([values])
+        .insert([{ nome: values.nome }])
         .select()
         .single();
 
@@ -105,12 +105,12 @@ export default function DepartmentManagement() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (values: z.infer<typeof formSchema>) => {
+    mutationFn: async (values: { nome: string }) => {
       if (!editingDepartment) return;
 
       const { error } = await supabase
         .from("bd_departamento")
-        .update(values)
+        .update({ nome: values.nome })
         .eq("id", editingDepartment.id);
 
       if (error) {
@@ -161,9 +161,9 @@ export default function DepartmentManagement() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (editingDepartment) {
-      updateMutation.mutate(values);
+      updateMutation.mutate({ nome: values.nome });
     } else {
-      createMutation.mutate(values);
+      createMutation.mutate({ nome: values.nome });
     }
   };
 
