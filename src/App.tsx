@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { useAuth } from "./hooks/useAuth";
+import { DashboardLayout } from "./components/layout/DashboardLayout";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -13,7 +15,6 @@ import DepartmentManagement from "./pages/DepartmentManagement";
 import FunctionManagement from "./pages/FunctionManagement";
 import CostCenterManagement from "./pages/CostCenterManagement";
 import CompanyManagement from "./pages/CompanyManagement";
-import { useAuth } from "./hooks/useAuth";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
@@ -22,13 +23,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/" replace />;
   }
 
-  return <>{children}</>;
+  return <DashboardLayout>{children}</DashboardLayout>;
 };
 
 function AppRoutes() {
   const { user } = useAuth();
 
-  // Se o usuário estiver autenticado e tentar acessar a rota raiz, redireciona para o dashboard
   if (user && window.location.pathname === "/") {
     return <Navigate to="/dashboard" replace />;
   }
