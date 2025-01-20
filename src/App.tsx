@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import FunctionManagement from "./pages/FunctionManagement";
+import DepartmentManagement from "./pages/DepartmentManagement";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/functions" element={<FunctionManagement />} />
+            <Route path="/departments" element={<DepartmentManagement />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
