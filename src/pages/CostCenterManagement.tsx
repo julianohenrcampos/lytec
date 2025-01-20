@@ -39,20 +39,31 @@ export default function CostCenterManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: costCenters, isLoading } = useQuery({
+  const { data: costCenters, isLoading, error } = useQuery({
     queryKey: ["costCenters", currentPage],
     queryFn: async () => {
+      console.log("Fetching cost centers...");
       const start = (currentPage - 1) * ITEMS_PER_PAGE;
       const end = start + ITEMS_PER_PAGE - 1;
 
-      const { data, error } = await supabase
-        .from("bd_centrocusto")
-        .select("*")
-        .range(start, end)
-        .order("created_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("bd_centrocusto")
+          .select("*")
+          .range(start, end)
+          .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data as CostCenter[];
+        if (error) {
+          console.error("Supabase error:", error);
+          throw error;
+        }
+
+        console.log("Cost centers fetched:", data);
+        return data as CostCenter[];
+      } catch (err) {
+        console.error("Failed to fetch cost centers:", err);
+        throw err;
+      }
     },
   });
 
