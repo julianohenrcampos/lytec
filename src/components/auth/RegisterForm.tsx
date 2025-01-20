@@ -33,10 +33,13 @@ export function RegisterForm() {
     },
   });
 
-  async function onSubmit(data: RegisterFormValues) {
+  async function onSubmit(values: RegisterFormValues) {
     setIsLoading(true);
     try {
-      await signUp(data);
+      await signUp({
+        email: values.email,
+        password: values.password,
+      });
       toast({
         title: "Conta criada com sucesso!",
         description: "Verifique seu email para confirmar o cadastro",

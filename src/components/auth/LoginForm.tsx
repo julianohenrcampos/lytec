@@ -32,10 +32,13 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     },
   });
 
-  async function onSubmit(data: LoginFormValues) {
+  async function onSubmit(values: LoginFormValues) {
     setIsLoading(true);
     try {
-      await signIn(data);
+      await signIn({
+        email: values.email,
+        password: values.password,
+      });
       toast({
         title: "Login realizado com sucesso!",
       });

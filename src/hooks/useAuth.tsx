@@ -2,10 +2,15 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
+interface AuthCredentials {
+  email: string;
+  password: string;
+}
+
 interface AuthContextType {
   user: User | null;
-  signIn: (credentials: { email: string; password: string }) => Promise<void>;
-  signUp: (credentials: { email: string; password: string }) => Promise<void>;
+  signIn: (credentials: AuthCredentials) => Promise<void>;
+  signUp: (credentials: AuthCredentials) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
@@ -16,12 +21,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Verificar sessão atual
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
 
-    // Escutar mudanças de autenticação
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -31,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async ({ email, password }: { email: string; password: string }) => {
+  const signIn = async ({ email, password }: AuthCredentials) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -39,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   };
 
-  const signUp = async ({ email, password }: { email: string; password: string }) => {
+  const signUp = async ({ email, password }: AuthCredentials) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
