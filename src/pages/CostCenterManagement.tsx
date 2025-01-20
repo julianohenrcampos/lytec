@@ -43,6 +43,11 @@ export default function CostCenterManagement() {
     queryKey: ["costCenters", currentPage],
     queryFn: async () => {
       console.log("Fetching cost centers...");
+      console.log("Current Supabase client config:", {
+        url: supabase.getUrl(),
+        headers: supabase.headers,
+      });
+
       const start = (currentPage - 1) * ITEMS_PER_PAGE;
       const end = start + ITEMS_PER_PAGE - 1;
 
@@ -55,6 +60,11 @@ export default function CostCenterManagement() {
 
         if (error) {
           console.error("Supabase error:", error);
+          toast({
+            title: "Erro ao carregar centros de custo",
+            description: error.message,
+            variant: "destructive",
+          });
           throw error;
         }
 
