@@ -32,14 +32,14 @@ const employeeSchema = z.object({
   centro_custo_id: z.string().min(1, "Centro de Custo é obrigatório"),
   empresa_id: z.string().min(1, "Empresa é obrigatória"),
   equipe_id: z.string().optional(),
-  salario: z.string().min(1, "Salário é obrigatório"),
-  insalubridade: z.string().optional(),
-  periculosidade: z.string().optional(),
-  gratificacao: z.string().optional(),
-  adicional_noturno: z.string().optional(),
-  custo_passagem: z.string().optional(),
-  refeicao: z.string().optional(),
-  diarias: z.string().optional(),
+  salario: z.number().min(1, "Salário é obrigatório"),
+  insalubridade: z.number().optional(),
+  periculosidade: z.number().optional(),
+  gratificacao: z.number().optional(),
+  adicional_noturno: z.number().optional(),
+  custo_passagem: z.number().optional(),
+  refeicao: z.number().optional(),
+  diarias: z.number().optional(),
   admissao: z.string().min(1, "Data de Admissão é obrigatória"),
   demissao: z.string().optional(),
   ativo: z.boolean().default(true),
@@ -50,11 +50,13 @@ const employeeSchema = z.object({
   genero: z.boolean(),
 });
 
+type EmployeeFormValues = z.infer<typeof employeeSchema>;
+
 export const EmployeeForm = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm({
+  const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
       nome: "",
@@ -64,14 +66,14 @@ export const EmployeeForm = () => {
       centro_custo_id: "",
       empresa_id: "",
       equipe_id: "",
-      salario: "",
-      insalubridade: "",
-      periculosidade: "",
-      gratificacao: "",
-      adicional_noturno: "",
-      custo_passagem: "",
-      refeicao: "",
-      diarias: "",
+      salario: 0,
+      insalubridade: 0,
+      periculosidade: 0,
+      gratificacao: 0,
+      adicional_noturno: 0,
+      custo_passagem: 0,
+      refeicao: 0,
+      diarias: 0,
       admissao: "",
       demissao: "",
       ativo: true,
@@ -116,8 +118,9 @@ export const EmployeeForm = () => {
   });
 
   const createEmployee = useMutation({
-    mutationFn: async (values: z.infer<typeof employeeSchema>) => {
-      const { error } = await supabase.from("bd_rhasfalto").insert([values]);
+    mutationFn: async (values: EmployeeFormValues) => {
+      const ferias = format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd");
+      const { error } = await supabase.from("bd_rhasfalto").insert([{ ...values, ferias }]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -136,13 +139,20 @@ export const EmployeeForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof employeeSchema>) => {
-    const ferias = format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd");
-    createEmployee.mutate({
+  const onSubmit = (values: EmployeeFormValues) => {
+    // Convert string values to numbers for numeric fields
+    const numericValues = {
       ...values,
-      ferias,
-      aviso: values.demissao ? true : false,
-    });
+      salario: Number(values.salario),
+      insalubridade: values.insalubridade ? Number(values.insalubridade) : undefined,
+      periculosidade: values.periculosidade ? Number(values.periculosidade) : undefined,
+      gratificacao: values.gratificacao ? Number(values.gratificacao) : undefined,
+      adicional_noturno: values.adicional_noturno ? Number(values.adicional_noturno) : undefined,
+      custo_passagem: values.custo_passagem ? Number(values.custo_passagem) : undefined,
+      refeicao: values.refeicao ? Number(values.refeicao) : undefined,
+      diarias: values.diarias ? Number(values.diarias) : undefined,
+    };
+    createEmployee.mutate(numericValues);
   };
 
   return (
@@ -318,6 +328,7 @@ export const EmployeeForm = () => {
               </FormItem>
             )}
           />
+
         </div>
 
         <div className="flex justify-end space-x-2">
