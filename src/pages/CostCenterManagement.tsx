@@ -43,9 +43,6 @@ export default function CostCenterManagement() {
     queryKey: ["costCenters", currentPage],
     queryFn: async () => {
       console.log("Fetching cost centers...");
-      console.log("Current Supabase config:", {
-        url: supabase.config.supabaseUrl,
-      });
 
       const start = (currentPage - 1) * ITEMS_PER_PAGE;
       const end = start + ITEMS_PER_PAGE - 1;
