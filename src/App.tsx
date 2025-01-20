@@ -11,6 +11,9 @@ import Dashboard from "@/pages/Dashboard";
 import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
 import EmployeeManagement from "@/pages/EmployeeManagement";
+import DepartmentManagement from "@/pages/DepartmentManagement";
+import FunctionManagement from "@/pages/FunctionManagement";
+import CostCenterManagement from "@/pages/CostCenterManagement";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +37,18 @@ const router = createBrowserRouter([
   {
     path: "/employees",
     element: <EmployeeManagement />,
+  },
+  {
+    path: "/departments",
+    element: <DepartmentManagement />,
+  },
+  {
+    path: "/functions",
+    element: <FunctionManagement />,
+  },
+  {
+    path: "/cost-centers",
+    element: <CostCenterManagement />,
   },
   {
     path: "login",
