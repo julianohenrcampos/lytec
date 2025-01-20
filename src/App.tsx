@@ -1,81 +1,38 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/hooks/useAuth";
-import Index from "@/pages/Index";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import ForgotPassword from "@/pages/ForgotPassword";
-import ResetPassword from "@/pages/ResetPassword";
-import Dashboard from "@/pages/Dashboard";
-import Profile from "@/pages/Profile";
-import Settings from "@/pages/Settings";
-import EmployeeManagement from "@/pages/EmployeeManagement";
-import DepartmentManagement from "@/pages/DepartmentManagement";
-import FunctionManagement from "@/pages/FunctionManagement";
-import CostCenterManagement from "@/pages/CostCenterManagement";
-
-const queryClient = new QueryClient();
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Index />,
-  },
-  {
-    path: "/dashboard",
-    element: <Dashboard />,
-  },
-  {
-    path: "/profile",
-    element: <Profile />,
-  },
-  {
-    path: "/settings",
-    element: <Settings />,
-  },
-  {
-    path: "/employees",
-    element: <EmployeeManagement />,
-  },
-  {
-    path: "/departments",
-    element: <DepartmentManagement />,
-  },
-  {
-    path: "/functions",
-    element: <FunctionManagement />,
-  },
-  {
-    path: "/cost-centers",
-    element: <CostCenterManagement />,
-  },
-  {
-    path: "login",
-    element: <Login />,
-  },
-  {
-    path: "register",
-    element: <Register />,
-  },
-  {
-    path: "forgot-password",
-    element: <ForgotPassword />,
-  },
-  {
-    path: "reset-password",
-    element: <ResetPassword />,
-  },
-]);
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import EmployeeManagement from "./pages/EmployeeManagement";
+import DepartmentManagement from "./pages/DepartmentManagement";
+import FunctionManagement from "./pages/FunctionManagement";
+import CostCenterManagement from "./pages/CostCenterManagement";
+import CompanyManagement from "./pages/CompanyManagement";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster />
-      </AuthProvider>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Index />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="employees" element={<EmployeeManagement />} />
+          <Route path="departments" element={<DepartmentManagement />} />
+          <Route path="functions" element={<FunctionManagement />} />
+          <Route path="cost-centers" element={<CostCenterManagement />} />
+          <Route path="companies" element={<CompanyManagement />} />
+        </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

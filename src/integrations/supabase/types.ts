@@ -63,6 +63,27 @@ export type Database = {
         }
         Relationships: []
       }
+      bd_empresa_proprietaria: {
+        Row: {
+          cnpj: string | null
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          cnpj?: string | null
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          cnpj?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
       bd_equipe: {
         Row: {
           created_at: string
