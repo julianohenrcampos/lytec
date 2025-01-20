@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
@@ -13,27 +13,45 @@ import DepartmentManagement from "./pages/DepartmentManagement";
 import FunctionManagement from "./pages/FunctionManagement";
 import CostCenterManagement from "./pages/CostCenterManagement";
 import CompanyManagement from "./pages/CompanyManagement";
+import { useAuth } from "./hooks/useAuth";
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      
+      {/* Protected Routes */}
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+      <Route path="/employees" element={<ProtectedRoute><EmployeeManagement /></ProtectedRoute>} />
+      <Route path="/departments" element={<ProtectedRoute><DepartmentManagement /></ProtectedRoute>} />
+      <Route path="/functions" element={<ProtectedRoute><FunctionManagement /></ProtectedRoute>} />
+      <Route path="/cost-centers" element={<ProtectedRoute><CostCenterManagement /></ProtectedRoute>} />
+      <Route path="/companies" element={<ProtectedRoute><CompanyManagement /></ProtectedRoute>} />
+    </Routes>
+  );
+}
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="employees" element={<EmployeeManagement />} />
-            <Route path="departments" element={<DepartmentManagement />} />
-            <Route path="functions" element={<FunctionManagement />} />
-            <Route path="cost-centers" element={<CostCenterManagement />} />
-            <Route path="companies" element={<CompanyManagement />} />
-          </Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-        </Routes>
+        <AppRoutes />
       </BrowserRouter>
     </AuthProvider>
   );
