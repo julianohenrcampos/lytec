@@ -45,6 +45,42 @@ export type Database = {
         }
         Relationships: []
       }
+      bd_empresa: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      bd_equipe: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
       bd_funcao: {
         Row: {
           created_at: string
@@ -62,6 +98,122 @@ export type Database = {
           nome?: string
         }
         Relationships: []
+      }
+      bd_rhasfalto: {
+        Row: {
+          adicional_noturno: number | null
+          admissao: string
+          ativo: boolean | null
+          aviso: boolean | null
+          centro_custo_id: string
+          cpf: string
+          created_at: string
+          custo_passagem: number | null
+          demissao: string | null
+          diarias: number | null
+          empresa_id: string
+          endereco: string | null
+          equipe_id: string | null
+          escolaridade: string | null
+          ferias: string | null
+          funcao_id: string
+          genero: boolean | null
+          gratificacao: number | null
+          id: string
+          imagem: string | null
+          insalubridade: number | null
+          matricula: string
+          nome: string
+          periculosidade: number | null
+          refeicao: number | null
+          salario: number
+        }
+        Insert: {
+          adicional_noturno?: number | null
+          admissao: string
+          ativo?: boolean | null
+          aviso?: boolean | null
+          centro_custo_id: string
+          cpf: string
+          created_at?: string
+          custo_passagem?: number | null
+          demissao?: string | null
+          diarias?: number | null
+          empresa_id: string
+          endereco?: string | null
+          equipe_id?: string | null
+          escolaridade?: string | null
+          ferias?: string | null
+          funcao_id: string
+          genero?: boolean | null
+          gratificacao?: number | null
+          id?: string
+          imagem?: string | null
+          insalubridade?: number | null
+          matricula: string
+          nome: string
+          periculosidade?: number | null
+          refeicao?: number | null
+          salario: number
+        }
+        Update: {
+          adicional_noturno?: number | null
+          admissao?: string
+          ativo?: boolean | null
+          aviso?: boolean | null
+          centro_custo_id?: string
+          cpf?: string
+          created_at?: string
+          custo_passagem?: number | null
+          demissao?: string | null
+          diarias?: number | null
+          empresa_id?: string
+          endereco?: string | null
+          equipe_id?: string | null
+          escolaridade?: string | null
+          ferias?: string | null
+          funcao_id?: string
+          genero?: boolean | null
+          gratificacao?: number | null
+          id?: string
+          imagem?: string | null
+          insalubridade?: number | null
+          matricula?: string
+          nome?: string
+          periculosidade?: number | null
+          refeicao?: number | null
+          salario?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bd_rhasfalto_centro_custo_id_fkey"
+            columns: ["centro_custo_id"]
+            isOneToOne: false
+            referencedRelation: "bd_centrocusto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bd_rhasfalto_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "bd_empresa"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bd_rhasfalto_equipe_id_fkey"
+            columns: ["equipe_id"]
+            isOneToOne: false
+            referencedRelation: "bd_equipe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bd_rhasfalto_funcao_id_fkey"
+            columns: ["funcao_id"]
+            isOneToOne: false
+            referencedRelation: "bd_funcao"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
