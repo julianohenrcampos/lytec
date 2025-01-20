@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -9,14 +9,12 @@ import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const navigate = useNavigate();
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
+  // Se o usuário estiver autenticado, redireciona diretamente para o dashboard
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleForgotPassword = () => {
     setShowForgotPassword(true);
@@ -25,10 +23,6 @@ const Index = () => {
   const handleBack = () => {
     setShowForgotPassword(false);
   };
-
-  if (user) {
-    return null; // Prevent flash of content while redirecting
-  }
 
   return (
     <div className="container flex items-center justify-center min-h-screen py-8">

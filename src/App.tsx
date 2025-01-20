@@ -26,6 +26,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 function AppRoutes() {
+  const { user } = useAuth();
+
+  // Se o usuário estiver autenticado e tentar acessar a rota raiz, redireciona para o dashboard
+  if (user && window.location.pathname === "/") {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
     <Routes>
       <Route path="/" element={<Index />} />
