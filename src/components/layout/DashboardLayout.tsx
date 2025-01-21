@@ -27,6 +27,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { path: "/functions", label: "Funções", icon: Briefcase },
     { path: "/cost-centers", label: "Centros de Custo", icon: CircleDollarSign },
     { path: "/fleets", label: "Frotas", icon: Truck },
+    { path: "/trucks-equipment", label: "Caminhões/Equipamentos", icon: Truck },
   ];
 
   return (

@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bd_caminhaoequipamento: {
+        Row: {
+          ano: number | null
+          capacidade: number | null
+          created_at: string
+          descricao: string | null
+          frota_id: string
+          id: string
+          modelo: string
+          proprietario: string | null
+          tipo: string
+        }
+        Insert: {
+          ano?: number | null
+          capacidade?: number | null
+          created_at?: string
+          descricao?: string | null
+          frota_id: string
+          id?: string
+          modelo: string
+          proprietario?: string | null
+          tipo: string
+        }
+        Update: {
+          ano?: number | null
+          capacidade?: number | null
+          created_at?: string
+          descricao?: string | null
+          frota_id?: string
+          id?: string
+          modelo?: string
+          proprietario?: string | null
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bd_caminhaoequipamento_frota_id_fkey"
+            columns: ["frota_id"]
+            isOneToOne: false
+            referencedRelation: "bd_frota"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bd_centrocusto: {
         Row: {
           created_at: string
