@@ -91,7 +91,18 @@ export function FleetTable() {
               <TableCell>{`${fleet.frota} ${fleet.numero}`}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <FleetFormDialog initialData={fleet} />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      const dialog = document.querySelector(`[data-fleet-id="${fleet.id}"]`);
+                      if (dialog instanceof HTMLElement) {
+                        dialog.click();
+                      }
+                    }}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
                   <Button
                     variant="destructive"
                     size="icon"

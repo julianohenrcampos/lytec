@@ -7,7 +7,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 import { FleetForm } from "./FleetForm";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -69,11 +69,15 @@ export function FleetFormDialog({ initialData, onOpenChange }: FleetFormDialogPr
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          {initialData ? "Editar Frota" : "Adicionar Frota"}
-        </Button>
+      <DialogTrigger asChild data-fleet-id={initialData?.id}>
+        {initialData ? (
+          <span className="sr-only">Editar Frota</span>
+        ) : (
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            Adicionar Frota
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
