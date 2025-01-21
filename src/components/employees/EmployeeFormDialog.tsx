@@ -139,20 +139,18 @@ export const EmployeeFormDialog = () => {
   const createEmployee = useMutation({
     mutationFn: async (values: EmployeeFormValues) => {
       const ferias = format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd");
-      const { error } = await supabase.from("bd_rhasfalto").insert([
-        {
-          ...values,
-          ferias,
-          salario: Number(values.salario),
-          insalubridade: values.insalubridade ? Number(values.insalubridade) : null,
-          periculosidade: values.periculosidade ? Number(values.periculosidade) : null,
-          gratificacao: values.gratificacao ? Number(values.gratificacao) : null,
-          adicional_noturno: values.adicional_noturno ? Number(values.adicional_noturno) : null,
-          custo_passagem: values.custo_passagem ? Number(values.custo_passagem) : null,
-          refeicao: values.refeicao ? Number(values.refeicao) : null,
-          diarias: values.diarias ? Number(values.diarias) : null,
-        },
-      ]);
+      const { error } = await supabase.from("bd_rhasfalto").insert({
+        ...values,
+        ferias,
+        salario: Number(values.salario),
+        insalubridade: values.insalubridade ? Number(values.insalubridade) : null,
+        periculosidade: values.periculosidade ? Number(values.periculosidade) : null,
+        gratificacao: values.gratificacao ? Number(values.gratificacao) : null,
+        adicional_noturno: values.adicional_noturno ? Number(values.adicional_noturno) : null,
+        custo_passagem: values.custo_passagem ? Number(values.custo_passagem) : null,
+        refeicao: values.refeicao ? Number(values.refeicao) : null,
+        diarias: values.diarias ? Number(values.diarias) : null,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
