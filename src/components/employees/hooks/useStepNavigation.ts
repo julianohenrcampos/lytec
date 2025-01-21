@@ -46,7 +46,7 @@ export const useStepNavigation = (
 const getFieldsForStep = (step: FormStep): Array<keyof EmployeeFormValues> => {
   switch (step) {
     case "personal":
-      return ["nome", "cpf", "matricula"];
+      return ["nome", "cpf", "matricula", "genero"];
     case "professional":
       return ["funcao_id", "centro_custo_id", "empresa_id"];
     case "financial":
