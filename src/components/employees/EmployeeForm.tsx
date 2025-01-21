@@ -32,22 +32,22 @@ const employeeSchema = z.object({
   centro_custo_id: z.string().min(1, "Centro de Custo é obrigatório"),
   empresa_id: z.string().min(1, "Empresa é obrigatória"),
   equipe_id: z.string().optional(),
-  salario: z.number().min(1, "Salário é obrigatório"),
-  insalubridade: z.number().optional(),
-  periculosidade: z.number().optional(),
-  gratificacao: z.number().optional(),
-  adicional_noturno: z.number().optional(),
-  custo_passagem: z.number().optional(),
-  refeicao: z.number().optional(),
-  diarias: z.number().optional(),
+  salario: z.coerce.number().min(1, "Salário é obrigatório"),
+  insalubridade: z.coerce.number().optional(),
+  periculosidade: z.coerce.number().optional(),
+  gratificacao: z.coerce.number().optional(),
+  adicional_noturno: z.coerce.number().optional(),
+  custo_passagem: z.coerce.number().optional(),
+  refeicao: z.coerce.number().optional(),
+  diarias: z.coerce.number().optional(),
   admissao: z.string().min(1, "Data de Admissão é obrigatória"),
   demissao: z.string().optional(),
   ativo: z.boolean().default(true),
   aviso: z.boolean().default(false),
   endereco: z.string().optional(),
   imagem: z.string().optional(),
-  escolaridade: z.enum(["Fundamental", "Médio", "Técnico", "Superior"]),
-  genero: z.boolean(),
+  escolaridade: z.enum(["Fundamental", "Médio", "Técnico", "Superior"]).default("Médio"),
+  genero: z.boolean().default(true),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
@@ -119,7 +119,9 @@ export const EmployeeForm = () => {
 
   const createEmployee = useMutation({
     mutationFn: async (values: EmployeeFormValues) => {
+      console.log("Submitting values:", values);
       const ferias = format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd");
+      
       const { error } = await supabase.from("bd_rhasfalto").insert([
         {
           nome: values.nome,
@@ -128,7 +130,7 @@ export const EmployeeForm = () => {
           funcao_id: values.funcao_id,
           centro_custo_id: values.centro_custo_id,
           empresa_id: values.empresa_id,
-          equipe_id: values.equipe_id,
+          equipe_id: values.equipe_id || null,
           salario: Number(values.salario),
           insalubridade: values.insalubridade ? Number(values.insalubridade) : null,
           periculosidade: values.periculosidade ? Number(values.periculosidade) : null,
@@ -148,7 +150,11 @@ export const EmployeeForm = () => {
           ferias,
         },
       ]);
-      if (error) throw error;
+
+      if (error) {
+        console.error("Error creating employee:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
@@ -157,7 +163,8 @@ export const EmployeeForm = () => {
       });
       form.reset();
     },
-    onError: (error) => {
+    onError: (error: Error) => {
+      console.error("Error in mutation:", error);
       toast({
         variant: "destructive",
         title: "Erro ao cadastrar funcionário",
@@ -167,19 +174,8 @@ export const EmployeeForm = () => {
   });
 
   const onSubmit = (values: EmployeeFormValues) => {
-    // Convert string values to numbers for numeric fields
-    const numericValues = {
-      ...values,
-      salario: Number(values.salario),
-      insalubridade: values.insalubridade ? Number(values.insalubridade) : undefined,
-      periculosidade: values.periculosidade ? Number(values.periculosidade) : undefined,
-      gratificacao: values.gratificacao ? Number(values.gratificacao) : undefined,
-      adicional_noturno: values.adicional_noturno ? Number(values.adicional_noturno) : undefined,
-      custo_passagem: values.custo_passagem ? Number(values.custo_passagem) : undefined,
-      refeicao: values.refeicao ? Number(values.refeicao) : undefined,
-      diarias: values.diarias ? Number(values.diarias) : undefined,
-    };
-    createEmployee.mutate(numericValues);
+    console.log("Form values before submission:", values);
+    createEmployee.mutate(values);
   };
 
   return (
@@ -305,31 +301,6 @@ export const EmployeeForm = () => {
 
           <FormField
             control={form.control}
-            name="equipe_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Equipe</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma equipe" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {equipes?.map((equipe) => (
-                      <SelectItem key={equipe.id} value={equipe.id}>
-                        {equipe.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="salario"
             render={({ field }) => (
               <FormItem>
@@ -356,6 +327,54 @@ export const EmployeeForm = () => {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="escolaridade"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Escolaridade</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione a escolaridade" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Fundamental">Fundamental</SelectItem>
+                    <SelectItem value="Médio">Médio</SelectItem>
+                    <SelectItem value="Técnico">Técnico</SelectItem>
+                    <SelectItem value="Superior">Superior</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="genero"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gênero</FormLabel>
+                <Select 
+                  onValueChange={(value) => field.onChange(value === "true")} 
+                  value={field.value ? "true" : "false"}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o gênero" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="true">Masculino</SelectItem>
+                    <SelectItem value="false">Feminino</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <div className="flex justify-end space-x-2">
