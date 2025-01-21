@@ -34,6 +34,7 @@ const formSchema = z.object({
   capacidade: z.string().optional().transform(val => val ? Number(val) : undefined),
   proprietario: z.string().optional(),
   descricao: z.string().optional(),
+  placa: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -70,6 +71,7 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
       capacidade: initialData?.capacidade?.toString() || "",
       proprietario: initialData?.proprietario || "",
       descricao: initialData?.descricao || "",
+      placa: initialData?.placa || "",
     },
   });
 
@@ -85,6 +87,7 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
           capacidade: values.capacidade,
           proprietario: values.proprietario,
           descricao: values.descricao,
+          placa: values.placa,
         }]);
       if (error) throw error;
     },
@@ -115,6 +118,7 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
           capacidade: values.capacidade,
           proprietario: values.proprietario,
           descricao: values.descricao,
+          placa: values.placa,
         })
         .eq("id", initialData?.id);
       if (error) throw error;
@@ -204,6 +208,20 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Modelo</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="placa"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Placa</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
