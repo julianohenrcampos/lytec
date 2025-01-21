@@ -185,7 +185,7 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement, EmployeeFormD
     },
   });
 
-  const onSubmit = (values: EmployeeFormValues) => {
+  const onSubmit = async (values: EmployeeFormValues) => {
     if (currentStep !== "contract") {
       const nextSteps: Record<FormStep, FormStep> = {
         personal: "professional",
