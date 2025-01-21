@@ -116,7 +116,8 @@ export function FleetTable({ onEdit }: FleetTableProps) {
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                      <AlertDial que deseja excluir esta frota? Esta ação não
+                      <AlertDialogDescription>
+                        Tem certeza que deseja excluir esta frota? Esta ação não
                         pode ser desfeita.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
