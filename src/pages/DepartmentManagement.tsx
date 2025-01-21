@@ -26,7 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -47,6 +47,8 @@ const formSchema = z.object({
   nome: z.string().min(1, "O nome do departamento é obrigatório"),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 type Department = {
   id: string;
   nome: string;
@@ -61,7 +63,7 @@ export default function DepartmentManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nome: "",
@@ -81,7 +83,7 @@ export default function DepartmentManagement() {
   });
 
   const createMutation = useMutation({
-    mutationFn: async (values: z.infer<typeof formSchema>) => {
+    mutationFn: async (values: FormValues) => {
       const { error } = await supabase.from("bd_departamento").insert([values]);
       if (error) throw error;
     },
@@ -104,11 +106,12 @@ export default function DepartmentManagement() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (values: z.infer<typeof formSchema>) => {
+    mutationFn: async (values: FormValues) => {
+      if (!editingDepartment?.id) return;
       const { error } = await supabase
         .from("bd_departamento")
         .update(values)
-        .eq("id", editingDepartment?.id);
+        .eq("id", editingDepartment.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -154,7 +157,7 @@ export default function DepartmentManagement() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: FormValues) => {
     if (editingDepartment) {
       updateMutation.mutate(values);
     } else {
