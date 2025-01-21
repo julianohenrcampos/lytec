@@ -20,7 +20,6 @@ import { ProfessionalDataForm } from "./forms/ProfessionalDataForm";
 import { FinancialDataForm } from "./forms/FinancialDataForm";
 import { ContractDataForm } from "./forms/ContractDataForm";
 import { useStepNavigation } from "./hooks/useStepNavigation";
-import { useEmployeeFormSubmit } from "./hooks/useEmployeeFormSubmit";
 
 export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
   const [open, setOpen] = useState(false);
@@ -62,6 +61,8 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
   const { handleNext, handlePrevious } = useStepNavigation(form, currentStep, setCurrentStep);
 
   const onSubmit = async (data: EmployeeFormValues) => {
+    console.log("Submitting form with data:", data);
+    
     if (currentStep !== "contract") {
       const success = await handleNext();
       if (!success) {
@@ -71,9 +72,37 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
     }
 
     try {
+      // Ensure all required fields are present and properly typed
+      const employeeData = {
+        nome: data.nome,
+        cpf: data.cpf,
+        matricula: data.matricula,
+        genero: data.genero,
+        endereco: data.endereco || null,
+        imagem: data.imagem || null,
+        funcao_id: data.funcao_id,
+        centro_custo_id: data.centro_custo_id,
+        empresa_id: data.empresa_id,
+        equipe_id: data.equipe_id || null,
+        salario: Number(data.salario),
+        insalubridade: data.insalubridade ? Number(data.insalubridade) : null,
+        periculosidade: data.periculosidade ? Number(data.periculosidade) : null,
+        gratificacao: data.gratificacao ? Number(data.gratificacao) : null,
+        adicional_noturno: data.adicional_noturno ? Number(data.adicional_noturno) : null,
+        custo_passagem: data.custo_passagem ? Number(data.custo_passagem) : null,
+        refeicao: data.refeicao ? Number(data.refeicao) : null,
+        diarias: data.diarias ? Number(data.diarias) : null,
+        admissao: data.admissao,
+        demissao: data.demissao || null,
+        ativo: data.ativo,
+        aviso: data.aviso
+      };
+
+      console.log("Sending to Supabase:", employeeData);
+
       const { error } = await supabase
         .from("bd_rhasfalto")
-        .insert([data]);
+        .insert(employeeData);
 
       if (error) throw error;
 
