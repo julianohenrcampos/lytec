@@ -24,14 +24,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import type { TruckEquipment } from "./types";
 
+const currentYear = new Date().getFullYear();
+const yearOptions = Array.from({ length: 51 }, (_, i) => currentYear - i);
+
 const formSchema = z.object({
   frota_id: z.string().min(1, "Frota é obrigatória"),
   tipo: z.enum(["Caminhão", "Equipamento"], {
     required_error: "Tipo é obrigatório",
   }),
   modelo: z.string().min(1, "Modelo é obrigatório"),
-  ano: z.string().optional().transform(val => val ? Number(val) : undefined),
-  capacidade: z.string().optional().transform(val => val ? Number(val) : undefined),
+  ano: z.number().min(currentYear - 50).max(currentYear).optional(),
+  capacidade: z.number().min(0).optional(),
   proprietario: z.string().optional(),
   descricao: z.string().optional(),
   placa: z.string().optional(),
@@ -67,8 +70,8 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
       frota_id: initialData?.frota_id || "",
       tipo: initialData?.tipo || "Caminhão",
       modelo: initialData?.modelo || "",
-      ano: initialData?.ano?.toString() || "",
-      capacidade: initialData?.capacidade?.toString() || "",
+      ano: initialData?.ano || undefined,
+      capacidade: initialData?.capacidade || undefined,
       proprietario: initialData?.proprietario || "",
       descricao: initialData?.descricao || "",
       placa: initialData?.placa || "",
@@ -236,9 +239,23 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Ano</FormLabel>
-                <FormControl>
-                  <Input {...field} type="number" />
-                </FormControl>
+                <Select
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  value={field.value?.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o ano" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {yearOptions.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -251,7 +268,13 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
               <FormItem>
                 <FormLabel>Capacidade</FormLabel>
                 <FormControl>
-                  <Input {...field} type="number" step="0.01" />
+                  <Input 
+                    type="number"
+                    min="0"
+                    step="1"
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                    value={field.value || ""}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
