@@ -47,7 +47,7 @@ export default function TruckEquipmentManagement() {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <div>
             <CardTitle>Gerenciamento de Caminhões/Equipamentos</CardTitle>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Cadastre e gerencie os caminhões e equipamentos da sua frota
             </p>
           </div>
