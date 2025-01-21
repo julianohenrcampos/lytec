@@ -70,7 +70,9 @@ type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
 type FormStep = "personal" | "professional" | "financial" | "contract";
 
-export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((props, ref) => {
+interface EmployeeFormDialogProps {}
+
+export const EmployeeFormDialog = React.forwardRef<HTMLDivElement, EmployeeFormDialogProps>((props, ref) => {
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<FormStep>("personal");
   const { toast } = useToast();
@@ -701,7 +703,7 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((props, ref) 
           Adicionar Funcionário
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl" ref={ref}>
         <DialogHeader>
           <DialogTitle>{stepTitles[currentStep]}</DialogTitle>
         </DialogHeader>
