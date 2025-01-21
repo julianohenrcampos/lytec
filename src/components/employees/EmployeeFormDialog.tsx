@@ -70,7 +70,7 @@ type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
 type FormStep = "personal" | "professional" | "financial" | "contract";
 
-export const EmployeeFormDialog = () => {
+export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((props, ref) => {
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<FormStep>("personal");
   const { toast } = useToast();
@@ -728,3 +728,5 @@ export const EmployeeFormDialog = () => {
     </Dialog>
   );
 });
+
+EmployeeFormDialog.displayName = "EmployeeFormDialog";
