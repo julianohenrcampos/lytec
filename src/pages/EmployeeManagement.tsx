@@ -5,6 +5,7 @@ import { EmployeeFormDialog } from "@/components/employees/EmployeeFormDialog";
 import { EmployeeTable } from "@/components/employees/EmployeeTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import type { Employee } from "@/components/employees/types";
 
 const EmployeeManagement = () => {
   const { toast } = useToast();
@@ -32,7 +33,7 @@ const EmployeeManagement = () => {
         return [];
       }
 
-      return data || [];
+      return data as Employee[] || [];
     },
   });
 

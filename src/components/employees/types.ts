@@ -33,4 +33,19 @@ export const employeeSchema = z.object({
 });
 
 export type EmployeeFormValues = z.infer<typeof employeeSchema>;
+
+export interface Employee extends EmployeeFormValues {
+  id: string;
+  created_at: string;
+  funcao?: { nome: string };
+  centro_custo?: { nome: string };
+  empresa?: { nome: string };
+  equipe?: { nome: string };
+}
+
+export interface EmployeeTableProps {
+  employees: Employee[];
+  isLoading: boolean;
+}
+
 export type FormStep = "personal" | "professional" | "financial" | "contract";
