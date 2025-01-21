@@ -60,23 +60,37 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
   console.log("Current step:", currentStep);
 
   const { handleNext, handlePrevious } = useStepNavigation(form, currentStep, setCurrentStep);
-  const { onSubmit } = useEmployeeFormSubmit(currentStep, handleNext, {
-    onSuccess: () => {
+
+  const onSubmit = async (data: EmployeeFormValues) => {
+    if (currentStep !== "contract") {
+      const success = await handleNext();
+      if (!success) {
+        console.log("Validation failed, not proceeding to next step");
+      }
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("bd_rhasfalto")
+        .insert([data]);
+
+      if (error) throw error;
+
       queryClient.invalidateQueries({ queryKey: ["employees"] });
       toast({ title: "Funcionário cadastrado com sucesso!" });
       setOpen(false);
       form.reset();
       setCurrentStep("personal");
-    },
-    onError: (error) => {
+    } catch (error: any) {
       console.error("Error in form submission:", error);
       toast({
         variant: "destructive",
         title: "Erro ao cadastrar funcionário",
         description: error.message,
       });
-    },
-  });
+    }
+  };
 
   const renderStepContent = () => {
     console.log("Rendering step content for:", currentStep);
