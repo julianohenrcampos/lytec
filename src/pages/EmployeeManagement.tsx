@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { EmployeeForm } from "@/components/employees/EmployeeForm";
+import { EmployeeFormDialog } from "@/components/employees/EmployeeFormDialog";
 import { EmployeeTable } from "@/components/employees/EmployeeTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -39,17 +39,9 @@ const EmployeeManagement = () => {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Gerenciamento de Funcionários</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <EmployeeForm />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Funcionários</CardTitle>
+          <EmployeeFormDialog />
         </CardHeader>
         <CardContent>
           <EmployeeTable employees={employees || []} isLoading={isLoading} />
