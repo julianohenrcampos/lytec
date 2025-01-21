@@ -8,14 +8,16 @@ export const useStepNavigation = (
 ) => {
   const handleNext = async () => {
     const fieldsToValidate = getFieldsForStep(currentStep);
-    console.log("Validating fields for step:", currentStep, fieldsToValidate);
+    console.log("Current step:", currentStep);
+    console.log("Fields to validate:", fieldsToValidate);
+    console.log("Current form values:", form.getValues());
     
     const isValid = await form.trigger(fieldsToValidate);
-    console.log("Validation result:", isValid);
+    console.log("Form validation result:", isValid);
     
     if (!isValid) {
       const errors = form.formState.errors;
-      console.log("Form errors:", errors);
+      console.log("Form validation errors:", errors);
       return false;
     }
 
@@ -26,6 +28,7 @@ export const useStepNavigation = (
       contract: "contract",
     };
     
+    console.log("Moving to next step:", nextSteps[currentStep]);
     setCurrentStep(nextSteps[currentStep]);
     return true;
   };

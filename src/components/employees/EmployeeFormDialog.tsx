@@ -56,6 +56,9 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
     },
   });
 
+  console.log("Current form state:", form.getValues());
+  console.log("Current step:", currentStep);
+
   const { handleNext, handlePrevious } = useStepNavigation(form, currentStep, setCurrentStep);
   const { onSubmit } = useEmployeeFormSubmit(currentStep, handleNext, {
     onSuccess: () => {
@@ -76,6 +79,7 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
   });
 
   const renderStepContent = () => {
+    console.log("Rendering step content for:", currentStep);
     switch (currentStep) {
       case "personal":
         return <PersonalDataForm form={form} />;
