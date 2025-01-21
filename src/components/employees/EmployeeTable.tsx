@@ -78,7 +78,7 @@ export const EmployeeTable = () => {
               <SelectValue placeholder="Filtrar por função" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas as funções</SelectItem>
+              <SelectItem value="_all">Todas as funções</SelectItem>
               {funcoes?.map((funcao) => (
                 <SelectItem key={funcao.id} value={funcao.id}>
                   {funcao.nome}
@@ -96,7 +96,7 @@ export const EmployeeTable = () => {
               <SelectValue placeholder="Filtrar por empresa" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas as empresas</SelectItem>
+              <SelectItem value="_all">Todas as empresas</SelectItem>
               {empresas?.map((empresa) => (
                 <SelectItem key={empresa.id} value={empresa.id}>
                   {empresa.nome}
