@@ -77,7 +77,15 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
     mutationFn: async (values: FormValues) => {
       const { error } = await supabase
         .from("bd_caminhaoequipamento")
-        .insert([values]);
+        .insert([{
+          frota_id: values.frota_id,
+          tipo: values.tipo,
+          modelo: values.modelo,
+          ano: values.ano,
+          capacidade: values.capacidade,
+          proprietario: values.proprietario,
+          descricao: values.descricao,
+        }]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -99,7 +107,15 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
     mutationFn: async (values: FormValues) => {
       const { error } = await supabase
         .from("bd_caminhaoequipamento")
-        .update(values)
+        .update({
+          frota_id: values.frota_id,
+          tipo: values.tipo,
+          modelo: values.modelo,
+          ano: values.ano,
+          capacidade: values.capacidade,
+          proprietario: values.proprietario,
+          descricao: values.descricao,
+        })
         .eq("id", initialData?.id);
       if (error) throw error;
     },
