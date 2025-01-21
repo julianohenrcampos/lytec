@@ -21,6 +21,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const menuItems = [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/employees", label: "Funcionários", icon: Users },
+    { path: "/teams", label: "Equipes", icon: Users },
     { path: "/companies", label: "Empresas", icon: Building2 },
     { path: "/functions", label: "Funções", icon: Briefcase },
     { path: "/cost-centers", label: "Centros de Custo", icon: CircleDollarSign },

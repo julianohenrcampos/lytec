@@ -86,21 +86,48 @@ export type Database = {
       }
       bd_equipe: {
         Row: {
+          apontador_id: string | null
+          colaboradores: string[] | null
           created_at: string
+          encarregado_id: string | null
           id: string
           nome: string
+          updated_at: string | null
         }
         Insert: {
+          apontador_id?: string | null
+          colaboradores?: string[] | null
           created_at?: string
+          encarregado_id?: string | null
           id?: string
           nome: string
+          updated_at?: string | null
         }
         Update: {
+          apontador_id?: string | null
+          colaboradores?: string[] | null
           created_at?: string
+          encarregado_id?: string | null
           id?: string
           nome?: string
+          updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bd_equipe_apontador_id_fkey"
+            columns: ["apontador_id"]
+            isOneToOne: false
+            referencedRelation: "bd_rhasfalto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bd_equipe_encarregado_id_fkey"
+            columns: ["encarregado_id"]
+            isOneToOne: false
+            referencedRelation: "bd_rhasfalto"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bd_funcao: {
         Row: {
