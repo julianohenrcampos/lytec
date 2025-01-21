@@ -29,11 +29,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 function AppRoutes() {
   const { user } = useAuth();
 
-  // Modificado para redirecionar apenas na rota raiz
-  if (user && window.location.pathname === "/") {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return (
     <Routes>
       <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Index />} />

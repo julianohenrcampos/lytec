@@ -131,8 +131,10 @@ export type Database = {
           created_at: string
           custo_passagem: number | null
           demissao: string | null
+          departamento_id: string | null
           diarias: number | null
           empresa_id: string
+          empresa_proprietaria_id: string | null
           endereco: string | null
           equipe_id: string | null
           escolaridade: string | null
@@ -159,8 +161,10 @@ export type Database = {
           created_at?: string
           custo_passagem?: number | null
           demissao?: string | null
+          departamento_id?: string | null
           diarias?: number | null
           empresa_id: string
+          empresa_proprietaria_id?: string | null
           endereco?: string | null
           equipe_id?: string | null
           escolaridade?: string | null
@@ -187,8 +191,10 @@ export type Database = {
           created_at?: string
           custo_passagem?: number | null
           demissao?: string | null
+          departamento_id?: string | null
           diarias?: number | null
           empresa_id?: string
+          empresa_proprietaria_id?: string | null
           endereco?: string | null
           equipe_id?: string | null
           escolaridade?: string | null
@@ -214,10 +220,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bd_rhasfalto_departamento_id_fkey"
+            columns: ["departamento_id"]
+            isOneToOne: false
+            referencedRelation: "bd_departamento"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "bd_rhasfalto_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "bd_empresa"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bd_rhasfalto_empresa_proprietaria_id_fkey"
+            columns: ["empresa_proprietaria_id"]
+            isOneToOne: false
+            referencedRelation: "bd_empresa_proprietaria"
             referencedColumns: ["id"]
           },
           {
