@@ -7,6 +7,7 @@ import {
   Briefcase,
   CircleDollarSign,
   LogOut,
+  Truck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -25,6 +26,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { path: "/companies", label: "Empresas", icon: Building2 },
     { path: "/functions", label: "Funções", icon: Briefcase },
     { path: "/cost-centers", label: "Centros de Custo", icon: CircleDollarSign },
+    { path: "/fleets", label: "Frotas", icon: Truck },
   ];
 
   return (

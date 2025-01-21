@@ -16,6 +16,7 @@ import FunctionManagement from "./pages/FunctionManagement";
 import CostCenterManagement from "./pages/CostCenterManagement";
 import CompanyManagement from "./pages/CompanyManagement";
 import TeamManagement from "./pages/TeamManagement";
+import FleetManagement from "./pages/FleetManagement";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
@@ -48,6 +49,7 @@ function AppRoutes() {
       <Route path="/cost-centers" element={<ProtectedRoute><CostCenterManagement /></ProtectedRoute>} />
       <Route path="/companies" element={<ProtectedRoute><CompanyManagement /></ProtectedRoute>} />
       <Route path="/teams" element={<ProtectedRoute><TeamManagement /></ProtectedRoute>} />
+      <Route path="/fleets" element={<ProtectedRoute><FleetManagement /></ProtectedRoute>} />
     </Routes>
   );
 }

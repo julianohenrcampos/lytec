@@ -129,6 +129,27 @@ export type Database = {
           },
         ]
       }
+      bd_frota: {
+        Row: {
+          created_at: string
+          frota: string
+          id: string
+          numero: string
+        }
+        Insert: {
+          created_at?: string
+          frota: string
+          id?: string
+          numero: string
+        }
+        Update: {
+          created_at?: string
+          frota?: string
+          id?: string
+          numero?: string
+        }
+        Relationships: []
+      }
       bd_funcao: {
         Row: {
           created_at: string
