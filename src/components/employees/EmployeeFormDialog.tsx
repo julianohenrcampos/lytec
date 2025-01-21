@@ -20,6 +20,8 @@ import { PersonalDataForm } from "./forms/PersonalDataForm";
 import { ProfessionalDataForm } from "./forms/ProfessionalDataForm";
 import { FinancialDataForm } from "./forms/FinancialDataForm";
 import { ContractDataForm } from "./forms/ContractDataForm";
+import { useStepNavigation } from "./hooks/useStepNavigation";
+import { useEmployeeFormSubmit } from "./hooks/useEmployeeFormSubmit";
 
 export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
   const [open, setOpen] = useState(false);
@@ -55,40 +57,11 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
     },
   });
 
-  const createEmployee = useMutation({
-    mutationFn: async (values: EmployeeFormValues) => {
-      const { error } = await supabase.from("bd_rhasfalto").insert({
-        nome: values.nome,
-        cpf: values.cpf,
-        matricula: values.matricula,
-        genero: values.genero,
-        endereco: values.endereco,
-        imagem: values.imagem,
-        funcao_id: values.funcao_id,
-        centro_custo_id: values.centro_custo_id,
-        empresa_id: values.empresa_id,
-        equipe_id: values.equipe_id,
-        salario: Number(values.salario),
-        insalubridade: values.insalubridade ? Number(values.insalubridade) : null,
-        periculosidade: values.periculosidade ? Number(values.periculosidade) : null,
-        gratificacao: values.gratificacao ? Number(values.gratificacao) : null,
-        adicional_noturno: values.adicional_noturno ? Number(values.adicional_noturno) : null,
-        custo_passagem: values.custo_passagem ? Number(values.custo_passagem) : null,
-        refeicao: values.refeicao ? Number(values.refeicao) : null,
-        diarias: values.diarias ? Number(values.diarias) : null,
-        admissao: values.admissao,
-        demissao: values.demissao || null,
-        ativo: values.ativo,
-        aviso: values.aviso,
-        ferias: format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd"),
-      });
-      if (error) throw error;
-    },
+  const { handleNext, handlePrevious } = useStepNavigation(form, currentStep, setCurrentStep);
+  const { onSubmit } = useEmployeeFormSubmit(currentStep, handleNext, {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
-      toast({
-        title: "Funcionário cadastrado com sucesso!",
-      });
+      toast({ title: "Funcionário cadastrado com sucesso!" });
       setOpen(false);
       form.reset();
       setCurrentStep("personal");
@@ -101,37 +74,6 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
       });
     },
   });
-
-  const handleNext = async () => {
-    const isValid = await form.trigger();
-    if (!isValid) return;
-
-    const nextSteps: Record<FormStep, FormStep> = {
-      personal: "professional",
-      professional: "financial",
-      financial: "contract",
-      contract: "contract",
-    };
-    setCurrentStep(nextSteps[currentStep]);
-  };
-
-  const onSubmit = async (values: EmployeeFormValues) => {
-    if (currentStep !== "contract") {
-      await handleNext();
-      return;
-    }
-    createEmployee.mutate(values);
-  };
-
-  const handlePrevious = () => {
-    const previousSteps: Record<FormStep, FormStep> = {
-      personal: "personal",
-      professional: "personal",
-      financial: "professional",
-      contract: "financial",
-    };
-    setCurrentStep(previousSteps[currentStep]);
-  };
 
   const renderStepContent = () => {
     switch (currentStep) {
