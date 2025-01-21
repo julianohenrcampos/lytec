@@ -80,7 +80,8 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
 
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      const { error } = await supabase
+      console.log("Creating new truck/equipment:", values);
+      const { data, error } = await supabase
         .from("bd_caminhaoequipamento")
         .insert([{
           frota_id: values.frota_id,
@@ -91,8 +92,15 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
           proprietario: values.proprietario,
           descricao: values.descricao,
           placa: values.placa,
-        }]);
-      if (error) throw error;
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error creating truck/equipment:", error);
+        throw error;
+      }
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trucks-equipment"] });
@@ -101,6 +109,7 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
       onSuccess?.();
     },
     onError: (error) => {
+      console.error("Mutation error:", error);
       toast({
         variant: "destructive",
         title: "Erro ao cadastrar item",
@@ -111,7 +120,8 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
 
   const updateMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      const { error } = await supabase
+      console.log("Updating truck/equipment:", values);
+      const { data, error } = await supabase
         .from("bd_caminhaoequipamento")
         .update({
           frota_id: values.frota_id,
@@ -123,8 +133,15 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
           descricao: values.descricao,
           placa: values.placa,
         })
-        .eq("id", initialData?.id);
-      if (error) throw error;
+        .eq("id", initialData?.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error updating truck/equipment:", error);
+        throw error;
+      }
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trucks-equipment"] });
@@ -132,6 +149,7 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
       onSuccess?.();
     },
     onError: (error) => {
+      console.error("Mutation error:", error);
       toast({
         variant: "destructive",
         title: "Erro ao atualizar item",
@@ -141,6 +159,7 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
   });
 
   const onSubmit = (values: FormValues) => {
+    console.log("Form submitted with values:", values);
     if (initialData) {
       updateMutation.mutate(values);
     } else {
