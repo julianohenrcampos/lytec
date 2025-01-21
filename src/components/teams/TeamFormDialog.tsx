@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -66,10 +66,26 @@ export const TeamFormDialog = () => {
     },
   });
 
+  // Update selected employees when encarregado or apontador changes
+  useEffect(() => {
+    const encarregadoId = form.watch("encarregado_id");
+    const apontadorId = form.watch("apontador_id");
+    
+    if (encarregadoId || apontadorId) {
+      const uniqueEmployees = new Set([...selectedEmployees]);
+      
+      if (encarregadoId) uniqueEmployees.add(encarregadoId);
+      if (apontadorId) uniqueEmployees.add(apontadorId);
+      
+      setSelectedEmployees(Array.from(uniqueEmployees));
+    }
+  }, [form.watch("encarregado_id"), form.watch("apontador_id")]);
+
   const filteredEmployees = employees?.filter(
     (employee) =>
-      employee.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.matricula.toLowerCase().includes(searchTerm.toLowerCase())
+      (employee.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        employee.matricula.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      !selectedEmployees.includes(employee.id)
   );
 
   const createTeam = useMutation({
@@ -111,6 +127,26 @@ export const TeamFormDialog = () => {
   };
 
   const handleRemoveEmployee = (employeeId: string) => {
+    const encarregadoId = form.getValues("encarregado_id");
+    const apontadorId = form.getValues("apontador_id");
+    
+    // Prevent removing if employee is encarregado or apontador
+    if (employeeId === encarregadoId) {
+      toast({
+        variant: "destructive",
+        title: "Não é possível remover o encarregado da equipe",
+      });
+      return;
+    }
+    
+    if (employeeId === apontadorId) {
+      toast({
+        variant: "destructive",
+        title: "Não é possível remover o apontador da equipe",
+      });
+      return;
+    }
+
     setSelectedEmployees(selectedEmployees.filter((id) => id !== employeeId));
   };
 

@@ -18,8 +18,8 @@ export const TeamTable = () => {
         .from("bd_equipe")
         .select(`
           *,
-          encarregado:encarregado_id(nome),
-          apontador:apontador_id(nome)
+          encarregado:bd_rhasfalto!bd_equipe_encarregado_id_fkey(nome),
+          apontador:bd_rhasfalto!bd_equipe_apontador_id_fkey(nome)
         `);
       return data || [];
     },
