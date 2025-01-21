@@ -138,10 +138,17 @@ export const EmployeeFormDialog = () => {
 
   const createEmployee = useMutation({
     mutationFn: async (values: EmployeeFormValues) => {
-      const ferias = format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd");
       const { error } = await supabase.from("bd_rhasfalto").insert({
-        ...values,
-        ferias,
+        nome: values.nome,
+        cpf: values.cpf,
+        matricula: values.matricula,
+        genero: values.genero,
+        endereco: values.endereco,
+        imagem: values.imagem,
+        funcao_id: values.funcao_id,
+        centro_custo_id: values.centro_custo_id,
+        empresa_id: values.empresa_id,
+        equipe_id: values.equipe_id,
         salario: Number(values.salario),
         insalubridade: values.insalubridade ? Number(values.insalubridade) : null,
         periculosidade: values.periculosidade ? Number(values.periculosidade) : null,
@@ -150,6 +157,11 @@ export const EmployeeFormDialog = () => {
         custo_passagem: values.custo_passagem ? Number(values.custo_passagem) : null,
         refeicao: values.refeicao ? Number(values.refeicao) : null,
         diarias: values.diarias ? Number(values.diarias) : null,
+        admissao: values.admissao,
+        demissao: values.demissao || null,
+        ativo: values.ativo,
+        aviso: values.aviso,
+        ferias: format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd"),
       });
       if (error) throw error;
     },
@@ -715,4 +727,4 @@ export const EmployeeFormDialog = () => {
       </DialogContent>
     </Dialog>
   );
-};
+});
