@@ -102,15 +102,22 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
     },
   });
 
+  const handleNext = async () => {
+    const isValid = await form.trigger();
+    if (!isValid) return;
+
+    const nextSteps: Record<FormStep, FormStep> = {
+      personal: "professional",
+      professional: "financial",
+      financial: "contract",
+      contract: "contract",
+    };
+    setCurrentStep(nextSteps[currentStep]);
+  };
+
   const onSubmit = async (values: EmployeeFormValues) => {
     if (currentStep !== "contract") {
-      const nextSteps: Record<FormStep, FormStep> = {
-        personal: "professional",
-        professional: "financial",
-        financial: "contract",
-        contract: "contract",
-      };
-      setCurrentStep(nextSteps[currentStep]);
+      await handleNext();
       return;
     }
     createEmployee.mutate(values);
