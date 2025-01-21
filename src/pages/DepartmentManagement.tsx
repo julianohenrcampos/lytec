@@ -2,15 +2,6 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -18,55 +9,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Pencil, Trash2 } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import { DepartmentForm, type FormValues } from "@/components/departments/DepartmentForm";
+import { DepartmentTable } from "@/components/departments/DepartmentTable";
 
 type Department = Database["public"]["Tables"]["bd_departamento"]["Row"];
 type DepartmentInsert = Database["public"]["Tables"]["bd_departamento"]["Insert"];
 
-const formSchema = z.object({
-  nome: z.string().min(1, "O nome do departamento é obrigatório"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 export default function DepartmentManagement() {
   const [isOpen, setIsOpen] = useState(false);
-  const [editingDepartment, setEditingDepartment] = useState<Department | null>(
-    null
-  );
+  const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      nome: "",
-    },
-  });
 
   const { data: departments, isLoading } = useQuery({
     queryKey: ["departments"],
@@ -93,7 +48,6 @@ export default function DepartmentManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["departments"] });
       setIsOpen(false);
-      form.reset();
       toast({
         title: "Sucesso",
         description: "Departamento criado com sucesso!",
@@ -124,7 +78,6 @@ export default function DepartmentManagement() {
       queryClient.invalidateQueries({ queryKey: ["departments"] });
       setIsOpen(false);
       setEditingDepartment(null);
-      form.reset();
       toast({
         title: "Sucesso",
         description: "Departamento atualizado com sucesso!",
@@ -163,7 +116,7 @@ export default function DepartmentManagement() {
     },
   });
 
-  const onSubmit = (values: FormValues) => {
+  const handleSubmit = (values: FormValues) => {
     if (editingDepartment) {
       updateMutation.mutate(values);
     } else {
@@ -173,7 +126,6 @@ export default function DepartmentManagement() {
 
   const handleEdit = (department: Department) => {
     setEditingDepartment(department);
-    form.setValue("nome", department.nome);
     setIsOpen(true);
   };
 
@@ -185,7 +137,6 @@ export default function DepartmentManagement() {
     setIsOpen(open);
     if (!open) {
       setEditingDepartment(null);
-      form.reset();
     }
   };
 
@@ -204,87 +155,23 @@ export default function DepartmentManagement() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {editingDepartment
-                  ? "Editar Departamento"
-                  : "Novo Departamento"}
+                {editingDepartment ? "Editar Departamento" : "Novo Departamento"}
               </DialogTitle>
             </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="nome"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome do Departamento</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full">
-                  {editingDepartment ? "Atualizar" : "Criar"}
-                </Button>
-              </form>
-            </Form>
+            <DepartmentForm
+              onSubmit={handleSubmit}
+              initialData={editingDepartment || undefined}
+              isSubmitting={createMutation.isPending || updateMutation.isPending}
+            />
           </DialogContent>
         </Dialog>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nome</TableHead>
-            <TableHead>Data de Criação</TableHead>
-            <TableHead className="text-right">Ações</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {departments?.map((department) => (
-            <TableRow key={department.id}>
-              <TableCell>{department.nome}</TableCell>
-              <TableCell>
-                {new Date(department.created_at).toLocaleDateString()}
-              </TableCell>
-              <TableCell className="text-right space-x-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleEdit(department)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Tem certeza que deseja excluir o departamento "
-                        {department.nome}"? Esta ação não pode ser desfeita.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleDelete(department.id)}
-                      >
-                        Excluir
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <DepartmentTable
+        departments={departments || []}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }
