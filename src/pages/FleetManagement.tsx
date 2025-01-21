@@ -16,7 +16,10 @@ export default function FleetManagement() {
 
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      const { error } = await supabase.from("bd_frota").insert([values]);
+      const { error } = await supabase.from("bd_frota").insert([{
+        frota: values.frota,
+        numero: values.numero,
+      }]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -40,7 +43,10 @@ export default function FleetManagement() {
     mutationFn: async ({ id, ...values }: FormValues & { id: string }) => {
       const { error } = await supabase
         .from("bd_frota")
-        .update(values)
+        .update({
+          frota: values.frota,
+          numero: values.numero,
+        })
         .eq("id", id);
       if (error) throw error;
     },
