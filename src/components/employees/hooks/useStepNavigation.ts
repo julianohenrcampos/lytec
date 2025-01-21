@@ -8,10 +8,14 @@ export const useStepNavigation = (
 ) => {
   const handleNext = async () => {
     const fieldsToValidate = getFieldsForStep(currentStep);
+    console.log("Validating fields for step:", currentStep, fieldsToValidate);
+    
     const isValid = await form.trigger(fieldsToValidate);
+    console.log("Validation result:", isValid);
     
     if (!isValid) {
-      console.log("Validation failed for fields:", fieldsToValidate);
+      const errors = form.formState.errors;
+      console.log("Form errors:", errors);
       return false;
     }
 
@@ -42,7 +46,7 @@ export const useStepNavigation = (
 const getFieldsForStep = (step: FormStep): Array<keyof EmployeeFormValues> => {
   switch (step) {
     case "personal":
-      return ["nome", "cpf", "matricula", "genero", "endereco"];
+      return ["nome", "cpf", "matricula"];
     case "professional":
       return ["funcao_id", "centro_custo_id", "empresa_id"];
     case "financial":

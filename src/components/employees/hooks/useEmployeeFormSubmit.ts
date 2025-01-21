@@ -15,6 +15,8 @@ export const useEmployeeFormSubmit = (
 ) => {
   const createEmployee = useMutation({
     mutationFn: async (values: EmployeeFormValues) => {
+      console.log("Submitting employee data:", values);
+      
       const { error } = await supabase.from("bd_rhasfalto").insert({
         nome: values.nome,
         cpf: values.cpf,
@@ -25,7 +27,7 @@ export const useEmployeeFormSubmit = (
         funcao_id: values.funcao_id,
         centro_custo_id: values.centro_custo_id,
         empresa_id: values.empresa_id,
-        equipe_id: values.equipe_id,
+        equipe_id: values.equipe_id || null,
         salario: Number(values.salario),
         insalubridade: values.insalubridade ? Number(values.insalubridade) : null,
         periculosidade: values.periculosidade ? Number(values.periculosidade) : null,
@@ -40,17 +42,25 @@ export const useEmployeeFormSubmit = (
         aviso: values.aviso,
         ferias: format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd"),
       });
-      if (error) throw error;
+
+      if (error) {
+        console.error("Error submitting employee:", error);
+        throw error;
+      }
     },
-    onSuccess: options.onSuccess,
-    onError: options.onError,
+    ...options,
   });
 
   const onSubmit = async (values: EmployeeFormValues) => {
+    console.log("Current step:", currentStep);
+    console.log("Form values:", values);
+
     if (currentStep !== "contract") {
-      await handleNext();
+      const canProceed = await handleNext();
+      console.log("Can proceed to next step:", canProceed);
       return;
     }
+
     createEmployee.mutate(values);
   };
 

@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { format, addDays } from "date-fns";
 import { Plus } from "lucide-react";
 import { employeeSchema, EmployeeFormValues, FormStep } from "./types";
 import { PersonalDataForm } from "./forms/PersonalDataForm";
@@ -67,6 +66,7 @@ export const EmployeeFormDialog = React.forwardRef<HTMLDivElement>((_, ref) => {
       setCurrentStep("personal");
     },
     onError: (error) => {
+      console.error("Error in form submission:", error);
       toast({
         variant: "destructive",
         title: "Erro ao cadastrar funcionário",
