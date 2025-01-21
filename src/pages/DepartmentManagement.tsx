@@ -42,18 +42,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Pencil, Trash2 } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
+
+type Department = Database["public"]["Tables"]["bd_departamento"]["Row"];
+type DepartmentInsert = Database["public"]["Tables"]["bd_departamento"]["Insert"];
 
 const formSchema = z.object({
   nome: z.string().min(1, "O nome do departamento é obrigatório"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-type Department = {
-  id: string;
-  nome: string;
-  created_at: string;
-};
 
 export default function DepartmentManagement() {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,7 +82,12 @@ export default function DepartmentManagement() {
 
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      const { error } = await supabase.from("bd_departamento").insert([values]);
+      const departmentData: DepartmentInsert = {
+        nome: values.nome,
+      };
+      const { error } = await supabase
+        .from("bd_departamento")
+        .insert([departmentData]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -108,9 +111,12 @@ export default function DepartmentManagement() {
   const updateMutation = useMutation({
     mutationFn: async (values: FormValues) => {
       if (!editingDepartment?.id) return;
+      const departmentData: DepartmentInsert = {
+        nome: values.nome,
+      };
       const { error } = await supabase
         .from("bd_departamento")
-        .update(values)
+        .update(departmentData)
         .eq("id", editingDepartment.id);
       if (error) throw error;
     },
