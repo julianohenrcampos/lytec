@@ -67,7 +67,7 @@ export default function TruckEquipmentManagement() {
                   <SelectValue placeholder="Filtrar por frota" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas as frotas</SelectItem>
+                  <SelectItem value="all">Todas as frotas</SelectItem>
                   {fleets?.map((fleet) => (
                     <SelectItem key={fleet.id} value={fleet.id}>
                       {`${fleet.frota} ${fleet.numero}`}
@@ -87,7 +87,7 @@ export default function TruckEquipmentManagement() {
 
           <TruckEquipmentTable
             onEdit={handleEdit}
-            fleetFilter={selectedFleet}
+            fleetFilter={selectedFleet === "all" ? "" : selectedFleet}
             licensePlateFilter={licensePlate}
           />
         </CardContent>
