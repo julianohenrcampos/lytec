@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Edit, Trash2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -11,6 +11,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,28 +41,23 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { Pencil, Trash2 } from "lucide-react";
 
-interface Department {
+const formSchema = z.object({
+  nome: z.string().min(1, "O nome do departamento é obrigatório"),
+});
+
+type Department = {
   id: string;
   nome: string;
   created_at: string;
-}
-
-const formSchema = z.object({
-  nome: z.string().min(1, "Nome do departamento é obrigatório"),
-});
-
-const ITEMS_PER_PAGE = 10;
+};
 
 export default function DepartmentManagement() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [editingDepartment, setEditingDepartment] = useState<Department | null>(
+    null
+  );
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -55,84 +69,62 @@ export default function DepartmentManagement() {
   });
 
   const { data: departments, isLoading } = useQuery({
-    queryKey: ["departments", currentPage],
+    queryKey: ["departments"],
     queryFn: async () => {
-      const start = (currentPage - 1) * ITEMS_PER_PAGE;
-      const end = start + ITEMS_PER_PAGE - 1;
-
       const { data, error } = await supabase
         .from("bd_departamento")
         .select("*")
-        .range(start, end)
-        .order("created_at", { ascending: false });
-
+        .order("nome");
       if (error) throw error;
       return data as Department[];
     },
   });
 
   const createMutation = useMutation({
-    mutationFn: async (values: { nome: string }) => {
-      const { data, error } = await supabase
-        .from("bd_departamento")
-        .insert([{ nome: values.nome }])
-        .select()
-        .single();
-
-      if (error) {
-        if (error.code === "23505") {
-          throw new Error("Departamento já existe");
-        }
-        throw error;
-      }
-      return data;
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      const { error } = await supabase.from("bd_departamento").insert([values]);
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["departments"] });
+      setIsOpen(false);
       form.reset();
       toast({
-        title: "Departamento criado com sucesso",
-        variant: "default",
+        title: "Sucesso",
+        description: "Departamento criado com sucesso!",
       });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({
-        title: "Erro ao criar departamento",
-        description: error.message,
+        title: "Erro",
+        description: "Erro ao criar departamento: " + error.message,
         variant: "destructive",
       });
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (values: { nome: string }) => {
-      if (!editingDepartment) return;
-
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
       const { error } = await supabase
         .from("bd_departamento")
-        .update({ nome: values.nome })
-        .eq("id", editingDepartment.id);
-
-      if (error) {
-        if (error.code === "23505") {
-          throw new Error("Departamento já existe");
-        }
-        throw error;
-      }
+        .update(values)
+        .eq("id", editingDepartment?.id);
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["departments"] });
+      setIsOpen(false);
       setEditingDepartment(null);
       form.reset();
       toast({
-        title: "Departamento atualizado com sucesso",
-        variant: "default",
+        title: "Sucesso",
+        description: "Departamento atualizado com sucesso!",
       });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({
-        title: "Erro ao atualizar departamento",
-        description: error.message,
+        title: "Erro",
+        description: "Erro ao atualizar departamento: " + error.message,
         variant: "destructive",
       });
     },
@@ -140,20 +132,23 @@ export default function DepartmentManagement() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("bd_departamento").delete().eq("id", id);
+      const { error } = await supabase
+        .from("bd_departamento")
+        .delete()
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["departments"] });
       toast({
-        title: "Departamento excluído com sucesso",
-        variant: "default",
+        title: "Sucesso",
+        description: "Departamento excluído com sucesso!",
       });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({
-        title: "Erro ao excluir departamento",
-        description: error.message,
+        title: "Erro",
+        description: "Erro ao excluir departamento: " + error.message,
         variant: "destructive",
       });
     },
@@ -161,20 +156,28 @@ export default function DepartmentManagement() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (editingDepartment) {
-      updateMutation.mutate({ nome: values.nome });
+      updateMutation.mutate(values);
     } else {
-      createMutation.mutate({ nome: values.nome });
+      createMutation.mutate(values);
     }
   };
 
   const handleEdit = (department: Department) => {
     setEditingDepartment(department);
     form.setValue("nome", department.nome);
+    setIsOpen(true);
   };
 
-  const handleCancel = () => {
-    setEditingDepartment(null);
-    form.reset();
+  const handleDelete = (id: string) => {
+    deleteMutation.mutate(id);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setEditingDepartment(null);
+      form.reset();
+    }
   };
 
   if (isLoading) {
@@ -182,109 +185,97 @@ export default function DepartmentManagement() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-4">Gerenciamento de Departamentos</h1>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="nome"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome do Departamento</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Digite o nome do departamento" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex gap-2">
-              <Button type="submit">
-                {editingDepartment ? "Atualizar" : "Salvar"}
-              </Button>
-              {editingDepartment && (
-                <Button type="button" variant="outline" onClick={handleCancel}>
-                  Cancelar
+    <div className="container mx-auto py-10">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Gerenciamento de Departamentos</h1>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+          <DialogTrigger asChild>
+            <Button>Novo Departamento</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {editingDepartment
+                  ? "Editar Departamento"
+                  : "Novo Departamento"}
+              </DialogTitle>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="nome"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome do Departamento</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full">
+                  {editingDepartment ? "Atualizar" : "Criar"}
                 </Button>
-              )}
-            </div>
-          </form>
-        </Form>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Data de Criação</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nome</TableHead>
+            <TableHead>Data de Criação</TableHead>
+            <TableHead className="text-right">Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {departments?.map((department) => (
+            <TableRow key={department.id}>
+              <TableCell>{department.nome}</TableCell>
+              <TableCell>
+                {new Date(department.created_at).toLocaleDateString()}
+              </TableCell>
+              <TableCell className="text-right space-x-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => handleEdit(department)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Tem certeza que deseja excluir o departamento "
+                        {department.nome}"? Esta ação não pode ser desfeita.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDelete(department.id)}
+                      >
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {departments?.map((department) => (
-              <TableRow key={department.id}>
-                <TableCell>{department.nome}</TableCell>
-                <TableCell>
-                  {new Date(department.created_at).toLocaleDateString()}
-                </TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => handleEdit(department)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Tem certeza que deseja excluir este departamento? Esta ação não
-                          pode ser desfeita.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => deleteMutation.mutate(department.id)}
-                        >
-                          Confirmar
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <div className="mt-4 flex justify-end space-x-2">
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-          disabled={currentPage === 1}
-        >
-          Anterior
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage((p) => p + 1)}
-          disabled={!departments || departments.length < ITEMS_PER_PAGE}
-        >
-          Próximo
-        </Button>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }
