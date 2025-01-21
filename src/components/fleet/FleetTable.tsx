@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { FleetFormDialog } from "./FleetFormDialog";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
 
 type Fleet = Database["public"]["Tables"]["bd_frota"]["Row"];
@@ -30,6 +31,7 @@ type Fleet = Database["public"]["Tables"]["bd_frota"]["Row"];
 export function FleetTable() {
   const [fleetToDelete, setFleetToDelete] = useState<Fleet | null>(null);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: fleets, isLoading } = useQuery({
     queryKey: ["fleets"],
@@ -55,6 +57,7 @@ export function FleetTable() {
 
       if (error) throw error;
 
+      queryClient.invalidateQueries({ queryKey: ["fleets"] });
       toast({
         title: "Frota excluída com sucesso",
       });
@@ -79,15 +82,13 @@ export function FleetTable() {
         <TableHeader>
           <TableRow>
             <TableHead>Frota</TableHead>
-            <TableHead>Número</TableHead>
             <TableHead className="w-[100px]">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {fleets?.map((fleet) => (
             <TableRow key={fleet.id}>
-              <TableCell>{fleet.frota}</TableCell>
-              <TableCell>{fleet.numero}</TableCell>
+              <TableCell>{`${fleet.frota} ${fleet.numero}`}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
                   <FleetFormDialog initialData={fleet} />
