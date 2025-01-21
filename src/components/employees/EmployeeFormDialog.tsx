@@ -8,6 +8,9 @@ import { ProfessionalDataForm } from "./forms/ProfessionalDataForm";
 import { ContractDataForm } from "./forms/ContractDataForm";
 import { FinancialDataForm } from "./forms/FinancialDataForm";
 import { useStepNavigation } from "./hooks/useStepNavigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { employeeSchema, type EmployeeFormValues } from "./types";
 import type { TablesInsert } from "@/integrations/supabase/types";
 
 type Employee = TablesInsert<"bd_rhasfalto">;
@@ -23,6 +26,11 @@ export function EmployeeFormDialog({
   const [formData, setFormData] = useState<Partial<Employee>>({});
   const { currentStep, nextStep, previousStep, isLastStep, isFirstStep } =
     useStepNavigation(4);
+
+  const form = useForm<EmployeeFormValues>({
+    resolver: zodResolver(employeeSchema),
+    defaultValues: formData,
+  });
 
   const handleSubmit = async () => {
     try {
@@ -104,24 +112,28 @@ export function EmployeeFormDialog({
         <div className="mt-4">
           {currentStep === 0 && (
             <PersonalDataForm
+              form={form}
               onSubmit={handleStepSubmit}
               initialData={formData}
             />
           )}
           {currentStep === 1 && (
             <ProfessionalDataForm
+              form={form}
               onSubmit={handleStepSubmit}
               initialData={formData}
             />
           )}
           {currentStep === 2 && (
             <ContractDataForm
+              form={form}
               onSubmit={handleStepSubmit}
               initialData={formData}
             />
           )}
           {currentStep === 3 && (
             <FinancialDataForm
+              form={form}
               onSubmit={handleStepSubmit}
               initialData={formData}
             />
