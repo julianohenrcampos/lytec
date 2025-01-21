@@ -1,62 +1,26 @@
-import { UseFormReturn } from "react-hook-form";
-import { EmployeeFormValues, FormStep } from "../types";
+export function useStepNavigation(totalSteps: number) {
+  const [currentStep, setCurrentStep] = useState(0);
 
-export const useStepNavigation = (
-  form: UseFormReturn<EmployeeFormValues>,
-  currentStep: FormStep,
-  setCurrentStep: (step: FormStep) => void
-) => {
-  const handleNext = async () => {
-    const fieldsToValidate = getFieldsForStep(currentStep);
-    console.log("Current step:", currentStep);
-    console.log("Fields to validate:", fieldsToValidate);
-    console.log("Current form values:", form.getValues());
-    
-    const isValid = await form.trigger(fieldsToValidate);
-    console.log("Form validation result:", isValid);
-    
-    if (!isValid) {
-      const errors = form.formState.errors;
-      console.log("Form validation errors:", errors);
-      return false;
+  const nextStep = () => {
+    if (currentStep < totalSteps - 1) {
+      setCurrentStep(currentStep + 1);
     }
-
-    const nextSteps: Record<FormStep, FormStep> = {
-      personal: "professional",
-      professional: "financial",
-      financial: "contract",
-      contract: "contract",
-    };
-    
-    console.log("Moving to next step:", nextSteps[currentStep]);
-    setCurrentStep(nextSteps[currentStep]);
-    return true;
   };
 
-  const handlePrevious = () => {
-    const previousSteps: Record<FormStep, FormStep> = {
-      personal: "personal",
-      professional: "personal",
-      financial: "professional",
-      contract: "financial",
-    };
-    setCurrentStep(previousSteps[currentStep]);
+  const previousStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
   };
 
-  return { handleNext, handlePrevious };
-};
+  const isLastStep = currentStep === totalSteps - 1;
+  const isFirstStep = currentStep === 0;
 
-const getFieldsForStep = (step: FormStep): Array<keyof EmployeeFormValues> => {
-  switch (step) {
-    case "personal":
-      return ["nome", "cpf", "matricula"];
-    case "professional":
-      return ["funcao_id", "centro_custo_id", "empresa_id"];
-    case "financial":
-      return ["salario"];
-    case "contract":
-      return ["admissao"];
-    default:
-      return [];
-  }
-};
+  return {
+    currentStep,
+    nextStep,
+    previousStep,
+    isLastStep,
+    isFirstStep,
+  };
+}

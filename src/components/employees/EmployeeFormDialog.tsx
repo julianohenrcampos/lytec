@@ -3,16 +3,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import PersonalDataForm from "./forms/PersonalDataForm";
-import ProfessionalDataForm from "./forms/ProfessionalDataForm";
-import ContractDataForm from "./forms/ContractDataForm";
-import FinancialDataForm from "./forms/FinancialDataForm";
-import useStepNavigation from "./hooks/useStepNavigation";
+import { PersonalDataForm } from "./forms/PersonalDataForm";
+import { ProfessionalDataForm } from "./forms/ProfessionalDataForm";
+import { ContractDataForm } from "./forms/ContractDataForm";
+import { FinancialDataForm } from "./forms/FinancialDataForm";
+import { useStepNavigation } from "./hooks/useStepNavigation";
 import type { TablesInsert } from "@/integrations/supabase/types";
 
 type Employee = TablesInsert<"bd_rhasfalto">;
 
-export default function EmployeeFormDialog({
+export function EmployeeFormDialog({
   open,
   onOpenChange,
 }: {
