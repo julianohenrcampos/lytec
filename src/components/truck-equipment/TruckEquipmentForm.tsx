@@ -30,8 +30,8 @@ const formSchema = z.object({
     required_error: "Tipo é obrigatório",
   }),
   modelo: z.string().min(1, "Modelo é obrigatório"),
-  ano: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  capacidade: z.string().optional().transform(val => val ? parseFloat(val) : undefined),
+  ano: z.string().optional().transform(val => val ? Number(val) : undefined),
+  capacidade: z.string().optional().transform(val => val ? Number(val) : undefined),
   proprietario: z.string().optional(),
   descricao: z.string().optional(),
 });
