@@ -9,12 +9,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { EmployeeFormValues } from "../types";
+import type { TablesInsert } from "@/integrations/supabase/types";
+
+type Employee = TablesInsert<"bd_rhasfalto">;
 
 interface FinancialDataFormProps {
   form: UseFormReturn<EmployeeFormValues>;
+  onSubmit: (data: Partial<Employee>) => void;
+  initialData: Partial<Employee>;
 }
 
-export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form }) => {
+export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form, onSubmit, initialData }) => {
   return (
     <div className="space-y-4">
       <FormField

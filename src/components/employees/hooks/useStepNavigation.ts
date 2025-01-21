@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export function useStepNavigation(totalSteps: number) {
   const [currentStep, setCurrentStep] = useState(0);
 

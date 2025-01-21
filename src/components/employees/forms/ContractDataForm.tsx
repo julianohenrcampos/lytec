@@ -11,12 +11,17 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format, addDays } from "date-fns";
 import { EmployeeFormValues } from "../types";
+import type { TablesInsert } from "@/integrations/supabase/types";
+
+type Employee = TablesInsert<"bd_rhasfalto">;
 
 interface ContractDataFormProps {
   form: UseFormReturn<EmployeeFormValues>;
+  onSubmit: (data: Partial<Employee>) => void;
+  initialData: Partial<Employee>;
 }
 
-export const ContractDataForm: React.FC<ContractDataFormProps> = ({ form }) => {
+export const ContractDataForm: React.FC<ContractDataFormProps> = ({ form, onSubmit, initialData }) => {
   return (
     <div className="space-y-4">
       <FormField

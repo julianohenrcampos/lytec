@@ -16,12 +16,17 @@ import {
 } from "@/components/ui/select";
 import { EmployeeFormValues } from "../types";
 import { useEmployeeFormData } from "../hooks/useEmployeeFormData";
+import type { TablesInsert } from "@/integrations/supabase/types";
+
+type Employee = TablesInsert<"bd_rhasfalto">;
 
 interface ProfessionalDataFormProps {
   form: UseFormReturn<EmployeeFormValues>;
+  onSubmit: (data: Partial<Employee>) => void;
+  initialData: Partial<Employee>;
 }
 
-export const ProfessionalDataForm: React.FC<ProfessionalDataFormProps> = ({ form }) => {
+export const ProfessionalDataForm: React.FC<ProfessionalDataFormProps> = ({ form, onSubmit, initialData }) => {
   const { funcoes, centrosCusto, empresas, equipes } = useEmployeeFormData();
 
   return (

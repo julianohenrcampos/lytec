@@ -10,12 +10,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { EmployeeFormValues } from "../types";
+import type { TablesInsert } from "@/integrations/supabase/types";
+
+type Employee = TablesInsert<"bd_rhasfalto">;
 
 interface PersonalDataFormProps {
   form: UseFormReturn<EmployeeFormValues>;
+  onSubmit: (data: Partial<Employee>) => void;
+  initialData: Partial<Employee>;
 }
 
-export const PersonalDataForm: React.FC<PersonalDataFormProps> = ({ form }) => {
+export const PersonalDataForm: React.FC<PersonalDataFormProps> = ({ form, onSubmit, initialData }) => {
   return (
     <div className="space-y-4">
       <FormField
