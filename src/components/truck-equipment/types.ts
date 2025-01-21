@@ -3,6 +3,7 @@ export interface TruckEquipment {
   frota_id: string;
   tipo: 'Caminhão' | 'Equipamento';
   modelo: string;
+  placa?: string;
   ano?: number;
   capacidade?: number;
   proprietario?: string;

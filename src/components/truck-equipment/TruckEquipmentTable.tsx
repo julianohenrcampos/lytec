@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
 import {
   Table,
   TableBody,
@@ -27,22 +26,38 @@ import type { TruckEquipment } from "./types";
 
 interface TruckEquipmentTableProps {
   onEdit: (item: TruckEquipment) => void;
+  fleetFilter?: string;
+  licensePlateFilter?: string;
 }
 
-export function TruckEquipmentTable({ onEdit }: TruckEquipmentTableProps) {
+export function TruckEquipmentTable({
+  onEdit,
+  fleetFilter,
+  licensePlateFilter,
+}: TruckEquipmentTableProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: items, isLoading } = useQuery({
-    queryKey: ["trucks-equipment"],
+    queryKey: ["trucks-equipment", fleetFilter, licensePlateFilter],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("bd_caminhaoequipamento")
         .select(`
           *,
           frota:bd_frota(frota, numero)
         `)
         .order("created_at", { ascending: false });
+
+      if (fleetFilter) {
+        query = query.eq("frota_id", fleetFilter);
+      }
+
+      if (licensePlateFilter) {
+        query = query.ilike("placa", `%${licensePlateFilter}%`);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         toast({
@@ -91,6 +106,7 @@ export function TruckEquipmentTable({ onEdit }: TruckEquipmentTableProps) {
           <TableHead>Frota</TableHead>
           <TableHead>Tipo</TableHead>
           <TableHead>Modelo</TableHead>
+          <TableHead>Placa</TableHead>
           <TableHead>Ano</TableHead>
           <TableHead>Capacidade</TableHead>
           <TableHead>Proprietário</TableHead>
@@ -101,13 +117,16 @@ export function TruckEquipmentTable({ onEdit }: TruckEquipmentTableProps) {
       <TableBody>
         {items?.map((item) => (
           <TableRow key={item.id}>
-            <TableCell>{item.frota ? `${item.frota.frota} ${item.frota.numero}` : '-'}</TableCell>
+            <TableCell>
+              {item.frota ? `${item.frota.frota} ${item.frota.numero}` : "-"}
+            </TableCell>
             <TableCell>{item.tipo}</TableCell>
             <TableCell>{item.modelo}</TableCell>
-            <TableCell>{item.ano || '-'}</TableCell>
-            <TableCell>{item.capacidade || '-'}</TableCell>
-            <TableCell>{item.proprietario || '-'}</TableCell>
-            <TableCell>{item.descricao || '-'}</TableCell>
+            <TableCell>{item.placa || "-"}</TableCell>
+            <TableCell>{item.ano || "-"}</TableCell>
+            <TableCell>{item.capacidade || "-"}</TableCell>
+            <TableCell>{item.proprietario || "-"}</TableCell>
+            <TableCell>{item.descricao || "-"}</TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end space-x-2">
                 <Button
