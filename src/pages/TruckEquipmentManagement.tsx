@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -41,55 +42,56 @@ export default function TruckEquipmentManagement() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">
-            Gerenciamento de Caminhões/Equipamentos
-          </h2>
-          <p className="text-muted-foreground">
-            Cadastre e gerencie os caminhões e equipamentos da sua frota
-          </p>
-        </div>
-        <Button onClick={() => setOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Novo
-        </Button>
-      </div>
+    <div className="container mx-auto py-6 space-y-6">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle>Gerenciamento de Caminhões/Equipamentos</CardTitle>
+            <p className="text-muted-foreground">
+              Cadastre e gerencie os caminhões e equipamentos da sua frota
+            </p>
+          </div>
+          <Button onClick={() => setOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Novo
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-4 mb-4">
+            <div className="w-[200px]">
+              <Select
+                value={selectedFleet}
+                onValueChange={setSelectedFleet}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Filtrar por frota" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Todas as frotas</SelectItem>
+                  {fleets?.map((fleet) => (
+                    <SelectItem key={fleet.id} value={fleet.id}>
+                      {`${fleet.frota} ${fleet.numero}`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="w-[200px]">
+              <Input
+                placeholder="Filtrar por placa"
+                value={licensePlate}
+                onChange={(e) => setLicensePlate(e.target.value)}
+              />
+            </div>
+          </div>
 
-      <div className="flex gap-4">
-        <div className="w-[200px]">
-          <Select
-            value={selectedFleet}
-            onValueChange={setSelectedFleet}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por frota" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Todas as frotas</SelectItem>
-              {fleets?.map((fleet) => (
-                <SelectItem key={fleet.id} value={fleet.id}>
-                  {`${fleet.frota} ${fleet.numero}`}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="w-[200px]">
-          <Input
-            placeholder="Filtrar por placa"
-            value={licensePlate}
-            onChange={(e) => setLicensePlate(e.target.value)}
+          <TruckEquipmentTable
+            onEdit={handleEdit}
+            fleetFilter={selectedFleet}
+            licensePlateFilter={licensePlate}
           />
-        </div>
-      </div>
-
-      <TruckEquipmentTable
-        onEdit={handleEdit}
-        fleetFilter={selectedFleet}
-        licensePlateFilter={licensePlate}
-      />
+        </CardContent>
+      </Card>
 
       <TruckEquipmentFormDialog
         open={open}
