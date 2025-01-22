@@ -38,6 +38,8 @@ const formSchema = z.object({
   proprietario: z.string().optional(),
   descricao: z.string().optional(),
   placa: z.string().optional(),
+  aluguel: z.number().min(0).optional(),
+  imagem: z.any().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -75,12 +77,42 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
       proprietario: initialData?.proprietario || "",
       descricao: initialData?.descricao || "",
       placa: initialData?.placa || "",
+      aluguel: initialData?.aluguel || undefined,
+      imagem: undefined,
     },
   });
+
+  const handleImageUpload = async (file: File) => {
+    if (!file) return null;
+    
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+    
+    const { error: uploadError, data } = await supabase.storage
+      .from('truck-equipment-images')
+      .upload(fileName, file);
+
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError);
+      throw uploadError;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('truck-equipment-images')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
+  };
 
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
       console.log("Creating new truck/equipment:", values);
+      let imageUrl = null;
+      
+      if (values.imagem instanceof FileList && values.imagem.length > 0) {
+        imageUrl = await handleImageUpload(values.imagem[0]);
+      }
+
       const { data, error } = await supabase
         .from("bd_caminhaoequipamento")
         .insert([{
@@ -92,6 +124,8 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
           proprietario: values.proprietario,
           descricao: values.descricao,
           placa: values.placa,
+          aluguel: values.aluguel,
+          imagem: imageUrl,
         }])
         .select()
         .single();
@@ -121,6 +155,12 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
   const updateMutation = useMutation({
     mutationFn: async (values: FormValues) => {
       console.log("Updating truck/equipment:", values);
+      let imageUrl = initialData?.imagem;
+      
+      if (values.imagem instanceof FileList && values.imagem.length > 0) {
+        imageUrl = await handleImageUpload(values.imagem[0]);
+      }
+
       const { data, error } = await supabase
         .from("bd_caminhaoequipamento")
         .update({
@@ -132,6 +172,8 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
           proprietario: values.proprietario,
           descricao: values.descricao,
           placa: values.placa,
+          aluguel: values.aluguel,
+          imagem: imageUrl,
         })
         .eq("id", initialData?.id)
         .select()
@@ -308,6 +350,45 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
                 <FormLabel>Proprietário</FormLabel>
                 <FormControl>
                   <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="aluguel"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Aluguel (R$)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                    value={field.value || ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="imagem"
+            render={({ field: { value, onChange, ...field } }) => (
+              <FormItem>
+                <FormLabel>Imagem</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => onChange(e.target.files)}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
