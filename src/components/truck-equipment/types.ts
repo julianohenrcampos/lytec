@@ -9,6 +9,8 @@ export interface TruckEquipment {
   proprietario?: string;
   descricao?: string;
   created_at: string;
+  aluguel?: number;
+  imagem?: string;
   frota?: {
     frota: string;
     numero: string;
