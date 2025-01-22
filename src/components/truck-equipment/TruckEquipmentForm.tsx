@@ -132,6 +132,10 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
 
       if (error) {
         console.error("Error creating truck/equipment:", error);
+        // Check for unique constraint violation
+        if (error.code === '23505' && error.message.includes('unique_placa_idx')) {
+          throw new Error('Esta placa já está cadastrada no sistema.');
+        }
         throw error;
       }
       return data;
@@ -147,7 +151,7 @@ export function TruckEquipmentForm({ initialData, onSuccess }: TruckEquipmentFor
       toast({
         variant: "destructive",
         title: "Erro ao cadastrar item",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Erro desconhecido",
       });
     },
   });
