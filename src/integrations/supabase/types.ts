@@ -11,36 +11,42 @@ export type Database = {
     Tables: {
       bd_caminhaoequipamento: {
         Row: {
+          aluguel: number | null
           ano: number | null
           capacidade: number | null
           created_at: string
           descricao: string | null
           frota_id: string
           id: string
+          imagem: string | null
           modelo: string
           placa: string | null
           proprietario: string | null
           tipo: string
         }
         Insert: {
+          aluguel?: number | null
           ano?: number | null
           capacidade?: number | null
           created_at?: string
           descricao?: string | null
           frota_id: string
           id?: string
+          imagem?: string | null
           modelo: string
           placa?: string | null
           proprietario?: string | null
           tipo: string
         }
         Update: {
+          aluguel?: number | null
           ano?: number | null
           capacidade?: number | null
           created_at?: string
           descricao?: string | null
           frota_id?: string
           id?: string
+          imagem?: string | null
           modelo?: string
           placa?: string | null
           proprietario?: string | null
