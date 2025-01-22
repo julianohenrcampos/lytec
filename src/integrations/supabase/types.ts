@@ -18,6 +18,7 @@ export type Database = {
           frota_id: string
           id: string
           modelo: string
+          placa: string | null
           proprietario: string | null
           tipo: string
         }
@@ -29,6 +30,7 @@ export type Database = {
           frota_id: string
           id?: string
           modelo: string
+          placa?: string | null
           proprietario?: string | null
           tipo: string
         }
@@ -40,6 +42,7 @@ export type Database = {
           frota_id?: string
           id?: string
           modelo?: string
+          placa?: string | null
           proprietario?: string | null
           tipo?: string
         }
