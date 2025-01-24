@@ -4,13 +4,20 @@ import { PlantForm } from "@/components/plants/PlantForm";
 import { PlantTable } from "@/components/plants/PlantTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function PlantManagement() {
   const [selectedPlant, setSelectedPlant] = useState<any>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSuccess = () => {
-    setShowForm(false);
+    setIsOpen(false);
     setSelectedPlant(null);
   };
 
@@ -18,24 +25,25 @@ export default function PlantManagement() {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight">Gestão de Usinas</h2>
-        <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" /> Adicionar Usina
-        </Button>
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <Button className="flex items-center gap-2">
+              <Plus className="h-4 w-4" /> Adicionar Usina
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-full sm:max-w-lg">
+            <SheetHeader>
+              <SheetTitle>{selectedPlant ? "Editar Usina" : "Nova Usina"}</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6">
+              <PlantForm
+                initialData={selectedPlant}
+                onSuccess={handleSuccess}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
-
-      {showForm && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{selectedPlant ? "Editar Usina" : "Nova Usina"}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PlantForm
-              initialData={selectedPlant}
-              onSuccess={handleSuccess}
-            />
-          </CardContent>
-        </Card>
-      )}
 
       <Card>
         <CardHeader>
@@ -45,7 +53,7 @@ export default function PlantManagement() {
           <PlantTable
             onEdit={(plant) => {
               setSelectedPlant(plant);
-              setShowForm(true);
+              setIsOpen(true);
             }}
           />
         </CardContent>

@@ -19,7 +19,12 @@ type PlantFormValues = z.infer<typeof plantSchema>;
 
 interface PlantFormProps {
   onSuccess: () => void;
-  initialData?: PlantFormValues & { id: string };
+  initialData?: {
+    id: string;
+    usina: string;
+    endereco: string | null;
+    producao_total: number | null;
+  };
 }
 
 export function PlantForm({ onSuccess, initialData }: PlantFormProps) {
@@ -28,10 +33,10 @@ export function PlantForm({ onSuccess, initialData }: PlantFormProps) {
 
   const form = useForm<PlantFormValues>({
     resolver: zodResolver(plantSchema),
-    defaultValues: initialData || {
-      usina: "",
-      endereco: "",
-      producao_total: "",
+    defaultValues: {
+      usina: initialData?.usina || "",
+      endereco: initialData?.endereco || "",
+      producao_total: initialData?.producao_total?.toString() || "",
     },
   });
 
@@ -42,7 +47,11 @@ export function PlantForm({ onSuccess, initialData }: PlantFormProps) {
       if (initialData?.id) {
         const { error } = await supabase
           .from("bd_usinas")
-          .update(data)
+          .update({
+            usina: data.usina,
+            endereco: data.endereco || null,
+            producao_total: data.producao_total,
+          })
           .eq("id", initialData.id);
 
         if (error) throw error;
@@ -50,7 +59,11 @@ export function PlantForm({ onSuccess, initialData }: PlantFormProps) {
       } else {
         const { error } = await supabase
           .from("bd_usinas")
-          .insert(data);
+          .insert({
+            usina: data.usina,
+            endereco: data.endereco || null,
+            producao_total: data.producao_total,
+          });
 
         if (error) throw error;
         toast({ title: "Usina cadastrada com sucesso!" });
@@ -131,7 +144,10 @@ export function PlantForm({ onSuccess, initialData }: PlantFormProps) {
           <Button
             type="button"
             variant="outline"
-            onClick={() => form.reset()}
+            onClick={() => {
+              form.reset();
+              onSuccess();
+            }}
             disabled={isSubmitting}
           >
             Cancelar
