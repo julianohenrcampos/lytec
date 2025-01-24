@@ -26,7 +26,7 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
         throw new Error("Empresa não encontrada. Por favor, selecione uma empresa válida.");
       }
       
-      const { error } = await supabase.from("bd_rhasfalto").insert({
+      const { data, error } = await supabase.from("bd_rhasfalto").insert({
         nome: values.nome,
         cpf: values.cpf,
         matricula: values.matricula,
@@ -50,16 +50,19 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
         ativo: values.ativo,
         aviso: values.aviso,
         ferias: format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd"),
-      });
+      }).select().single();
 
       if (error) {
         console.error("Error submitting employee:", error);
         throw error;
       }
+
+      return data;
     },
     onSuccess: () => {
       toast({
         title: "Funcionário cadastrado com sucesso!",
+        description: "Os dados foram salvos corretamente.",
       });
       options?.onSuccess?.();
     },
@@ -74,6 +77,6 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
 
   return {
     onSubmit: mutation.mutate,
-    isSubmitting: mutation.isPending
+    isSubmitting: mutation.isPending,
   };
 };
