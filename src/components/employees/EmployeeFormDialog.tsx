@@ -46,7 +46,7 @@ export function EmployeeFormDialog({ open, onOpenChange, initialData }: Employee
     },
   });
 
-  const { currentStep, nextStep, previousStep, isLastStep, isFirstStep } = useStepNavigation();
+  const { currentStep, nextStep, previousStep, isLastStep, isFirstStep, setCurrentStep } = useStepNavigation();
   const { onSubmit, isSubmitting } = useEmployeeFormSubmit({ 
     onSuccess: () => onOpenChange(false) 
   });
