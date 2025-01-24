@@ -18,6 +18,7 @@ import CompanyManagement from "./pages/CompanyManagement";
 import TeamManagement from "./pages/TeamManagement";
 import FleetManagement from "./pages/FleetManagement";
 import TruckEquipmentManagement from "./pages/TruckEquipmentManagement";
+import PlantManagement from "./pages/PlantManagement";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
@@ -52,6 +53,7 @@ function AppRoutes() {
       <Route path="/teams" element={<ProtectedRoute><TeamManagement /></ProtectedRoute>} />
       <Route path="/fleets" element={<ProtectedRoute><FleetManagement /></ProtectedRoute>} />
       <Route path="/trucks-equipment" element={<ProtectedRoute><TruckEquipmentManagement /></ProtectedRoute>} />
+      <Route path="/plants" element={<ProtectedRoute><PlantManagement /></ProtectedRoute>} />
     </Routes>
   );
 }

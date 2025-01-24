@@ -357,6 +357,30 @@ export type Database = {
           },
         ]
       }
+      bd_usinas: {
+        Row: {
+          created_at: string
+          endereco: string | null
+          id: string
+          producao_total: number | null
+          usina: string
+        }
+        Insert: {
+          created_at?: string
+          endereco?: string | null
+          id?: string
+          producao_total?: number | null
+          usina: string
+        }
+        Update: {
+          created_at?: string
+          endereco?: string | null
+          id?: string
+          producao_total?: number | null
+          usina?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
