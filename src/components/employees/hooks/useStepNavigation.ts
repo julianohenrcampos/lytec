@@ -1,25 +1,30 @@
 import { useState } from "react";
+import { FormStep } from "../types";
 
-export function useStepNavigation(totalSteps: number) {
-  const [currentStep, setCurrentStep] = useState(0);
+const STEPS: FormStep[] = ["personal", "professional", "financial", "contract"];
+
+export function useStepNavigation() {
+  const [currentStep, setCurrentStep] = useState<FormStep>("personal");
+
+  const currentStepIndex = STEPS.indexOf(currentStep);
+  const isFirstStep = currentStepIndex === 0;
+  const isLastStep = currentStepIndex === STEPS.length - 1;
 
   const nextStep = () => {
-    if (currentStep < totalSteps - 1) {
-      setCurrentStep(currentStep + 1);
+    if (!isLastStep) {
+      setCurrentStep(STEPS[currentStepIndex + 1]);
     }
   };
 
   const previousStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+    if (!isFirstStep) {
+      setCurrentStep(STEPS[currentStepIndex - 1]);
     }
   };
 
-  const isLastStep = currentStep === totalSteps - 1;
-  const isFirstStep = currentStep === 0;
-
   return {
     currentStep,
+    setCurrentStep,
     nextStep,
     previousStep,
     isLastStep,

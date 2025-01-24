@@ -1,19 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { EmployeeFormValues, FormStep } from "../types";
+import { EmployeeFormValues } from "../types";
 import { format, addDays } from "date-fns";
 
 interface UseEmployeeFormSubmitOptions {
-  onSuccess: () => void;
-  onError: (error: Error) => void;
+  onSuccess?: () => void;
 }
 
-export const useEmployeeFormSubmit = (
-  currentStep: FormStep,
-  handleNext: () => Promise<boolean>,
-  options: UseEmployeeFormSubmitOptions
-) => {
-  const createEmployee = useMutation({
+export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) => {
+  const mutation = useMutation({
     mutationFn: async (values: EmployeeFormValues) => {
       console.log("Submitting employee data:", values);
       
@@ -48,21 +43,11 @@ export const useEmployeeFormSubmit = (
         throw error;
       }
     },
-    ...options,
+    onSuccess: options?.onSuccess,
   });
 
-  const onSubmit = async (values: EmployeeFormValues) => {
-    console.log("Current step:", currentStep);
-    console.log("Form values:", values);
-
-    if (currentStep !== "contract") {
-      const canProceed = await handleNext();
-      console.log("Can proceed to next step:", canProceed);
-      return;
-    }
-
-    createEmployee.mutate(values);
+  return {
+    onSubmit: mutation.mutate,
+    isSubmitting: mutation.isPending
   };
-
-  return { onSubmit };
 };

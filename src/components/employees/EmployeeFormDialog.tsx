@@ -19,7 +19,6 @@ interface EmployeeFormDialogProps {
 }
 
 export function EmployeeFormDialog({ open, onOpenChange, initialData }: EmployeeFormDialogProps) {
-  const [currentStep, setCurrentStep] = useState("personal");
   const form = useForm<EmployeeFormValues>({
     defaultValues: initialData || {
       nome: "",
@@ -47,8 +46,18 @@ export function EmployeeFormDialog({ open, onOpenChange, initialData }: Employee
     },
   });
 
-  const { onSubmit, isSubmitting } = useEmployeeFormSubmit({ onSuccess: () => onOpenChange(false) });
-  const { canGoNext, canGoPrevious, goToNextStep, goToPreviousStep } = useStepNavigation(currentStep, setCurrentStep);
+  const { currentStep, nextStep, previousStep, isLastStep, isFirstStep } = useStepNavigation();
+  const { onSubmit, isSubmitting } = useEmployeeFormSubmit({ 
+    onSuccess: () => onOpenChange(false) 
+  });
+
+  const handleSubmit = async (values: EmployeeFormValues) => {
+    if (!isLastStep) {
+      nextStep();
+      return;
+    }
+    onSubmit(values);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -59,7 +68,7 @@ export function EmployeeFormDialog({ open, onOpenChange, initialData }: Employee
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <Tabs value={currentStep} onValueChange={setCurrentStep}>
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="personal">Dados Pessoais</TabsTrigger>
@@ -100,24 +109,14 @@ export function EmployeeFormDialog({ open, onOpenChange, initialData }: Employee
               <Button
                 type="button"
                 variant="outline"
-                onClick={goToPreviousStep}
-                disabled={!canGoPrevious}
+                onClick={previousStep}
+                disabled={isFirstStep}
               >
                 Anterior
               </Button>
-              {currentStep === "financial" ? (
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Salvando..." : "Salvar"}
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={goToNextStep}
-                  disabled={!canGoNext}
-                >
-                  Próximo
-                </Button>
-              )}
+              <Button type="submit" disabled={isSubmitting}>
+                {isLastStep ? (isSubmitting ? "Salvando..." : "Salvar") : "Próximo"}
+              </Button>
             </div>
           </form>
         </Form>
