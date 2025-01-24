@@ -1,164 +1,126 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonalDataForm } from "./forms/PersonalDataForm";
 import { ProfessionalDataForm } from "./forms/ProfessionalDataForm";
 import { ContractDataForm } from "./forms/ContractDataForm";
 import { FinancialDataForm } from "./forms/FinancialDataForm";
+import { Button } from "@/components/ui/button";
+import { useEmployeeFormSubmit } from "./hooks/useEmployeeFormSubmit";
 import { useStepNavigation } from "./hooks/useStepNavigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { employeeSchema, type EmployeeFormValues } from "./types";
-import type { TablesInsert } from "@/integrations/supabase/types";
+import { EmployeeFormValues } from "./types";
+import { Form } from "@/components/ui/form";
 
-type Employee = TablesInsert<"bd_rhasfalto">;
-
-export function EmployeeFormDialog({
-  open,
-  onOpenChange,
-}: {
+interface EmployeeFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}) {
-  const { toast } = useToast();
-  const [formData, setFormData] = useState<Partial<Employee>>({});
-  const { currentStep, nextStep, previousStep, isLastStep, isFirstStep } =
-    useStepNavigation(4);
+  initialData?: Partial<EmployeeFormValues>;
+}
 
+export function EmployeeFormDialog({ open, onOpenChange, initialData }: EmployeeFormDialogProps) {
+  const [currentStep, setCurrentStep] = useState("personal");
   const form = useForm<EmployeeFormValues>({
-    resolver: zodResolver(employeeSchema),
-    defaultValues: formData,
+    defaultValues: initialData || {
+      nome: "",
+      cpf: "",
+      matricula: "",
+      genero: true,
+      endereco: "",
+      imagem: "",
+      funcao_id: "",
+      centro_custo_id: "",
+      empresa_id: "",
+      equipe_id: "",
+      salario: 0,
+      insalubridade: 0,
+      periculosidade: 0,
+      gratificacao: 0,
+      adicional_noturno: 0,
+      custo_passagem: 0,
+      refeicao: 0,
+      diarias: 0,
+      admissao: "",
+      demissao: "",
+      ativo: true,
+      aviso: false,
+    },
   });
 
-  const handleSubmit = async () => {
-    try {
-      console.log("Form data before submission:", formData);
-
-      // Ensure all required fields are present and properly typed
-      const employeeData: Employee = {
-        nome: formData.nome!,
-        cpf: formData.cpf!,
-        matricula: formData.matricula!,
-        funcao_id: formData.funcao_id!,
-        centro_custo_id: formData.centro_custo_id!,
-        empresa_id: formData.empresa_id!,
-        salario: Number(formData.salario!),
-        admissao: formData.admissao!,
-        // Optional fields
-        equipe_id: formData.equipe_id || null,
-        insalubridade: formData.insalubridade ? Number(formData.insalubridade) : null,
-        periculosidade: formData.periculosidade ? Number(formData.periculosidade) : null,
-        gratificacao: formData.gratificacao ? Number(formData.gratificacao) : null,
-        adicional_noturno: formData.adicional_noturno ? Number(formData.adicional_noturno) : null,
-        custo_passagem: formData.custo_passagem ? Number(formData.custo_passagem) : null,
-        refeicao: formData.refeicao ? Number(formData.refeicao) : null,
-        diarias: formData.diarias ? Number(formData.diarias) : null,
-        ferias: formData.ferias || null,
-        demissao: formData.demissao || null,
-        ativo: formData.ativo !== undefined ? formData.ativo : true,
-        aviso: formData.aviso || false,
-        endereco: formData.endereco || null,
-        imagem: formData.imagem || null,
-        escolaridade: formData.escolaridade || null,
-        genero: formData.genero || null,
-        empresa_proprietaria_id: formData.empresa_proprietaria_id || null,
-        departamento_id: formData.departamento_id || null,
-      };
-
-      console.log("Structured employee data:", employeeData);
-
-      const { error } = await supabase
-        .from("bd_rhasfalto")
-        .insert([employeeData]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Funcionário cadastrado com sucesso!",
-        variant: "default",
-      });
-
-      onOpenChange(false);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Erro ao cadastrar funcionário",
-        description: error instanceof Error ? error.message : "Erro desconhecido",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleStepSubmit = (stepData: Partial<Employee>) => {
-    console.log("Step data received:", stepData);
-    setFormData((prev) => ({ ...prev, ...stepData }));
-
-    if (isLastStep) {
-      handleSubmit();
-    } else {
-      nextStep();
-    }
-  };
+  const { onSubmit, isSubmitting } = useEmployeeFormSubmit({ onSuccess: () => onOpenChange(false) });
+  const { canGoNext, canGoPrevious, goToNextStep, goToPreviousStep } = useStepNavigation(currentStep, setCurrentStep);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Cadastro de Funcionário - Etapa {currentStep + 1}</DialogTitle>
+          <DialogTitle>
+            {initialData ? "Editar Funcionário" : "Cadastrar Funcionário"}
+          </DialogTitle>
         </DialogHeader>
-
-        <div className="mt-4">
-          {currentStep === 0 && (
-            <PersonalDataForm
-              form={form}
-              onSubmit={handleStepSubmit}
-              initialData={formData}
-            />
-          )}
-          {currentStep === 1 && (
-            <ProfessionalDataForm
-              form={form}
-              onSubmit={handleStepSubmit}
-              initialData={formData}
-            />
-          )}
-          {currentStep === 2 && (
-            <ContractDataForm
-              form={form}
-              onSubmit={handleStepSubmit}
-              initialData={formData}
-            />
-          )}
-          {currentStep === 3 && (
-            <FinancialDataForm
-              form={form}
-              onSubmit={handleStepSubmit}
-              initialData={formData}
-            />
-          )}
-        </div>
-
-        <div className="flex justify-between mt-4">
-          <Button
-            variant="outline"
-            onClick={previousStep}
-            disabled={isFirstStep}
-          >
-            Anterior
-          </Button>
-          <Button
-            onClick={() => {
-              const currentForm = document.querySelector("form");
-              if (currentForm) {
-                currentForm.requestSubmit();
-              }
-            }}
-          >
-            {isLastStep ? "Finalizar" : "Próximo"}
-          </Button>
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <Tabs value={currentStep} onValueChange={setCurrentStep}>
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="personal">Dados Pessoais</TabsTrigger>
+                <TabsTrigger value="professional">Dados Profissionais</TabsTrigger>
+                <TabsTrigger value="contract">Dados Contratuais</TabsTrigger>
+                <TabsTrigger value="financial">Dados Financeiros</TabsTrigger>
+              </TabsList>
+              <TabsContent value="personal">
+                <PersonalDataForm
+                  form={form}
+                  onSubmit={onSubmit}
+                  initialData={initialData}
+                />
+              </TabsContent>
+              <TabsContent value="professional">
+                <ProfessionalDataForm
+                  form={form}
+                  onSubmit={onSubmit}
+                  initialData={initialData}
+                />
+              </TabsContent>
+              <TabsContent value="contract">
+                <ContractDataForm
+                  form={form}
+                  onSubmit={onSubmit}
+                  initialData={initialData}
+                />
+              </TabsContent>
+              <TabsContent value="financial">
+                <FinancialDataForm
+                  form={form}
+                  onSubmit={onSubmit}
+                  initialData={initialData}
+                />
+              </TabsContent>
+            </Tabs>
+            <div className="flex justify-between">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={goToPreviousStep}
+                disabled={!canGoPrevious}
+              >
+                Anterior
+              </Button>
+              {currentStep === "financial" ? (
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Salvando..." : "Salvar"}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={goToNextStep}
+                  disabled={!canGoNext}
+                >
+                  Próximo
+                </Button>
+              )}
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
