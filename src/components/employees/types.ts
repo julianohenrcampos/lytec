@@ -48,4 +48,4 @@ export interface EmployeeTableProps {
   isLoading: boolean;
 }
 
-export type FormStep = "personal" | "professional" | "financial" | "contract";
+export type FormStep = "personal" | "professional" | "contract" | "financial";

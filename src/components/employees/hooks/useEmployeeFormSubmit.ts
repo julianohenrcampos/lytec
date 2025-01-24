@@ -2,15 +2,29 @@ import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { EmployeeFormValues } from "../types";
 import { format, addDays } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 interface UseEmployeeFormSubmitOptions {
   onSuccess?: () => void;
 }
 
 export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) => {
+  const { toast } = useToast();
+
   const mutation = useMutation({
     mutationFn: async (values: EmployeeFormValues) => {
       console.log("Submitting employee data:", values);
+      
+      // First verify if the empresa_id exists
+      const { data: empresa } = await supabase
+        .from("bd_empresa")
+        .select("id")
+        .eq("id", values.empresa_id)
+        .single();
+
+      if (!empresa) {
+        throw new Error("Empresa não encontrada. Por favor, selecione uma empresa válida.");
+      }
       
       const { error } = await supabase.from("bd_rhasfalto").insert({
         nome: values.nome,
@@ -43,7 +57,19 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
         throw error;
       }
     },
-    onSuccess: options?.onSuccess,
+    onSuccess: () => {
+      toast({
+        title: "Funcionário cadastrado com sucesso!",
+      });
+      options?.onSuccess?.();
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Erro ao cadastrar funcionário",
+        description: error.message,
+      });
+    },
   });
 
   return {

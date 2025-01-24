@@ -9,7 +9,7 @@ import { FinancialDataForm } from "./forms/FinancialDataForm";
 import { Button } from "@/components/ui/button";
 import { useEmployeeFormSubmit } from "./hooks/useEmployeeFormSubmit";
 import { useStepNavigation } from "./hooks/useStepNavigation";
-import { EmployeeFormValues } from "./types";
+import { EmployeeFormValues, FormStep } from "./types";
 import { Form } from "@/components/ui/form";
 
 interface EmployeeFormDialogProps {
@@ -69,7 +69,7 @@ export function EmployeeFormDialog({ open, onOpenChange, initialData }: Employee
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <Tabs value={currentStep} onValueChange={setCurrentStep}>
+            <Tabs value={currentStep} onValueChange={(value: FormStep) => setCurrentStep(value)}>
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="personal">Dados Pessoais</TabsTrigger>
                 <TabsTrigger value="professional">Dados Profissionais</TabsTrigger>
