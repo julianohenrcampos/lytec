@@ -16,11 +16,16 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
       console.log("Submitting employee data:", values);
       
       // First verify if the empresa_id exists
-      const { data: empresa } = await supabase
+      const { data: empresa, error: empresaError } = await supabase
         .from("bd_empresa")
         .select("id")
         .eq("id", values.empresa_id)
-        .single();
+        .maybeSingle();
+
+      if (empresaError) {
+        console.error("Error checking empresa:", empresaError);
+        throw new Error("Erro ao verificar empresa. Por favor, tente novamente.");
+      }
 
       if (!empresa) {
         throw new Error("Empresa não encontrada. Por favor, selecione uma empresa válida.");
