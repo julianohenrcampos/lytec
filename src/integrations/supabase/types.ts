@@ -221,6 +221,60 @@ export type Database = {
         }
         Relationships: []
       }
+      bd_requisicao: {
+        Row: {
+          area: number | null
+          bairro: string | null
+          centro_custo: string
+          comprimento: number
+          created_at: string
+          data: string
+          diretoria: string | null
+          engenheiro: string
+          espessura: number
+          gerencia: string | null
+          id: string
+          largura: number
+          ligante: string | null
+          logradouro: string
+          peso: number | null
+        }
+        Insert: {
+          area?: number | null
+          bairro?: string | null
+          centro_custo: string
+          comprimento: number
+          created_at?: string
+          data: string
+          diretoria?: string | null
+          engenheiro: string
+          espessura: number
+          gerencia?: string | null
+          id?: string
+          largura: number
+          ligante?: string | null
+          logradouro: string
+          peso?: number | null
+        }
+        Update: {
+          area?: number | null
+          bairro?: string | null
+          centro_custo?: string
+          comprimento?: number
+          created_at?: string
+          data?: string
+          diretoria?: string | null
+          engenheiro?: string
+          espessura?: number
+          gerencia?: string | null
+          id?: string
+          largura?: number
+          ligante?: string | null
+          logradouro?: string
+          peso?: number | null
+        }
+        Relationships: []
+      }
       bd_rhasfalto: {
         Row: {
           adicional_noturno: number | null
