@@ -31,8 +31,8 @@ export function useCreateMassRequest(onSuccess?: () => void) {
           largura: firstStreet.largura,
           comprimento: firstStreet.comprimento,
           espessura: firstStreet.espessura,
-          area,
-          peso,
+          area: area,
+          peso: peso,
           traco: firstStreet.traco,
           ligante: firstStreet.ligante,
         }])
