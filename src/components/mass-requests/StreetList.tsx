@@ -48,12 +48,9 @@ export function StreetList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <AddStreetButton onClick={handleAddStreet} />
-          <span className="text-sm text-muted-foreground">
-            {controlledFields.length} rua(s) adicionada(s)
-          </span>
-        </div>
+        <span className="text-sm text-muted-foreground">
+          {controlledFields.length} rua(s) adicionada(s)
+        </span>
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" size="icon">
@@ -61,8 +58,9 @@ export function StreetList() {
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl">
-            <DialogHeader>
+            <DialogHeader className="flex flex-row items-center justify-between">
               <DialogTitle>Lista de Ruas</DialogTitle>
+              <AddStreetButton onClick={handleAddStreet} />
             </DialogHeader>
             <StreetTable
               fields={controlledFields}
