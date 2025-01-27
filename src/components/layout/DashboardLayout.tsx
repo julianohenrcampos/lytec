@@ -9,6 +9,7 @@ import {
   LogOut,
   Truck,
   Factory,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -30,6 +31,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { path: "/fleets", label: "Frotas", icon: Truck },
     { path: "/trucks-equipment", label: "Caminhões/Equipamentos", icon: Truck },
     { path: "/plants", label: "Usinas", icon: Factory },
+    { path: "/mass-requests", label: "Requisição de Massa", icon: FileText },
   ];
 
   return (
