@@ -13,10 +13,10 @@ interface StreetTableProps {
 
 export function StreetTable({ fields, onRemove, totalArea, totalWeight, totalLength }: StreetTableProps) {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <StreetTableHeader />
-        <TableBody>
+        <TableBody className="text-sm">
           {fields.map((field, index) => (
             <StreetTableRow
               key={field.id}
