@@ -125,7 +125,7 @@ export function StreetList() {
                             type="number"
                             value={area.toFixed(2)}
                             disabled
-                            className="bg-muted text-right"
+                            className="bg-muted text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                         </TableCell>
                         <TableCell>
@@ -144,7 +144,7 @@ export function StreetList() {
                             type="number"
                             value={peso.toFixed(2)}
                             disabled
-                            className="bg-muted text-right"
+                            className="bg-muted text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                         </TableCell>
                         <TableCell>
@@ -171,7 +171,7 @@ export function StreetList() {
                           type="number"
                           value={totalArea.toFixed(2)}
                           disabled
-                          className="bg-muted text-right font-medium"
+                          className="bg-muted text-right font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       </TableCell>
                       <TableCell />
@@ -180,7 +180,7 @@ export function StreetList() {
                           type="number"
                           value={totalWeight.toFixed(2)}
                           disabled
-                          className="bg-muted text-right font-medium"
+                          className="bg-muted text-right font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       </TableCell>
                       <TableCell />
