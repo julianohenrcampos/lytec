@@ -1,4 +1,5 @@
 export interface Street {
+  id?: string;
   logradouro: string;
   bairro?: string;
   largura: number;
@@ -27,6 +28,7 @@ export interface MassRequest {
   peso: number;
   traco?: string;
   streets?: Street[];
+  created_at?: string;
 }
 
 export interface FormValues {
