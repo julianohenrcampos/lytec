@@ -22,7 +22,7 @@ export function PlantForm({ onSuccess, initialData }: PlantFormProps) {
     defaultValues: {
       usina: initialData?.usina || "",
       endereco: initialData?.endereco || "",
-      producao_total: initialData?.producao_total?.toString() || "",
+      producao_total: initialData?.producao_total || null,
     },
   });
 

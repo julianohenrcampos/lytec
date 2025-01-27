@@ -51,7 +51,11 @@ export function FormFields({ form }: FormFieldsProps) {
                 step="0.01"
                 min="0"
                 {...field}
-                value={field.value || ""}
+                onChange={(e) => {
+                  const value = e.target.value ? parseFloat(e.target.value) : null;
+                  field.onChange(value);
+                }}
+                value={field.value ?? ""}
               />
             </FormControl>
             <FormMessage />
