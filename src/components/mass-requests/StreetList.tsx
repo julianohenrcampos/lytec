@@ -1,9 +1,7 @@
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FormValues } from "./types";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, Trash2 } from "lucide-react";
+import { Eye } from "lucide-react";
 import { AddStreetButton } from "./street-list/AddStreetButton";
 import {
   Dialog,
@@ -12,9 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { StreetTable } from "./street-list/StreetTable";
 
 export function StreetList() {
-  const { control, register, watch } = useFormContext<FormValues>();
+  const { control, watch } = useFormContext<FormValues>();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "streets",
@@ -65,130 +64,12 @@ export function StreetList() {
             <DialogHeader>
               <DialogTitle>Lista de Ruas</DialogTitle>
             </DialogHeader>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[30%]">Logradouro</TableHead>
-                    <TableHead className="w-[30%]">Bairro</TableHead>
-                    <TableHead className="w-[10%] text-right">Largura (m)</TableHead>
-                    <TableHead className="w-[10%] text-right">Comprimento (m)</TableHead>
-                    <TableHead className="w-[7%] text-right">Área (m²)</TableHead>
-                    <TableHead className="w-[7%] text-right">Espessura (m)</TableHead>
-                    <TableHead className="w-[6%] text-right">Peso (t)</TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {controlledFields.map((field, index) => {
-                    const area = Number(field.largura) * Number(field.comprimento);
-                    const peso = area * Number(field.espessura) * 2.4;
-
-                    return (
-                      <TableRow key={field.id}>
-                        <TableCell>
-                          <Input
-                            {...register(`streets.${index}.logradouro`)}
-                            placeholder="Digite o logradouro"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            {...register(`streets.${index}.bairro`)}
-                            placeholder="Digite o bairro"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            className="text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            {...register(`streets.${index}.largura`, {
-                              valueAsNumber: true,
-                            })}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            className="text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            {...register(`streets.${index}.comprimento`, {
-                              valueAsNumber: true,
-                            })}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            value={area.toFixed(2)}
-                            disabled
-                            className="bg-muted text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            className="text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            {...register(`streets.${index}.espessura`, {
-                              valueAsNumber: true,
-                            })}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            value={peso.toFixed(2)}
-                            disabled
-                            className="bg-muted text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => remove(index)}
-                            className="h-8 w-8"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {controlledFields.length > 0 && (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-right font-medium">
-                        Total:
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Input
-                          type="number"
-                          value={totalArea.toFixed(2)}
-                          disabled
-                          className="bg-muted text-right font-medium w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                      </TableCell>
-                      <TableCell />
-                      <TableCell className="text-right">
-                        <Input
-                          type="number"
-                          value={totalWeight.toFixed(2)}
-                          disabled
-                          className="bg-muted text-right font-medium w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                      </TableCell>
-                      <TableCell />
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <StreetTable
+              fields={controlledFields}
+              onRemove={remove}
+              totalArea={totalArea}
+              totalWeight={totalWeight}
+            />
           </DialogContent>
         </Dialog>
       </div>
