@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -63,6 +70,34 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch cost centers
+  const { data: costCenters } = useQuery({
+    queryKey: ["costCenters"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("bd_centrocusto")
+        .select("id, nome")
+        .order("nome");
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch engineers (employees with engineering roles)
+  const { data: engineers } = useQuery({
+    queryKey: ["engineers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("bd_rhasfalto")
+        .select("id, nome, funcao_id")
+        .order("nome");
+
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const form = useForm<FormValues>({
     defaultValues: initialData
@@ -179,9 +214,23 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Centro de Custo</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Digite o centro de custo" />
-                </FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um centro de custo" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {costCenters?.map((cc) => (
+                      <SelectItem key={cc.id} value={cc.nome}>
+                        {cc.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -222,9 +271,23 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Engenheiro</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Digite o nome do engenheiro" />
-                </FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um engenheiro" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {engineers?.map((eng) => (
+                      <SelectItem key={eng.id} value={eng.nome}>
+                        {eng.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
