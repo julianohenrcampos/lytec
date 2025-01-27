@@ -10,19 +10,10 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useFieldArray, useFormContext } from "react-hook-form";
-
-interface Street {
-  logradouro: string;
-  bairro?: string;
-  largura: number;
-  comprimento: number;
-  espessura: number;
-  area?: number;
-  peso?: number;
-}
+import { FormValues } from "./types";
 
 export function StreetList() {
-  const { control, watch } = useFormContext();
+  const { control, register, watch } = useFormContext<FormValues>();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "streets",
@@ -71,13 +62,13 @@ export function StreetList() {
                 <TableRow key={field.id}>
                   <TableCell>
                     <Input
-                      {...control.register(`streets.${index}.logradouro`)}
+                      {...register(`streets.${index}.logradouro`)}
                       placeholder="Digite o logradouro"
                     />
                   </TableCell>
                   <TableCell>
                     <Input
-                      {...control.register(`streets.${index}.bairro`)}
+                      {...register(`streets.${index}.bairro`)}
                       placeholder="Digite o bairro"
                     />
                   </TableCell>
@@ -86,7 +77,7 @@ export function StreetList() {
                       type="number"
                       step="0.01"
                       min="0"
-                      {...control.register(`streets.${index}.largura`, {
+                      {...register(`streets.${index}.largura`, {
                         valueAsNumber: true,
                       })}
                       placeholder="0.00"
@@ -97,7 +88,7 @@ export function StreetList() {
                       type="number"
                       step="0.01"
                       min="0"
-                      {...control.register(`streets.${index}.comprimento`, {
+                      {...register(`streets.${index}.comprimento`, {
                         valueAsNumber: true,
                       })}
                       placeholder="0.00"
@@ -116,7 +107,7 @@ export function StreetList() {
                       type="number"
                       step="0.01"
                       min="0"
-                      {...control.register(`streets.${index}.espessura`, {
+                      {...register(`streets.${index}.espessura`, {
                         valueAsNumber: true,
                       })}
                       placeholder="0.00"

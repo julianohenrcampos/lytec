@@ -1,7 +1,6 @@
 import { useForm, FormProvider } from "react-hook-form";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
 import { FormFields } from "./form/FormFields";
 import { StreetList } from "./StreetList";
 import { useFormSubmit } from "./hooks/useFormSubmit";
@@ -48,7 +47,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
 
   return (
     <FormProvider {...methods}>
-      <Form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
         <FormFields />
 
         <div className="space-y-4">
@@ -71,7 +70,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
             {initialData ? "Atualizar" : "Criar"} Requisição
           </Button>
         </div>
-      </Form>
+      </form>
     </FormProvider>
   );
 }
