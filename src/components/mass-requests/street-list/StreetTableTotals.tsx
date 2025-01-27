@@ -16,8 +16,8 @@ export function StreetTableTotals({ totalArea, totalWeight }: StreetTableTotalsP
         <Input
           type="number"
           value={totalArea.toFixed(2)}
-          disabled
-          className="bg-muted text-right font-medium w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          readOnly
+          className="bg-muted text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </TableCell>
       <TableCell />
@@ -25,8 +25,8 @@ export function StreetTableTotals({ totalArea, totalWeight }: StreetTableTotalsP
         <Input
           type="number"
           value={totalWeight.toFixed(2)}
-          disabled
-          className="bg-muted text-right font-medium w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          readOnly
+          className="bg-muted text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </TableCell>
       <TableCell />

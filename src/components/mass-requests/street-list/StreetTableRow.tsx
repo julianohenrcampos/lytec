@@ -6,7 +6,7 @@ import { FormValues } from "../types";
 
 interface StreetTableRowProps {
   index: number;
-  onRemove: () => void;
+  onRemove: (index: number) => void;
 }
 
 export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
@@ -27,15 +27,17 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
     <tr>
       <td>
         <Input
-          {...register(`streets.${index}.logradouro`)}
-          placeholder="Digite o logradouro"
+          type="text"
+          {...register(`streets.${index}.logradouro`, {
+            required: true,
+          })}
           className="w-full"
         />
       </td>
       <td>
         <Input
+          type="text"
           {...register(`streets.${index}.bairro`)}
-          placeholder="Digite o bairro"
           className="w-full"
         />
       </td>
@@ -43,49 +45,49 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
         <Input
           type="number"
           step="0.01"
-          min="0"
-          className="text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           {...register(`streets.${index}.largura`, {
+            required: true,
             valueAsNumber: true,
           })}
+          className="text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </td>
       <td className="w-[8%]">
         <Input
           type="number"
           step="0.01"
-          min="0"
-          className="text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           {...register(`streets.${index}.comprimento`, {
+            required: true,
             valueAsNumber: true,
           })}
+          className="text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </td>
       <td className="w-[10%]">
         <Input
           type="number"
           value={area.toFixed(2)}
-          disabled
-          className="bg-muted text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          readOnly
+          className="bg-muted text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </td>
       <td className="w-[8%]">
         <Input
           type="number"
           step="0.01"
-          min="0"
-          className="text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           {...register(`streets.${index}.espessura`, {
+            required: true,
             valueAsNumber: true,
           })}
+          className="text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </td>
       <td className="w-[10%]">
         <Input
           type="number"
           value={peso.toFixed(2)}
-          disabled
-          className="bg-muted text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          readOnly
+          className="bg-muted text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </td>
       <td>
@@ -93,8 +95,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           type="button"
           variant="ghost"
           size="icon"
-          onClick={onRemove}
-          className="h-8 w-8"
+          onClick={() => onRemove(index)}
         >
           <Trash2 className="h-4 w-4" />
         </Button>
