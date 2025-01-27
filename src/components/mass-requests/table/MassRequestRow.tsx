@@ -31,7 +31,7 @@ export function MassRequestRow({
   onDelete,
 }: MassRequestRowProps) {
   return (
-    <TableRow>
+    <TableRow className="bg-muted/5">
       <TableCell>
         {request.streets && request.streets.length > 0 && (
           <Button
@@ -47,14 +47,14 @@ export function MassRequestRow({
           </Button>
         )}
       </TableCell>
-      <TableCell>{request.centro_custo}</TableCell>
+      <TableCell className="font-medium">{request.centro_custo}</TableCell>
       <TableCell>{request.diretoria || "-"}</TableCell>
       <TableCell>{request.engenheiro}</TableCell>
       <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
       <TableCell>{request.logradouro}</TableCell>
       <TableCell>{request.bairro || "-"}</TableCell>
-      <TableCell>{request.area.toFixed(2)}</TableCell>
-      <TableCell>{request.peso.toFixed(2)}</TableCell>
+      <TableCell className="text-center">{request.area.toFixed(2)}</TableCell>
+      <TableCell className="text-center">{request.peso.toFixed(2)}</TableCell>
       <TableCell>{request.traco || "-"}</TableCell>
       <TableCell>{request.ligante || "-"}</TableCell>
       <TableCell className="text-right">

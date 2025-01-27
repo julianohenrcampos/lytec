@@ -82,25 +82,26 @@ export function MassRequestTable({ onEdit }: MassRequestTableProps) {
   }
 
   return (
-    <Table>
-      <MassRequestTableHeader />
-      <TableBody>
-        {requests?.map((request) => (
-          <>
-            <MassRequestRow
-              key={request.id}
-              request={request}
-              isExpanded={expandedRows[request.id]}
-              onToggleExpand={() => toggleRow(request.id)}
-              onEdit={onEdit}
-              onDelete={(id) => deleteMutation.mutate(id)}
-            />
-            {expandedRows[request.id] && request.streets?.map((street) => (
-              <StreetRow key={street.id} street={street} />
-            ))}
-          </>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="space-y-4">
+      <Table>
+        <MassRequestTableHeader />
+        <TableBody>
+          {requests?.map((request) => (
+            <div key={request.id} className="border-b border-gray-200">
+              <MassRequestRow
+                request={request}
+                isExpanded={expandedRows[request.id]}
+                onToggleExpand={() => toggleRow(request.id)}
+                onEdit={onEdit}
+                onDelete={(id) => deleteMutation.mutate(id)}
+              />
+              {expandedRows[request.id] && request.streets?.map((street) => (
+                <StreetRow key={street.id} street={street} />
+              ))}
+            </div>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
