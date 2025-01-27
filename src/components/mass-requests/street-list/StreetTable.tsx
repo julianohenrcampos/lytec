@@ -8,9 +8,10 @@ interface StreetTableProps {
   onRemove: (index: number) => void;
   totalArea: number;
   totalWeight: number;
+  totalLength: number;
 }
 
-export function StreetTable({ fields, onRemove, totalArea, totalWeight }: StreetTableProps) {
+export function StreetTable({ fields, onRemove, totalArea, totalWeight, totalLength }: StreetTableProps) {
   return (
     <div className="rounded-md border">
       <Table>
@@ -27,6 +28,7 @@ export function StreetTable({ fields, onRemove, totalArea, totalWeight }: Street
             <StreetTableTotals
               totalArea={totalArea}
               totalWeight={totalWeight}
+              totalLength={totalLength}
             />
           )}
         </TableBody>

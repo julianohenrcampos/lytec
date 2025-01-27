@@ -46,6 +46,10 @@ export function StreetList() {
     return sum + (Number(field.largura) * Number(field.comprimento) * Number(field.espessura) * 2.4);
   }, 0);
 
+  const totalLength = controlledFields.reduce((sum, field) => {
+    return sum + Number(field.comprimento);
+  }, 0);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -76,6 +80,7 @@ export function StreetList() {
               onRemove={remove}
               totalArea={totalArea}
               totalWeight={totalWeight}
+              totalLength={totalLength}
             />
           </DialogContent>
         </Dialog>
