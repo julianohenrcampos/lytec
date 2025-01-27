@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { FormValues } from "../types";
 
 interface StreetTableRowProps {
@@ -11,9 +11,17 @@ interface StreetTableRowProps {
 
 export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
   const { register } = useFormContext<FormValues>();
+  const values = useWatch({
+    name: [
+      `streets.${index}.largura`,
+      `streets.${index}.comprimento`,
+      `streets.${index}.espessura`
+    ]
+  });
 
-  const area = Number(register(`streets.${index}.largura`).value) * Number(register(`streets.${index}.comprimento`).value);
-  const peso = area * Number(register(`streets.${index}.espessura`).value) * 2.4;
+  const [largura, comprimento, espessura] = values;
+  const area = Number(largura || 0) * Number(comprimento || 0);
+  const peso = area * Number(espessura || 0) * 2.4;
 
   return (
     <tr>
@@ -31,7 +39,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           className="w-full"
         />
       </td>
-      <td>
+      <td className="w-[8%]">
         <Input
           type="number"
           step="0.01"
@@ -42,7 +50,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           })}
         />
       </td>
-      <td>
+      <td className="w-[8%]">
         <Input
           type="number"
           step="0.01"
@@ -53,7 +61,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           })}
         />
       </td>
-      <td>
+      <td className="w-[10%]">
         <Input
           type="number"
           value={area.toFixed(2)}
@@ -61,7 +69,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           className="bg-muted text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </td>
-      <td>
+      <td className="w-[8%]">
         <Input
           type="number"
           step="0.01"
@@ -72,7 +80,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           })}
         />
       </td>
-      <td>
+      <td className="w-[10%]">
         <Input
           type="number"
           value={peso.toFixed(2)}

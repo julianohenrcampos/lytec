@@ -9,10 +9,10 @@ interface StreetTableTotalsProps {
 export function StreetTableTotals({ totalArea, totalWeight }: StreetTableTotalsProps) {
   return (
     <TableRow>
-      <TableCell colSpan={4} className="text-right font-medium">
+      <TableCell colSpan={3} className="text-right font-medium">
         Total:
       </TableCell>
-      <TableCell className="text-right">
+      <TableCell className="w-[10%]">
         <Input
           type="number"
           value={totalArea.toFixed(2)}
@@ -21,7 +21,7 @@ export function StreetTableTotals({ totalArea, totalWeight }: StreetTableTotalsP
         />
       </TableCell>
       <TableCell />
-      <TableCell className="text-right">
+      <TableCell className="w-[10%]">
         <Input
           type="number"
           value={totalWeight.toFixed(2)}
