@@ -31,24 +31,23 @@ export function StreetList() {
 
   return (
     <div className="space-y-4">
-      <StreetTableHeader />
-      <div className="space-y-4">
-        {controlledFields.map((field, index) => {
-          const area = Number(field.largura) * Number(field.comprimento);
-          const peso = area * Number(field.espessura) * 2.4;
+      {controlledFields.map((field, index) => {
+        const area = Number(field.largura) * Number(field.comprimento);
+        const peso = area * Number(field.espessura) * 2.4;
 
-          return (
+        return (
+          <div key={field.id} className="space-y-4">
+            <StreetTableHeader index={index} register={register} />
             <StreetRow
-              key={field.id}
               index={index}
               register={register}
               onRemove={() => remove(index)}
               area={area}
               peso={peso}
             />
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
       <AddStreetButton onClick={handleAddStreet} />
     </div>
   );

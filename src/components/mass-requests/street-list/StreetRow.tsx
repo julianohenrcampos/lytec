@@ -18,22 +18,6 @@ export function StreetRow({ index, register, onRemove, area, peso }: StreetRowPr
     <Card className="mb-4">
       <CardContent className="p-4">
         <div className="space-y-4">
-          {/* Location Section */}
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <Input
-                {...register(`streets.${index}.logradouro`)}
-                placeholder="Digite o logradouro"
-              />
-            </div>
-            <div className="flex-1">
-              <Input
-                {...register(`streets.${index}.bairro`)}
-                placeholder="Digite o bairro"
-              />
-            </div>
-          </div>
-
           {/* Dimensions Section */}
           <div className="space-y-2">
             <div className="flex flex-wrap gap-4">
