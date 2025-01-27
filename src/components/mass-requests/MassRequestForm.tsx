@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -70,6 +71,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   // Fetch cost centers
   const { data: costCenters } = useQuery({
@@ -85,18 +87,22 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
     },
   });
 
-  // Fetch engineers (employees with engineering roles)
-  const { data: engineers } = useQuery({
-    queryKey: ["engineers"],
+  // Fetch logged in user's profile
+  const { data: userProfile } = useQuery({
+    queryKey: ["userProfile", user?.id],
     queryFn: async () => {
+      if (!user?.id) return null;
+      
       const { data, error } = await supabase
-        .from("bd_rhasfalto")
-        .select("id, nome, funcao_id")
-        .order("nome");
+        .from("profiles")
+        .select("first_name, last_name")
+        .eq("id", user.id)
+        .single();
 
       if (error) throw error;
       return data;
     },
+    enabled: !!user?.id,
   });
 
   const form = useForm<FormValues>({
@@ -112,7 +118,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           centro_custo: "",
           diretoria: "",
           gerencia: "",
-          engenheiro: "",
+          engenheiro: userProfile ? `${userProfile.first_name} ${userProfile.last_name}` : user?.email || "",
           data: new Date(),
           logradouro: "",
           bairro: "",
@@ -271,23 +277,9 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Engenheiro</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione um engenheiro" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {engineers?.map((eng) => (
-                      <SelectItem key={eng.id} value={eng.nome}>
-                        {eng.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <Input {...field} disabled placeholder="Engenheiro responsável" />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
