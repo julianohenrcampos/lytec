@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { format } from "date-fns";
 
 interface StreetTableRowProps {
   index: number;
@@ -27,12 +28,25 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
     control
   });
 
+  const data = useWatch({
+    name: "data",
+    control
+  });
+
   const [largura, comprimento, espessura] = values;
   const area = Number(largura || 0) * Number(comprimento || 0);
-  const peso = area * Number(espessura || 0) * 2.4;
+  const volume = area * Number(espessura || 0) * 2.4;
 
   return (
     <tr>
+      <td className="text-center">
+        <Input
+          type="text"
+          value={data ? format(data, "dd/MM/yyyy") : ""}
+          readOnly
+          className="text-center bg-muted"
+        />
+      </td>
       <td>
         <Input
           type="text"
@@ -49,7 +63,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           className="w-full"
         />
       </td>
-      <td className="w-[8%]">
+      <td>
         <Input
           type="number"
           step="0.01"
@@ -60,7 +74,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           className="text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </td>
-      <td className="w-[8%]">
+      <td>
         <Input
           type="number"
           step="0.01"
@@ -71,7 +85,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           className="text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </td>
-      <td className="w-[10%]">
+      <td>
         <Input
           type="number"
           value={area.toFixed(2)}
@@ -79,24 +93,20 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           className="bg-muted text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </td>
-      <td className="w-[8%]">
-        <Input
-          type="number"
-          step="0.01"
-          {...register(`streets.${index}.espessura`, {
-            required: true,
-            valueAsNumber: true,
-          })}
-          className="text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-        />
-      </td>
-      <td className="w-[10%]">
-        <Input
-          type="number"
-          value={peso.toFixed(2)}
-          readOnly
-          className="bg-muted text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-        />
+      <td>
+        <Select
+          {...register(`streets.${index}.ligante`)}
+          defaultValue=""
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Ligante" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Binder">Binder</SelectItem>
+            <SelectItem value="5A">5A</SelectItem>
+            <SelectItem value="4C">4C</SelectItem>
+          </SelectContent>
+        </Select>
       </td>
       <td>
         <Select
@@ -114,19 +124,23 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
         </Select>
       </td>
       <td>
-        <Select
-          {...register(`streets.${index}.ligante`)}
-          defaultValue=""
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Ligante" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Binder">Binder</SelectItem>
-            <SelectItem value="5A">5A</SelectItem>
-            <SelectItem value="4C">4C</SelectItem>
-          </SelectContent>
-        </Select>
+        <Input
+          type="number"
+          step="0.01"
+          {...register(`streets.${index}.espessura`, {
+            required: true,
+            valueAsNumber: true,
+          })}
+          className="text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+      </td>
+      <td>
+        <Input
+          type="number"
+          value={volume.toFixed(2)}
+          readOnly
+          className="bg-muted text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
       </td>
       <td>
         <Button

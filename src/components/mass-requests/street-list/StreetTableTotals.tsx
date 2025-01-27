@@ -10,10 +10,11 @@ interface StreetTableTotalsProps {
 export function StreetTableTotals({ totalArea, totalWeight, totalLength }: StreetTableTotalsProps) {
   return (
     <TableRow>
-      <TableCell colSpan={3} className="text-right font-medium">
-        Total:
-      </TableCell>
-      <TableCell className="w-[10%]">
+      <TableCell className="font-medium">Total</TableCell>
+      <TableCell>-</TableCell>
+      <TableCell>-</TableCell>
+      <TableCell>-</TableCell>
+      <TableCell>
         <Input
           type="number"
           value={totalLength.toFixed(2)}
@@ -21,7 +22,7 @@ export function StreetTableTotals({ totalArea, totalWeight, totalLength }: Stree
           className="bg-muted text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </TableCell>
-      <TableCell className="w-[10%]">
+      <TableCell>
         <Input
           type="number"
           value={totalArea.toFixed(2)}
@@ -29,8 +30,10 @@ export function StreetTableTotals({ totalArea, totalWeight, totalLength }: Stree
           className="bg-muted text-center w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </TableCell>
-      <TableCell />
-      <TableCell className="w-[10%]">
+      <TableCell>-</TableCell>
+      <TableCell>-</TableCell>
+      <TableCell>-</TableCell>
+      <TableCell>
         <Input
           type="number"
           value={totalWeight.toFixed(2)}
