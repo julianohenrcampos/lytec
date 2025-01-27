@@ -51,7 +51,6 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
         <FormFields />
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Ruas</h3>
           <StreetList />
         </div>
 
