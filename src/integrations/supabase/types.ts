@@ -411,6 +411,53 @@ export type Database = {
           },
         ]
       }
+      bd_ruas_requisicao: {
+        Row: {
+          area: number | null
+          bairro: string | null
+          comprimento: number
+          created_at: string
+          espessura: number
+          id: string
+          largura: number
+          logradouro: string
+          peso: number | null
+          requisicao_id: string
+        }
+        Insert: {
+          area?: number | null
+          bairro?: string | null
+          comprimento: number
+          created_at?: string
+          espessura: number
+          id?: string
+          largura: number
+          logradouro: string
+          peso?: number | null
+          requisicao_id: string
+        }
+        Update: {
+          area?: number | null
+          bairro?: string | null
+          comprimento?: number
+          created_at?: string
+          espessura?: number
+          id?: string
+          largura?: number
+          logradouro?: string
+          peso?: number | null
+          requisicao_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bd_ruas_requisicao_requisicao_id_fkey"
+            columns: ["requisicao_id"]
+            isOneToOne: false
+            referencedRelation: "bd_requisicao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bd_usinas: {
         Row: {
           created_at: string

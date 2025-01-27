@@ -22,7 +22,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Pencil, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+
+interface Street {
+  id: string;
+  logradouro: string;
+  bairro?: string;
+  largura: number;
+  comprimento: number;
+  espessura: number;
+  area: number;
+  peso: number;
+}
 
 interface MassRequest {
   id: string;
@@ -40,6 +52,7 @@ interface MassRequest {
   espessura: number;
   peso: number;
   created_at: string;
+  streets?: Street[];
 }
 
 interface MassRequestTableProps {
@@ -49,30 +62,50 @@ interface MassRequestTableProps {
 export function MassRequestTable({ onEdit }: MassRequestTableProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+
+  const toggleRow = (id: string) => {
+    setExpandedRows(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
 
   const { data: requests, isLoading } = useQuery({
     queryKey: ["mass-requests"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Fetch main requests
+      const { data: mainRequests, error: mainError } = await supabase
         .from("bd_requisicao")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Erro ao carregar requisições",
-          description: error.message,
-        });
-        return [];
-      }
+      if (mainError) throw mainError;
 
-      return data as MassRequest[];
+      // Fetch additional streets for each request
+      const requestsWithStreets = await Promise.all(
+        mainRequests.map(async (request) => {
+          const { data: streets, error: streetsError } = await supabase
+            .from("bd_ruas_requisicao")
+            .select("*")
+            .eq("requisicao_id", request.id);
+
+          if (streetsError) throw streetsError;
+
+          return {
+            ...request,
+            streets: streets || [],
+          };
+        })
+      );
+
+      return requestsWithStreets as MassRequest[];
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
+      // The streets will be deleted automatically due to ON DELETE CASCADE
       const { error } = await supabase
         .from("bd_requisicao")
         .delete()
@@ -102,6 +135,7 @@ export function MassRequestTable({ onEdit }: MassRequestTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
+          <TableHead className="w-[40px]"></TableHead>
           <TableHead>Centro de Custo</TableHead>
           <TableHead>Diretoria</TableHead>
           <TableHead>Engenheiro</TableHead>
@@ -115,51 +149,79 @@ export function MassRequestTable({ onEdit }: MassRequestTableProps) {
       </TableHeader>
       <TableBody>
         {requests?.map((request) => (
-          <TableRow key={request.id}>
-            <TableCell>{request.centro_custo}</TableCell>
-            <TableCell>{request.diretoria || "-"}</TableCell>
-            <TableCell>{request.engenheiro}</TableCell>
-            <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
-            <TableCell>{request.logradouro}</TableCell>
-            <TableCell>{request.bairro || "-"}</TableCell>
-            <TableCell>{request.area.toFixed(2)}</TableCell>
-            <TableCell>{request.peso.toFixed(2)}</TableCell>
-            <TableCell className="text-right">
-              <div className="flex justify-end space-x-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => onEdit(request)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Tem certeza que deseja excluir esta requisição? Esta ação
-                        não pode ser desfeita.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteMutation.mutate(request.id)}
-                      >
-                        Excluir
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </TableCell>
-          </TableRow>
+          <>
+            <TableRow key={request.id}>
+              <TableCell>
+                {request.streets && request.streets.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => toggleRow(request.id)}
+                  >
+                    {expandedRows[request.id] ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+              </TableCell>
+              <TableCell>{request.centro_custo}</TableCell>
+              <TableCell>{request.diretoria || "-"}</TableCell>
+              <TableCell>{request.engenheiro}</TableCell>
+              <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
+              <TableCell>{request.logradouro}</TableCell>
+              <TableCell>{request.bairro || "-"}</TableCell>
+              <TableCell>{request.area.toFixed(2)}</TableCell>
+              <TableCell>{request.peso.toFixed(2)}</TableCell>
+              <TableCell className="text-right">
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => onEdit(request)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Tem certeza que deseja excluir esta requisição? Esta ação
+                          não pode ser desfeita.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => deleteMutation.mutate(request.id)}
+                        >
+                          Excluir
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </TableCell>
+            </TableRow>
+            {expandedRows[request.id] && request.streets?.map((street) => (
+              <TableRow key={street.id} className="bg-muted/50">
+                <TableCell></TableCell>
+                <TableCell colSpan={4}></TableCell>
+                <TableCell>{street.logradouro}</TableCell>
+                <TableCell>{street.bairro || "-"}</TableCell>
+                <TableCell>{street.area.toFixed(2)}</TableCell>
+                <TableCell>{street.peso.toFixed(2)}</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            ))}
+          </>
         ))}
       </TableBody>
     </Table>

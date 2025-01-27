@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +30,17 @@ import {
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { StreetList } from "./StreetList";
+
+interface Street {
+  logradouro: string;
+  bairro?: string;
+  largura: number;
+  comprimento: number;
+  espessura: number;
+  area?: number;
+  peso?: number;
+}
 
 interface MassRequest {
   id: string;
@@ -46,6 +57,7 @@ interface MassRequest {
   area: number;
   espessura: number;
   peso: number;
+  streets?: Street[];
 }
 
 interface FormValues {
@@ -54,12 +66,8 @@ interface FormValues {
   gerencia?: string;
   engenheiro: string;
   data: Date;
-  logradouro: string;
-  bairro?: string;
-  largura: number;
-  comprimento: number;
   ligante?: string;
-  espessura: number;
+  streets: Street[];
 }
 
 interface MassRequestFormProps {
@@ -105,14 +113,18 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
     enabled: !!user?.id,
   });
 
-  const form = useForm<FormValues>({
+  const methods = useForm<FormValues>({
     defaultValues: initialData
       ? {
           ...initialData,
           data: new Date(initialData.data),
-          largura: Number(initialData.largura),
-          comprimento: Number(initialData.comprimento),
-          espessura: Number(initialData.espessura),
+          streets: initialData.streets || [{
+            logradouro: initialData.logradouro,
+            bairro: initialData.bairro,
+            largura: initialData.largura,
+            comprimento: initialData.comprimento,
+            espessura: initialData.espessura,
+          }],
         }
       : {
           centro_custo: "",
@@ -120,34 +132,68 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           gerencia: "",
           engenheiro: userProfile ? `${userProfile.first_name} ${userProfile.last_name}` : user?.email || "",
           data: new Date(),
-          logradouro: "",
-          bairro: "",
-          largura: 0,
-          comprimento: 0,
           ligante: "",
-          espessura: 0,
+          streets: [{
+            logradouro: "",
+            bairro: "",
+            largura: 0,
+            comprimento: 0,
+            espessura: 0,
+          }],
         },
   });
 
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      const { data, error } = await supabase
+      // First create the main request
+      const { data: requestData, error: requestError } = await supabase
         .from("bd_requisicao")
         .insert([
           {
-            ...values,
+            centro_custo: values.centro_custo,
+            diretoria: values.diretoria,
+            gerencia: values.gerencia,
+            engenheiro: values.engenheiro,
             data: format(values.data, "yyyy-MM-dd"),
+            ligante: values.ligante,
+            // Use the first street as the main request data
+            logradouro: values.streets[0].logradouro,
+            bairro: values.streets[0].bairro,
+            largura: values.streets[0].largura,
+            comprimento: values.streets[0].comprimento,
+            espessura: values.streets[0].espessura,
+            area: values.streets[0].largura * values.streets[0].comprimento,
+            peso: values.streets[0].largura * values.streets[0].comprimento * values.streets[0].espessura * 2.4,
           },
         ])
         .select()
         .single();
 
-      if (error) throw error;
-      return data;
+      if (requestError) throw requestError;
+
+      // Then create all the streets
+      if (values.streets.length > 1) {
+        const streetsToInsert = values.streets.slice(1).map(street => ({
+          requisicao_id: requestData.id,
+          logradouro: street.logradouro,
+          bairro: street.bairro,
+          largura: street.largura,
+          comprimento: street.comprimento,
+          espessura: street.espessura,
+        }));
+
+        const { error: streetsError } = await supabase
+          .from("bd_ruas_requisicao")
+          .insert(streetsToInsert);
+
+        if (streetsError) throw streetsError;
+      }
+
+      return requestData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mass-requests"] });
-      form.reset();
+      methods.reset();
       onSuccess();
       toast({
         title: "Requisição criada com sucesso",
@@ -166,22 +212,61 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
     mutationFn: async (values: FormValues) => {
       if (!initialData) throw new Error("No request selected for editing");
 
-      const { data, error } = await supabase
+      // Update main request
+      const { data: requestData, error: requestError } = await supabase
         .from("bd_requisicao")
         .update({
-          ...values,
+          centro_custo: values.centro_custo,
+          diretoria: values.diretoria,
+          gerencia: values.gerencia,
+          engenheiro: values.engenheiro,
           data: format(values.data, "yyyy-MM-dd"),
+          ligante: values.ligante,
+          logradouro: values.streets[0].logradouro,
+          bairro: values.streets[0].bairro,
+          largura: values.streets[0].largura,
+          comprimento: values.streets[0].comprimento,
+          espessura: values.streets[0].espessura,
+          area: values.streets[0].largura * values.streets[0].comprimento,
+          peso: values.streets[0].largura * values.streets[0].comprimento * values.streets[0].espessura * 2.4,
         })
         .eq("id", initialData.id)
         .select()
         .single();
 
-      if (error) throw error;
-      return data;
+      if (requestError) throw requestError;
+
+      // Delete existing streets
+      const { error: deleteError } = await supabase
+        .from("bd_ruas_requisicao")
+        .delete()
+        .eq("requisicao_id", initialData.id);
+
+      if (deleteError) throw deleteError;
+
+      // Insert new streets
+      if (values.streets.length > 1) {
+        const streetsToInsert = values.streets.slice(1).map(street => ({
+          requisicao_id: initialData.id,
+          logradouro: street.logradouro,
+          bairro: street.bairro,
+          largura: street.largura,
+          comprimento: street.comprimento,
+          espessura: street.espessura,
+        }));
+
+        const { error: streetsError } = await supabase
+          .from("bd_ruas_requisicao")
+          .insert(streetsToInsert);
+
+        if (streetsError) throw streetsError;
+      }
+
+      return requestData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mass-requests"] });
-      form.reset();
+      methods.reset();
       onSuccess();
       toast({
         title: "Requisição atualizada com sucesso",
@@ -210,11 +295,11 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           <FormField
-            control={form.control}
+            control={methods.control}
             name="centro_custo"
             rules={{ required: "Centro de custo é obrigatório" }}
             render={({ field }) => (
@@ -243,7 +328,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           />
 
           <FormField
-            control={form.control}
+            control={methods.control}
             name="diretoria"
             render={({ field }) => (
               <FormItem>
@@ -257,7 +342,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           />
 
           <FormField
-            control={form.control}
+            control={methods.control}
             name="gerencia"
             render={({ field }) => (
               <FormItem>
@@ -271,7 +356,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           />
 
           <FormField
-            control={form.control}
+            control={methods.control}
             name="engenheiro"
             rules={{ required: "Engenheiro é obrigatório" }}
             render={({ field }) => (
@@ -286,7 +371,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           />
 
           <FormField
-            control={form.control}
+            control={methods.control}
             name="data"
             rules={{ required: "Data é obrigatória" }}
             render={({ field }) => (
@@ -329,78 +414,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           />
 
           <FormField
-            control={form.control}
-            name="logradouro"
-            rules={{ required: "Logradouro é obrigatório" }}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Logradouro</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Digite o logradouro" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="bairro"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Bairro</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Digite o bairro" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="largura"
-            rules={{ required: "Largura é obrigatória" }}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Largura (m)</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    step="0.01"
-                    placeholder="Digite a largura"
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="comprimento"
-            rules={{ required: "Comprimento é obrigatório" }}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Comprimento (m)</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    step="0.01"
-                    placeholder="Digite o comprimento"
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
+            control={methods.control}
             name="ligante"
             render={({ field }) => (
               <FormItem>
@@ -412,27 +426,11 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
               </FormItem>
             )}
           />
+        </div>
 
-          <FormField
-            control={form.control}
-            name="espessura"
-            rules={{ required: "Espessura é obrigatória" }}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Espessura (m)</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    step="0.01"
-                    placeholder="Digite a espessura"
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Ruas</h3>
+          <StreetList />
         </div>
 
         <div className="flex justify-end space-x-2">
@@ -440,7 +438,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
             type="button"
             variant="outline"
             onClick={() => {
-              form.reset();
+              methods.reset();
               onSuccess();
             }}
           >
@@ -451,6 +449,6 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           </Button>
         </div>
       </form>
-    </Form>
+    </FormProvider>
   );
 }
