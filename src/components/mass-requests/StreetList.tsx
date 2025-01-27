@@ -103,7 +103,7 @@ export function StreetList() {
                             type="number"
                             step="0.01"
                             min="0"
-                            className="text-right"
+                            className="text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             {...register(`streets.${index}.largura`, {
                               valueAsNumber: true,
                             })}
@@ -114,7 +114,7 @@ export function StreetList() {
                             type="number"
                             step="0.01"
                             min="0"
-                            className="text-right"
+                            className="text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             {...register(`streets.${index}.comprimento`, {
                               valueAsNumber: true,
                             })}
@@ -133,7 +133,7 @@ export function StreetList() {
                             type="number"
                             step="0.01"
                             min="0"
-                            className="text-right"
+                            className="text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             {...register(`streets.${index}.espessura`, {
                               valueAsNumber: true,
                             })}
