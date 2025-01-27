@@ -23,7 +23,7 @@ export function BinderField() {
       control={control}
       name="ligante"
       render={({ field }) => (
-        <FormItem className="w-full">
+        <FormItem className="flex flex-col w-full">
           <FormLabel>Ligante</FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
