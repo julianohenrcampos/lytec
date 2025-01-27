@@ -4,7 +4,7 @@ export function StreetTableHeader() {
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="py-3">
+        <CardHeader>
           <div className="flex items-center gap-2">
             <span className="font-medium">Logradouro:</span>
           </div>
