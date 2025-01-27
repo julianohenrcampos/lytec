@@ -1,18 +1,18 @@
-import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export function StreetTableHeader() {
   return (
-    <TableHeader>
-      <TableRow>
-        <TableHead>Logradouro</TableHead>
-        <TableHead>Bairro</TableHead>
-        <TableHead>Largura (m)</TableHead>
-        <TableHead>Comprimento (m)</TableHead>
-        <TableHead>Área (m²)</TableHead>
-        <TableHead>Espessura (m)</TableHead>
-        <TableHead>Peso (t)</TableHead>
-        <TableHead className="w-[50px]"></TableHead>
-      </TableRow>
-    </TableHeader>
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="py-3">
+          <div className="flex items-center gap-2">
+            <span className="font-medium">Logradouro:</span>
+          </div>
+        </CardHeader>
+        <CardContent className="py-2">
+          <div className="font-medium mb-2">Dimensões:</div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

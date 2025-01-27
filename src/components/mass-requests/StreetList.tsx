@@ -1,4 +1,3 @@
-import { Table, TableBody } from "@/components/ui/table";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FormValues } from "./types";
 import { StreetRow } from "./street-list/StreetRow";
@@ -32,27 +31,23 @@ export function StreetList() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border">
-        <Table>
-          <StreetTableHeader />
-          <TableBody>
-            {controlledFields.map((field, index) => {
-              const area = Number(field.largura) * Number(field.comprimento);
-              const peso = area * Number(field.espessura) * 2.4;
+      <StreetTableHeader />
+      <div className="space-y-4">
+        {controlledFields.map((field, index) => {
+          const area = Number(field.largura) * Number(field.comprimento);
+          const peso = area * Number(field.espessura) * 2.4;
 
-              return (
-                <StreetRow
-                  key={field.id}
-                  index={index}
-                  register={register}
-                  onRemove={() => remove(index)}
-                  area={area}
-                  peso={peso}
-                />
-              );
-            })}
-          </TableBody>
-        </Table>
+          return (
+            <StreetRow
+              key={field.id}
+              index={index}
+              register={register}
+              onRemove={() => remove(index)}
+              area={area}
+              peso={peso}
+            />
+          );
+        })}
       </div>
       <AddStreetButton onClick={handleAddStreet} />
     </div>
