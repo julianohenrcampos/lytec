@@ -43,11 +43,6 @@ export function StreetList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead colSpan={2}>Localização</TableHead>
-              <TableHead colSpan={5}>Dimensões</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
-            </TableRow>
-            <TableRow>
               <TableHead>Logradouro</TableHead>
               <TableHead>Bairro</TableHead>
               <TableHead>Largura (m)</TableHead>
@@ -55,7 +50,7 @@ export function StreetList() {
               <TableHead>Área (m²)</TableHead>
               <TableHead>Espessura (m)</TableHead>
               <TableHead>Peso (t)</TableHead>
-              <TableHead></TableHead>
+              <TableHead className="w-[50px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
