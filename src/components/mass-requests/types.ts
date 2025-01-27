@@ -6,6 +6,8 @@ export interface Street {
   espessura: number;
   area?: number;
   peso?: number;
+  traco?: string;
+  ligante?: string;
 }
 
 export interface MassRequest {
@@ -23,6 +25,7 @@ export interface MassRequest {
   area: number;
   espessura: number;
   peso: number;
+  traco?: string;
   streets?: Street[];
 }
 
@@ -33,5 +36,6 @@ export interface FormValues {
   engenheiro: string;
   data: Date;
   ligante?: string;
+  traco?: string;
   streets: Street[];
 }

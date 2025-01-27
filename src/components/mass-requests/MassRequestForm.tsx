@@ -20,12 +20,15 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
       ? {
           ...initialData,
           data: new Date(initialData.data),
+          traco: initialData.traco,
           streets: initialData.streets || [{
             logradouro: initialData.logradouro,
             bairro: initialData.bairro,
             largura: initialData.largura,
             comprimento: initialData.comprimento,
             espessura: initialData.espessura,
+            traco: initialData.traco,
+            ligante: initialData.ligante,
           }],
         }
       : {
@@ -35,12 +38,15 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           engenheiro: user?.email || "",
           data: new Date(),
           ligante: "",
+          traco: "",
           streets: [{
             logradouro: "",
             bairro: "",
             largura: 0,
             comprimento: 0,
             espessura: 0,
+            traco: "",
+            ligante: "",
           }],
         },
   });

@@ -144,6 +144,8 @@ export function MassRequestTable({ onEdit }: MassRequestTableProps) {
           <TableHead>Bairro</TableHead>
           <TableHead>Área (m²)</TableHead>
           <TableHead>Peso (t)</TableHead>
+          <TableHead>Traço</TableHead>
+          <TableHead>Ligante</TableHead>
           <TableHead className="text-right">Ações</TableHead>
         </TableRow>
       </TableHeader>
@@ -174,6 +176,8 @@ export function MassRequestTable({ onEdit }: MassRequestTableProps) {
               <TableCell>{request.bairro || "-"}</TableCell>
               <TableCell>{request.area.toFixed(2)}</TableCell>
               <TableCell>{request.peso.toFixed(2)}</TableCell>
+              <TableCell>{request.traco || "-"}</TableCell>
+              <TableCell>{request.ligante || "-"}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end space-x-2">
                   <Button
@@ -218,6 +222,8 @@ export function MassRequestTable({ onEdit }: MassRequestTableProps) {
                 <TableCell>{street.bairro || "-"}</TableCell>
                 <TableCell>{street.area.toFixed(2)}</TableCell>
                 <TableCell>{street.peso.toFixed(2)}</TableCell>
+                <TableCell>{street.traco || "-"}</TableCell>
+                <TableCell>{street.ligante || "-"}</TableCell>
                 <TableCell></TableCell>
               </TableRow>
             ))}

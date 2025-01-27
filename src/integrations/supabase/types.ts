@@ -238,6 +238,7 @@ export type Database = {
           ligante: string | null
           logradouro: string
           peso: number | null
+          traco: string | null
         }
         Insert: {
           area?: number | null
@@ -255,6 +256,7 @@ export type Database = {
           ligante?: string | null
           logradouro: string
           peso?: number | null
+          traco?: string | null
         }
         Update: {
           area?: number | null
@@ -272,6 +274,7 @@ export type Database = {
           ligante?: string | null
           logradouro?: string
           peso?: number | null
+          traco?: string | null
         }
         Relationships: []
       }
@@ -420,9 +423,11 @@ export type Database = {
           espessura: number
           id: string
           largura: number
+          ligante: string | null
           logradouro: string
           peso: number | null
           requisicao_id: string
+          traco: string | null
         }
         Insert: {
           area?: number | null
@@ -432,9 +437,11 @@ export type Database = {
           espessura: number
           id?: string
           largura: number
+          ligante?: string | null
           logradouro: string
           peso?: number | null
           requisicao_id: string
+          traco?: string | null
         }
         Update: {
           area?: number | null
@@ -444,9 +451,11 @@ export type Database = {
           espessura?: number
           id?: string
           largura?: number
+          ligante?: string | null
           logradouro?: string
           peso?: number | null
           requisicao_id?: string
+          traco?: string | null
         }
         Relationships: [
           {

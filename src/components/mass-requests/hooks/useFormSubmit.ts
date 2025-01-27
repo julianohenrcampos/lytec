@@ -28,6 +28,7 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
             engenheiro: values.engenheiro,
             data: format(values.data, "yyyy-MM-dd"),
             ligante: values.ligante,
+            traco: values.traco,
             // Use the first street as the main request data
             logradouro: values.streets[0].logradouro,
             bairro: values.streets[0].bairro,
@@ -52,6 +53,10 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
           largura: street.largura,
           comprimento: street.comprimento,
           espessura: street.espessura,
+          traco: street.traco,
+          ligante: street.ligante,
+          area: street.largura * street.comprimento,
+          peso: street.largura * street.comprimento * street.espessura * 2.4,
         }));
 
         const { error: streetsError } = await supabase
@@ -93,6 +98,7 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
           engenheiro: values.engenheiro,
           data: format(values.data, "yyyy-MM-dd"),
           ligante: values.ligante,
+          traco: values.traco,
           logradouro: values.streets[0].logradouro,
           bairro: values.streets[0].bairro,
           largura: values.streets[0].largura,
@@ -124,6 +130,10 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
           largura: street.largura,
           comprimento: street.comprimento,
           espessura: street.espessura,
+          traco: street.traco,
+          ligante: street.ligante,
+          area: street.largura * street.comprimento,
+          peso: street.largura * street.comprimento * street.espessura * 2.4,
         }));
 
         const { error: streetsError } = await supabase

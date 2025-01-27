@@ -91,6 +91,22 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
         />
       </td>
       <td>
+        <Input
+          type="text"
+          {...register(`streets.${index}.traco`)}
+          className="w-full"
+          placeholder="Traço"
+        />
+      </td>
+      <td>
+        <Input
+          type="text"
+          {...register(`streets.${index}.ligante`)}
+          className="w-full"
+          placeholder="Ligante"
+        />
+      </td>
+      <td>
         <Button
           type="button"
           variant="ghost"
