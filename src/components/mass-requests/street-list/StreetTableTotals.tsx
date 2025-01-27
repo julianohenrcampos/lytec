@@ -9,8 +9,8 @@ interface StreetTableTotalsProps {
 
 export function StreetTableTotals({ totalArea, totalWeight, totalLength }: StreetTableTotalsProps) {
   return (
-    <TableRow>
-      <TableCell className="font-medium">Total</TableCell>
+    <TableRow className="bg-muted/50 font-medium">
+      <TableCell>Total</TableCell>
       <TableCell>-</TableCell>
       <TableCell>-</TableCell>
       <TableCell>-</TableCell>
