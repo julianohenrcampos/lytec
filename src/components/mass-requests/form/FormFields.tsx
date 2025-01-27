@@ -184,9 +184,17 @@ export function FormFields() {
         render={({ field }) => (
           <FormItem className="w-full">
             <FormLabel>Ligante</FormLabel>
-            <FormControl>
-              <Input {...field} placeholder="Digite o tipo de ligante" className="w-full" />
-            </FormControl>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecione o tipo de ligante" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="IMPRIMA">IMPRIMA</SelectItem>
+                <SelectItem value="RR">RR</SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}
