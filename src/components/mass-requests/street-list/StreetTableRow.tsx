@@ -3,6 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { FormValues } from "../types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface StreetTableRowProps {
   index: number;
@@ -10,13 +17,14 @@ interface StreetTableRowProps {
 }
 
 export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
-  const { register } = useFormContext<FormValues>();
+  const { register, control } = useFormContext<FormValues>();
   const values = useWatch({
     name: [
       `streets.${index}.largura`,
       `streets.${index}.comprimento`,
       `streets.${index}.espessura`
-    ]
+    ],
+    control
   });
 
   const [largura, comprimento, espessura] = values;
@@ -91,20 +99,34 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
         />
       </td>
       <td>
-        <Input
-          type="text"
+        <Select
           {...register(`streets.${index}.traco`)}
-          className="w-full"
-          placeholder="Traço"
-        />
+          defaultValue=""
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Traço" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Binder">Binder</SelectItem>
+            <SelectItem value="5A">5A</SelectItem>
+            <SelectItem value="4C">4C</SelectItem>
+          </SelectContent>
+        </Select>
       </td>
       <td>
-        <Input
-          type="text"
+        <Select
           {...register(`streets.${index}.ligante`)}
-          className="w-full"
-          placeholder="Ligante"
-        />
+          defaultValue=""
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Ligante" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Binder">Binder</SelectItem>
+            <SelectItem value="5A">5A</SelectItem>
+            <SelectItem value="4C">4C</SelectItem>
+          </SelectContent>
+        </Select>
       </td>
       <td>
         <Button

@@ -58,7 +58,7 @@ export function StreetList() {
               <Eye className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="max-w-7xl">
             <DialogHeader className="flex flex-row items-center justify-between border-b pb-2">
               <DialogTitle>Lista de Ruas</DialogTitle>
               <div className="flex items-center gap-2">
