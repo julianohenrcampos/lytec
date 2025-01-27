@@ -18,7 +18,7 @@ export function StreetRow({ index, register, onRemove, area, peso }: StreetRowPr
     <Card className="mb-4">
       <CardContent className="p-4">
         <div className="space-y-4">
-          {/* Dimensions Section */}
+          <div className="font-medium mb-2">Dimensões:</div>
           <div className="space-y-2">
             <div className="flex flex-wrap gap-4">
               <div className="flex-1 min-w-[120px]">
