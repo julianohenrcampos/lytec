@@ -17,7 +17,15 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
 
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      // First create the main request
+      if (!values.streets.length) {
+        throw new Error("Adicione pelo menos uma rua à requisição");
+      }
+
+      // First create the main request using the first street
+      const firstStreet = values.streets[0];
+      const area = firstStreet.largura * firstStreet.comprimento;
+      const peso = area * firstStreet.espessura * 2.4;
+
       const { data: requestData, error: requestError } = await supabase
         .from("bd_requisicao")
         .insert([
@@ -27,16 +35,15 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
             gerencia: values.gerencia,
             engenheiro: values.engenheiro,
             data: format(values.data, "yyyy-MM-dd"),
-            ligante: values.ligante,
-            traco: values.traco,
-            // Use the first street as the main request data
-            logradouro: values.streets[0].logradouro,
-            bairro: values.streets[0].bairro,
-            largura: values.streets[0].largura,
-            comprimento: values.streets[0].comprimento,
-            espessura: values.streets[0].espessura,
-            area: values.streets[0].largura * values.streets[0].comprimento,
-            peso: values.streets[0].largura * values.streets[0].comprimento * values.streets[0].espessura * 2.4,
+            logradouro: firstStreet.logradouro,
+            bairro: firstStreet.bairro,
+            largura: firstStreet.largura,
+            comprimento: firstStreet.comprimento,
+            espessura: firstStreet.espessura,
+            area: area,
+            peso: peso,
+            traco: firstStreet.traco,
+            ligante: firstStreet.ligante,
           },
         ])
         .select()
@@ -44,7 +51,7 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
 
       if (requestError) throw requestError;
 
-      // Then create all the streets
+      // Then create all additional streets
       if (values.streets.length > 1) {
         const streetsToInsert = values.streets.slice(1).map(street => ({
           requisicao_id: requestData.id,
@@ -76,6 +83,7 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
       });
     },
     onError: (error: Error) => {
+      console.error("Error creating mass request:", error);
       toast({
         variant: "destructive",
         title: "Erro ao criar requisição",
@@ -87,8 +95,15 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
   const updateMutation = useMutation({
     mutationFn: async (values: FormValues) => {
       if (!initialData) throw new Error("No request selected for editing");
+      if (!values.streets.length) {
+        throw new Error("Adicione pelo menos uma rua à requisição");
+      }
 
-      // Update main request
+      // Update main request with first street data
+      const firstStreet = values.streets[0];
+      const area = firstStreet.largura * firstStreet.comprimento;
+      const peso = area * firstStreet.espessura * 2.4;
+
       const { data: requestData, error: requestError } = await supabase
         .from("bd_requisicao")
         .update({
@@ -97,15 +112,15 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
           gerencia: values.gerencia,
           engenheiro: values.engenheiro,
           data: format(values.data, "yyyy-MM-dd"),
-          ligante: values.ligante,
-          traco: values.traco,
-          logradouro: values.streets[0].logradouro,
-          bairro: values.streets[0].bairro,
-          largura: values.streets[0].largura,
-          comprimento: values.streets[0].comprimento,
-          espessura: values.streets[0].espessura,
-          area: values.streets[0].largura * values.streets[0].comprimento,
-          peso: values.streets[0].largura * values.streets[0].comprimento * values.streets[0].espessura * 2.4,
+          logradouro: firstStreet.logradouro,
+          bairro: firstStreet.bairro,
+          largura: firstStreet.largura,
+          comprimento: firstStreet.comprimento,
+          espessura: firstStreet.espessura,
+          area: area,
+          peso: peso,
+          traco: firstStreet.traco,
+          ligante: firstStreet.ligante,
         })
         .eq("id", initialData.id)
         .select()
@@ -121,7 +136,7 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
 
       if (deleteError) throw deleteError;
 
-      // Insert new streets
+      // Insert new streets (excluding the first one which is in the main request)
       if (values.streets.length > 1) {
         const streetsToInsert = values.streets.slice(1).map(street => ({
           requisicao_id: initialData.id,
@@ -153,6 +168,7 @@ export function useFormSubmit({ initialData, onSuccess }: UseFormSubmitProps) {
       });
     },
     onError: (error: Error) => {
+      console.error("Error updating mass request:", error);
       toast({
         variant: "destructive",
         title: "Erro ao atualizar requisição",
