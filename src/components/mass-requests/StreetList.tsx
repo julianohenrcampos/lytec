@@ -1,7 +1,7 @@
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FormValues } from "./types";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
+import { Eye, X } from "lucide-react";
 import { AddStreetButton } from "./street-list/AddStreetButton";
 import {
   Dialog,
@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { StreetTable } from "./street-list/StreetTable";
 
@@ -62,6 +63,12 @@ export function StreetList() {
               <DialogTitle>Lista de Ruas</DialogTitle>
               <div className="flex items-center gap-2">
                 <AddStreetButton onClick={handleAddStreet} />
+                <DialogClose asChild>
+                  <Button variant="outline" size="icon">
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Close</span>
+                  </Button>
+                </DialogClose>
               </div>
             </DialogHeader>
             <StreetTable
