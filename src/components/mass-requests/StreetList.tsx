@@ -69,13 +69,13 @@ export function StreetList() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Logradouro</TableHead>
-                    <TableHead>Bairro</TableHead>
-                    <TableHead className="text-right">Largura (m)</TableHead>
-                    <TableHead className="text-right">Comprimento (m)</TableHead>
-                    <TableHead className="text-right">Área (m²)</TableHead>
-                    <TableHead className="text-right">Espessura (m)</TableHead>
-                    <TableHead className="text-right">Peso (t)</TableHead>
+                    <TableHead className="w-[30%]">Logradouro</TableHead>
+                    <TableHead className="w-[30%]">Bairro</TableHead>
+                    <TableHead className="w-[10%] text-right">Largura (m)</TableHead>
+                    <TableHead className="w-[10%] text-right">Comprimento (m)</TableHead>
+                    <TableHead className="w-[7%] text-right">Área (m²)</TableHead>
+                    <TableHead className="w-[7%] text-right">Espessura (m)</TableHead>
+                    <TableHead className="w-[6%] text-right">Peso (t)</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -103,7 +103,7 @@ export function StreetList() {
                             type="number"
                             step="0.01"
                             min="0"
-                            className="text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             {...register(`streets.${index}.largura`, {
                               valueAsNumber: true,
                             })}
@@ -114,7 +114,7 @@ export function StreetList() {
                             type="number"
                             step="0.01"
                             min="0"
-                            className="text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             {...register(`streets.${index}.comprimento`, {
                               valueAsNumber: true,
                             })}
@@ -125,7 +125,7 @@ export function StreetList() {
                             type="number"
                             value={area.toFixed(2)}
                             disabled
-                            className="bg-muted text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="bg-muted text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                         </TableCell>
                         <TableCell>
@@ -133,7 +133,7 @@ export function StreetList() {
                             type="number"
                             step="0.01"
                             min="0"
-                            className="text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             {...register(`streets.${index}.espessura`, {
                               valueAsNumber: true,
                             })}
@@ -144,7 +144,7 @@ export function StreetList() {
                             type="number"
                             value={peso.toFixed(2)}
                             disabled
-                            className="bg-muted text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="bg-muted text-right w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                         </TableCell>
                         <TableCell>
@@ -171,7 +171,7 @@ export function StreetList() {
                           type="number"
                           value={totalArea.toFixed(2)}
                           disabled
-                          className="bg-muted text-right font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="bg-muted text-right font-medium w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       </TableCell>
                       <TableCell />
@@ -180,7 +180,7 @@ export function StreetList() {
                           type="number"
                           value={totalWeight.toFixed(2)}
                           disabled
-                          className="bg-muted text-right font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="bg-muted text-right font-medium w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       </TableCell>
                       <TableCell />
