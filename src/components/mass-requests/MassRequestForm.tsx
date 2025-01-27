@@ -47,7 +47,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6 w-full max-w-full overflow-hidden px-1">
         <FormFields />
 
         <div className="space-y-4">

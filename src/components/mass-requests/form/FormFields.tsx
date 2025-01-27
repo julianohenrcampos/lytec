@@ -65,17 +65,17 @@ export function FormFields() {
   });
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <FormField
         control={control}
         name="centro_custo"
         rules={{ required: "Centro de custo é obrigatório" }}
         render={({ field }) => (
-          <FormItem>
+          <FormItem className="w-full">
             <FormLabel>Centro de Custo</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecione um centro de custo" />
                 </SelectTrigger>
               </FormControl>
@@ -96,10 +96,10 @@ export function FormFields() {
         control={control}
         name="diretoria"
         render={({ field }) => (
-          <FormItem>
+          <FormItem className="w-full">
             <FormLabel>Diretoria</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Digite a diretoria" />
+              <Input {...field} placeholder="Digite a diretoria" className="w-full" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -110,10 +110,10 @@ export function FormFields() {
         control={control}
         name="gerencia"
         render={({ field }) => (
-          <FormItem>
+          <FormItem className="w-full">
             <FormLabel>Gerência</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Digite a gerência" />
+              <Input {...field} placeholder="Digite a gerência" className="w-full" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -125,10 +125,10 @@ export function FormFields() {
         name="engenheiro"
         rules={{ required: "Engenheiro é obrigatório" }}
         render={({ field }) => (
-          <FormItem>
+          <FormItem className="w-full">
             <FormLabel>Engenheiro</FormLabel>
             <FormControl>
-              <Input {...field} disabled placeholder="Engenheiro responsável" />
+              <Input {...field} disabled placeholder="Engenheiro responsável" className="w-full" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -140,7 +140,7 @@ export function FormFields() {
         name="data"
         rules={{ required: "Data é obrigatória" }}
         render={({ field }) => (
-          <FormItem className="flex flex-col">
+          <FormItem className="flex flex-col w-full">
             <FormLabel>Data</FormLabel>
             <Popover>
               <PopoverTrigger asChild>
@@ -182,10 +182,10 @@ export function FormFields() {
         control={control}
         name="ligante"
         render={({ field }) => (
-          <FormItem>
+          <FormItem className="w-full">
             <FormLabel>Ligante</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Digite o tipo de ligante" />
+              <Input {...field} placeholder="Digite o tipo de ligante" className="w-full" />
             </FormControl>
             <FormMessage />
           </FormItem>
