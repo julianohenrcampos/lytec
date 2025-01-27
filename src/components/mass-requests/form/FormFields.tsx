@@ -3,7 +3,6 @@ import { DirectoryField } from "./fields/DirectoryField";
 import { ManagementField } from "./fields/ManagementField";
 import { EngineerField } from "./fields/EngineerField";
 import { DateField } from "./fields/DateField";
-import { BinderField } from "./fields/BinderField";
 
 export function FormFields() {
   return (
@@ -13,7 +12,6 @@ export function FormFields() {
       <ManagementField />
       <EngineerField />
       <DateField />
-      <BinderField />
     </div>
   );
 }
