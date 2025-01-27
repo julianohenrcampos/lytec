@@ -182,7 +182,7 @@ export function FormFields() {
         control={control}
         name="ligante"
         render={({ field }) => (
-          <FormItem className="w-full col-span-1">
+          <FormItem className="w-full">
             <FormLabel>Ligante</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
