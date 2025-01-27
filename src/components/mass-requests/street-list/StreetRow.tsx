@@ -22,6 +22,7 @@ export function StreetRow({ index, register, onRemove, area, peso }: StreetRowPr
           <div className="space-y-2">
             <div className="flex flex-wrap gap-4">
               <div className="flex-1 min-w-[120px]">
+                <div className="text-sm text-gray-600 mb-1">Largura (m)</div>
                 <Input
                   type="number"
                   step="0.01"
@@ -29,10 +30,10 @@ export function StreetRow({ index, register, onRemove, area, peso }: StreetRowPr
                   {...register(`streets.${index}.largura`, {
                     valueAsNumber: true,
                   })}
-                  placeholder="Largura (m)"
                 />
               </div>
               <div className="flex-1 min-w-[120px]">
+                <div className="text-sm text-gray-600 mb-1">Comprimento (m)</div>
                 <Input
                   type="number"
                   step="0.01"
@@ -40,19 +41,19 @@ export function StreetRow({ index, register, onRemove, area, peso }: StreetRowPr
                   {...register(`streets.${index}.comprimento`, {
                     valueAsNumber: true,
                   })}
-                  placeholder="Comprimento (m)"
                 />
               </div>
               <div className="flex-1 min-w-[120px]">
+                <div className="text-sm text-gray-600 mb-1">Área (m²)</div>
                 <Input
                   type="number"
                   value={area.toFixed(2)}
                   disabled
                   className="bg-muted"
-                  placeholder="Área (m²)"
                 />
               </div>
               <div className="flex-1 min-w-[120px]">
+                <div className="text-sm text-gray-600 mb-1">Espessura (m)</div>
                 <Input
                   type="number"
                   step="0.01"
@@ -60,16 +61,15 @@ export function StreetRow({ index, register, onRemove, area, peso }: StreetRowPr
                   {...register(`streets.${index}.espessura`, {
                     valueAsNumber: true,
                   })}
-                  placeholder="Espessura (m)"
                 />
               </div>
               <div className="flex-1 min-w-[120px]">
+                <div className="text-sm text-gray-600 mb-1">Peso (t)</div>
                 <Input
                   type="number"
                   value={peso.toFixed(2)}
                   disabled
                   className="bg-muted"
-                  placeholder="Peso (t)"
                 />
               </div>
             </div>
