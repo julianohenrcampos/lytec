@@ -108,16 +108,28 @@ export const TeamFormDialog = () => {
     },
   });
 
-  // Watch for encarregado_id changes to update team name
+  // Watch for encarregado_id changes to update team name and add to collaborators
   useEffect(() => {
     const encarregadoId = form.watch("encarregado_id");
     if (encarregadoId) {
       const selectedEncarregado = encarregados?.find(e => e.id === encarregadoId);
       if (selectedEncarregado) {
         form.setValue("nome", `Equipe ${selectedEncarregado.nome}`);
+        // Add encarregado to collaborators if not already present
+        if (!selectedEmployees.includes(encarregadoId)) {
+          setSelectedEmployees(prev => [...prev, encarregadoId]);
+        }
       }
     }
   }, [form.watch("encarregado_id"), encarregados]);
+
+  // Watch for apontador_id changes to add to collaborators
+  useEffect(() => {
+    const apontadorId = form.watch("apontador_id");
+    if (apontadorId && !selectedEmployees.includes(apontadorId)) {
+      setSelectedEmployees(prev => [...prev, apontadorId]);
+    }
+  }, [form.watch("apontador_id")]);
 
   const createTeam = useMutation({
     mutationFn: async (values: TeamFormValues) => {
