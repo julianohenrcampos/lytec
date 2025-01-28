@@ -10,6 +10,7 @@ import {
   Truck,
   Factory,
   FileText,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -32,6 +33,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { path: "/trucks-equipment", label: "Caminhões/Equipamentos", icon: Truck },
     { path: "/plants", label: "Usinas", icon: Factory },
     { path: "/mass-requests", label: "Requisição de Massa", icon: FileText },
+    { path: "/mass-programming", label: "Programação de Massa", icon: Calendar },
   ];
 
   return (
