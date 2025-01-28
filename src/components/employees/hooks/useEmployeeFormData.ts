@@ -23,6 +23,15 @@ export const useEmployeeFormData = () => {
   const { data: empresas } = useQuery({
     queryKey: ["empresas"],
     queryFn: async () => {
+      const { data, error } = await supabase.from("bd_empresa").select("*");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: empresasProprietarias } = useQuery({
+    queryKey: ["empresasProprietarias"],
+    queryFn: async () => {
       const { data, error } = await supabase.from("bd_empresa_proprietaria").select("*");
       if (error) throw error;
       return data || [];
@@ -42,6 +51,7 @@ export const useEmployeeFormData = () => {
     funcoes,
     centrosCusto,
     empresas,
+    empresasProprietarias,
     equipes,
   };
 };

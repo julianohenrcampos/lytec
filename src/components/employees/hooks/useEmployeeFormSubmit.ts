@@ -17,6 +17,8 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
     mutationFn: async (values: EmployeeFormValues) => {
       console.log("Submitting employee data:", values);
       
+      const ferias = format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd");
+      
       const employeeData = {
         nome: values.nome,
         cpf: values.cpf,
@@ -26,7 +28,8 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
         imagem: values.imagem || null,
         funcao_id: values.funcao_id,
         centro_custo_id: values.centro_custo_id,
-        empresa_proprietaria_id: values.empresa_id,
+        empresa_id: values.empresa_id,
+        empresa_proprietaria_id: values.empresa_proprietaria_id,
         equipe_id: values.equipe_id || null,
         salario: Number(values.salario),
         insalubridade: values.insalubridade ? Number(values.insalubridade) : null,
@@ -40,7 +43,7 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
         demissao: values.demissao || null,
         ativo: values.ativo,
         aviso: values.aviso,
-        ferias: format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd"),
+        ferias,
       };
 
       let query = supabase.from("bd_rhasfalto");
