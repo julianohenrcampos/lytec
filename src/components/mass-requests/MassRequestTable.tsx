@@ -2,11 +2,12 @@ import { format } from "date-fns";
 import { Table, TableBody } from "@/components/ui/table";
 import { MassRequestTableHeader } from "./table/TableHeader";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Eye, Trash2 } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface MassRequestTableProps {
   data: any[];
@@ -16,6 +17,7 @@ interface MassRequestTableProps {
 export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -58,6 +60,13 @@ export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
               <TableCell className="text-center">{request.espessura}</TableCell>
               <TableCell className="text-center">{request.peso}</TableCell>
               <TableCell className="text-right space-x-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate(`/mass-requests/${request.id}`)}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
