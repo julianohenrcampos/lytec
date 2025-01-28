@@ -47,13 +47,28 @@ interface FormValues {
   volume?: number;
 }
 
+interface SupabaseValues {
+  data_entrega: string;
+  tipo_lancamento: string;
+  usina: string;
+  centro_custo_id: string;
+  logradouro: string;
+  encarregado: string;
+  apontador: string;
+  caminhao?: string;
+  volume?: number;
+}
+
 export function MassProgrammingForm({ initialData, onSuccess }: MassProgrammingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
-    defaultValues: initialData || {
+    defaultValues: initialData ? {
+      ...initialData,
+      data_entrega: new Date(initialData.data_entrega)
+    } : {
       data_entrega: new Date(),
       tipo_lancamento: "",
       usina: "",
@@ -118,9 +133,14 @@ export function MassProgrammingForm({ initialData, onSuccess }: MassProgrammingF
 
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
+      const supabaseValues: SupabaseValues = {
+        ...values,
+        data_entrega: format(values.data_entrega, 'yyyy-MM-dd')
+      };
+
       const { data, error } = await supabase
         .from("bd_programacaomassa")
-        .insert([values])
+        .insert([supabaseValues])
         .select()
         .single();
 
@@ -149,9 +169,14 @@ export function MassProgrammingForm({ initialData, onSuccess }: MassProgrammingF
     mutationFn: async (values: FormValues) => {
       if (!initialData) throw new Error("No program selected for editing");
 
+      const supabaseValues: SupabaseValues = {
+        ...values,
+        data_entrega: format(values.data_entrega, 'yyyy-MM-dd')
+      };
+
       const { data, error } = await supabase
         .from("bd_programacaomassa")
-        .update(values)
+        .update(supabaseValues)
         .eq("id", initialData.id)
         .select()
         .single();
