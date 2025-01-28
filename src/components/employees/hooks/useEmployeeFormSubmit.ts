@@ -26,7 +26,7 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
         imagem: values.imagem || null,
         funcao_id: values.funcao_id,
         centro_custo_id: values.centro_custo_id,
-        empresa_id: values.empresa_id,
+        empresa_proprietaria_id: values.empresa_id,
         equipe_id: values.equipe_id || null,
         salario: Number(values.salario),
         insalubridade: values.insalubridade ? Number(values.insalubridade) : null,

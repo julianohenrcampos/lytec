@@ -112,7 +112,7 @@ export const ProfessionalDataForm: React.FC<ProfessionalDataFormProps> = ({ form
         render={({ field }) => (
           <FormItem>
             <FormLabel>Equipe</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value || ""}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione uma equipe" />
