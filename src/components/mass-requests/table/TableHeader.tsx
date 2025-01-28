@@ -8,17 +8,12 @@ export function MassRequestTableHeader() {
   return (
     <TableHeader className="bg-gray-100">
       <TableRow>
-        <TableHead className="w-[100px]">DATA</TableHead>
-        <TableHead>LOGRADOURO</TableHead>
-        <TableHead>BAIRRO</TableHead>
-        <TableHead className="text-center">LARGURA (m)</TableHead>
-        <TableHead className="text-center">COMPRIMENTO (m)</TableHead>
-        <TableHead className="text-center">ÁREA (m²)</TableHead>
-        <TableHead className="text-center">PINTURA DE LIGAÇÃO</TableHead>
-        <TableHead className="text-center">TRAÇO</TableHead>
-        <TableHead className="text-center">ESPESSURA (m)</TableHead>
-        <TableHead className="text-center">VOLUME (t)</TableHead>
-        <TableHead className="text-right">Ações</TableHead>
+        <TableHead>DATA</TableHead>
+        <TableHead>CENTRO DE CUSTO</TableHead>
+        <TableHead>DIRETORIA</TableHead>
+        <TableHead>GERÊNCIA</TableHead>
+        <TableHead>ENGENHEIRO</TableHead>
+        <TableHead className="text-right">AÇÕES</TableHead>
       </TableRow>
     </TableHeader>
   );

@@ -50,37 +50,34 @@ export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
           {data?.map((request) => (
             <TableRow key={request.id}>
               <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
-              <TableCell>{request.logradouro}</TableCell>
-              <TableCell>{request.bairro}</TableCell>
-              <TableCell className="text-center">{request.largura}</TableCell>
-              <TableCell className="text-center">{request.comprimento}</TableCell>
-              <TableCell className="text-center">{request.area}</TableCell>
-              <TableCell className="text-center">{request.ligante}</TableCell>
-              <TableCell className="text-center">{request.traco}</TableCell>
-              <TableCell className="text-center">{request.espessura}</TableCell>
-              <TableCell className="text-center">{request.peso}</TableCell>
-              <TableCell className="text-right space-x-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate(`/mass-requests/${request.id}`)}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onEdit(request)}
-                >
-                  <Edit2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => deleteMutation.mutate(request.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+              <TableCell>{request.centro_custo}</TableCell>
+              <TableCell>{request.diretoria || "-"}</TableCell>
+              <TableCell>{request.gerencia || "-"}</TableCell>
+              <TableCell>{request.engenheiro}</TableCell>
+              <TableCell>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate(`/mass-requests/${request.id}`)}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEdit(request)}
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => deleteMutation.mutate(request.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
