@@ -39,19 +39,27 @@ export function StreetDetails({ streets, totalArea, totalWeight }: StreetDetails
             </TableRow>
           </TableHeader>
           <TableBody>
-            {streets.map((street) => (
-              <TableRow key={street.id}>
-                <TableCell>{street.logradouro}</TableCell>
-                <TableCell>{street.bairro || "-"}</TableCell>
-                <TableCell className="text-center">{street.largura}</TableCell>
-                <TableCell className="text-center">{street.comprimento}</TableCell>
-                <TableCell className="text-center">{street.area}</TableCell>
-                <TableCell className="text-center">{street.ligante || "-"}</TableCell>
-                <TableCell className="text-center">{street.traco || "-"}</TableCell>
-                <TableCell className="text-center">{street.espessura}</TableCell>
-                <TableCell className="text-center">{street.peso}</TableCell>
+            {streets && streets.length > 0 ? (
+              streets.map((street) => (
+                <TableRow key={street.id}>
+                  <TableCell>{street.logradouro}</TableCell>
+                  <TableCell>{street.bairro || "-"}</TableCell>
+                  <TableCell className="text-center">{street.largura.toFixed(2)}</TableCell>
+                  <TableCell className="text-center">{street.comprimento.toFixed(2)}</TableCell>
+                  <TableCell className="text-center">{street.area?.toFixed(2) || "-"}</TableCell>
+                  <TableCell className="text-center">{street.ligante || "-"}</TableCell>
+                  <TableCell className="text-center">{street.traco || "-"}</TableCell>
+                  <TableCell className="text-center">{street.espessura.toFixed(2)}</TableCell>
+                  <TableCell className="text-center">{street.peso?.toFixed(2) || "-"}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center">
+                  Nenhuma rua encontrada
+                </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
@@ -60,11 +68,11 @@ export function StreetDetails({ streets, totalArea, totalWeight }: StreetDetails
         <div className="grid grid-cols-2 gap-6">
           <div className="flex flex-col">
             <h3 className="font-semibold text-sm text-gray-500 mb-1">Área Total</h3>
-            <p className="text-base">{totalArea} m²</p>
+            <p className="text-base">{totalArea?.toFixed(2)} m²</p>
           </div>
           <div className="flex flex-col">
             <h3 className="font-semibold text-sm text-gray-500 mb-1">Peso Total</h3>
-            <p className="text-base">{totalWeight} t</p>
+            <p className="text-base">{totalWeight?.toFixed(2)} t</p>
           </div>
         </div>
       </div>
