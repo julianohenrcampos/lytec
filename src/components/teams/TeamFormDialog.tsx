@@ -59,11 +59,19 @@ export const TeamFormDialog = () => {
   const { data: encarregados } = useQuery({
     queryKey: ["encarregados"],
     queryFn: async () => {
+      const { data: funcaoData } = await supabase
+        .from("bd_funcao")
+        .select("id")
+        .eq("nome", "Encarregado")
+        .single();
+
+      if (!funcaoData) return [];
+
       const { data, error } = await supabase
         .from("bd_rhasfalto")
-        .select("id, nome, funcao:bd_funcao(nome)")
+        .select("id, nome")
         .eq("ativo", true)
-        .eq("funcao.nome", "Encarregado");
+        .eq("funcao_id", funcaoData.id);
 
       if (error) throw error;
       return data || [];
@@ -74,11 +82,19 @@ export const TeamFormDialog = () => {
   const { data: apontadores } = useQuery({
     queryKey: ["apontadores"],
     queryFn: async () => {
+      const { data: funcaoData } = await supabase
+        .from("bd_funcao")
+        .select("id")
+        .eq("nome", "Apontador")
+        .single();
+
+      if (!funcaoData) return [];
+
       const { data, error } = await supabase
         .from("bd_rhasfalto")
-        .select("id, nome, funcao:bd_funcao(nome)")
+        .select("id, nome")
         .eq("ativo", true)
-        .eq("funcao.nome", "Apontador");
+        .eq("funcao_id", funcaoData.id);
 
       if (error) throw error;
       return data || [];
