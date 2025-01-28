@@ -6,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { EmployeeFormValues } from "@/components/employees/types";
+import { EmployeeViewDialog } from "@/components/employees/EmployeeViewDialog";
 
 const EmployeeManagement = () => {
-  const [open, setOpen] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Partial<EmployeeFormValues> | undefined>(undefined);
   const [filters, setFilters] = useState({
     nome: "",
@@ -18,12 +20,12 @@ const EmployeeManagement = () => {
 
   const handleEdit = (employee: Partial<EmployeeFormValues>) => {
     setSelectedEmployee(employee);
-    setOpen(true);
+    setFormOpen(true);
   };
 
   const handleView = (employee: Partial<EmployeeFormValues>) => {
-    // TODO: Implement view functionality in a new page or dialog
-    console.log("View employee:", employee);
+    setSelectedEmployee(employee);
+    setViewOpen(true);
   };
 
   return (
@@ -43,7 +45,7 @@ const EmployeeManagement = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Lista de Funcionários</CardTitle>
-          <Button onClick={() => setOpen(true)}>
+          <Button onClick={() => setFormOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Cadastrar Funcionário
           </Button>
@@ -58,9 +60,15 @@ const EmployeeManagement = () => {
       </Card>
 
       <EmployeeFormDialog 
-        open={open} 
-        onOpenChange={setOpen} 
+        open={formOpen} 
+        onOpenChange={setFormOpen} 
         initialData={selectedEmployee}
+      />
+
+      <EmployeeViewDialog
+        open={viewOpen}
+        onOpenChange={setViewOpen}
+        employee={selectedEmployee}
       />
     </div>
   );
