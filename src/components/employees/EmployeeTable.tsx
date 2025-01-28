@@ -8,9 +8,9 @@ import { EmployeeTableRow } from "./table/EmployeeTableRow";
 
 interface EmployeeTableProps {
   filters: {
-    nome?: string;
-    funcao?: string;
-    empresa?: string;
+    nome: string;
+    funcao: string;
+    centro_custo: string;
   };
   onEdit: (employee: Partial<EmployeeFormValues>) => void;
 }
@@ -36,8 +36,8 @@ export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
       if (filters.funcao && filters.funcao !== "_all") {
         query = query.eq("funcao_id", filters.funcao);
       }
-      if (filters.empresa && filters.empresa !== "_all") {
-        query = query.eq("empresa_proprietaria_id", filters.empresa);
+      if (filters.centro_custo && filters.centro_custo !== "_all") {
+        query = query.eq("centro_custo_id", filters.centro_custo);
       }
 
       const { data, error } = await query;

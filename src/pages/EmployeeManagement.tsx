@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { EmployeeFormDialog } from "@/components/employees/EmployeeFormDialog";
 import { EmployeeTable } from "@/components/employees/EmployeeTable";
+import { EmployeeFilters } from "@/components/employees/EmployeeFilters";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -11,8 +12,8 @@ const EmployeeManagement = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<Partial<EmployeeFormValues> | undefined>(undefined);
   const [filters, setFilters] = useState({
     nome: "",
-    funcao: "",
-    empresa: "",
+    funcao: "_all",
+    centro_custo: "_all",
   });
 
   const handleEdit = (employee: Partial<EmployeeFormValues>) => {
@@ -36,6 +37,10 @@ const EmployeeManagement = () => {
           />
         </CardHeader>
         <CardContent>
+          <EmployeeFilters 
+            filters={filters}
+            onFilterChange={setFilters}
+          />
           <EmployeeTable 
             filters={filters}
             onEdit={handleEdit}
