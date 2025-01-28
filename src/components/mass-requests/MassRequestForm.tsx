@@ -5,6 +5,7 @@ import { FormFields } from "./form/FormFields";
 import { StreetList } from "./StreetList";
 import { useFormSubmit } from "./hooks/useFormSubmit";
 import { FormValues, MassRequest } from "./types";
+import { Card } from "@/components/ui/card";
 
 interface MassRequestFormProps {
   initialData?: MassRequest | null;
@@ -54,11 +55,17 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6 w-full max-w-full overflow-hidden px-1">
-        <FormFields />
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Cabeçalho da Requisição</h3>
+          <FormFields />
+        </Card>
 
-        <div className="space-y-4">
-          <StreetList />
-        </div>
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Lista de Ruas</h3>
+          <div className="space-y-4">
+            <StreetList />
+          </div>
+        </Card>
 
         <div className="flex justify-end space-x-2">
           <Button

@@ -23,7 +23,7 @@ export function StreetDetails({ streets, totalArea, totalWeight }: StreetDetails
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="font-semibold text-lg mb-4">Lista de Ruas</h2>
+        <h3 className="text-lg font-semibold mb-4">Lista de Ruas</h3>
         <Table>
           <TableHeader>
             <TableRow>
