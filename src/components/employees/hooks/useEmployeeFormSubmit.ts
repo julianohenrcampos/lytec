@@ -26,10 +26,11 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
         genero: values.genero,
         endereco: values.endereco || null,
         imagem: values.imagem || null,
+        escolaridade: values.escolaridade,
         funcao_id: values.funcao_id,
         centro_custo_id: values.centro_custo_id,
         empresa_id: values.empresa_id,
-        empresa_proprietaria_id: values.empresa_proprietaria_id,
+        empresa_proprietaria_id: values.empresa_proprietaria_id || null,
         equipe_id: values.equipe_id || null,
         salario: Number(values.salario),
         insalubridade: values.insalubridade ? Number(values.insalubridade) : null,
@@ -53,7 +54,12 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
         const { data, error } = await query
           .update(employeeData)
           .eq('id', options.initialData.id)
-          .select()
+          .select(`
+            *,
+            funcao:funcao_id(nome),
+            empresa:empresa_id(nome),
+            empresa_proprietaria:empresa_proprietaria_id(nome)
+          `)
           .single();
 
         if (error) {
@@ -66,7 +72,12 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
         // Create new employee
         const { data, error } = await query
           .insert(employeeData)
-          .select()
+          .select(`
+            *,
+            funcao:funcao_id(nome),
+            empresa:empresa_id(nome),
+            empresa_proprietaria:empresa_proprietaria_id(nome)
+          `)
           .single();
 
         if (error) {

@@ -5,7 +5,10 @@ export const useEmployeeFormData = () => {
   const { data: funcoes } = useQuery({
     queryKey: ["funcoes"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("bd_funcao").select("*");
+      const { data, error } = await supabase
+        .from("bd_funcao")
+        .select("*")
+        .order("nome");
       if (error) throw error;
       return data || [];
     },
@@ -14,7 +17,10 @@ export const useEmployeeFormData = () => {
   const { data: centrosCusto } = useQuery({
     queryKey: ["centrosCusto"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("bd_centrocusto").select("*");
+      const { data, error } = await supabase
+        .from("bd_centrocusto")
+        .select("*")
+        .order("nome");
       if (error) throw error;
       return data || [];
     },
@@ -23,7 +29,10 @@ export const useEmployeeFormData = () => {
   const { data: empresas } = useQuery({
     queryKey: ["empresas"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("bd_empresa").select("*");
+      const { data, error } = await supabase
+        .from("bd_empresa")
+        .select("*")
+        .order("nome");
       if (error) throw error;
       return data || [];
     },
@@ -32,7 +41,10 @@ export const useEmployeeFormData = () => {
   const { data: empresasProprietarias } = useQuery({
     queryKey: ["empresasProprietarias"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("bd_empresa_proprietaria").select("*");
+      const { data, error } = await supabase
+        .from("bd_empresa_proprietaria")
+        .select("*")
+        .order("nome");
       if (error) throw error;
       return data || [];
     },
@@ -41,17 +53,20 @@ export const useEmployeeFormData = () => {
   const { data: equipes } = useQuery({
     queryKey: ["equipes"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("bd_equipe").select("*");
+      const { data, error } = await supabase
+        .from("bd_equipe")
+        .select("*")
+        .order("nome");
       if (error) throw error;
       return data || [];
     },
   });
 
   return {
-    funcoes,
-    centrosCusto,
-    empresas,
-    empresasProprietarias,
-    equipes,
+    funcoes: funcoes || [],
+    centrosCusto: centrosCusto || [],
+    empresas: empresas || [],
+    empresasProprietarias: empresasProprietarias || [],
+    equipes: equipes || [],
   };
 };
