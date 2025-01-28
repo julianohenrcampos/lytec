@@ -3,6 +3,7 @@ import { z } from "zod";
 export type FormStep = "personal" | "professional" | "contract" | "financial";
 
 export const employeeSchema = z.object({
+  id: z.string().optional(),
   nome: z.string().min(1, "Nome é obrigatório"),
   cpf: z.string().min(11, "CPF inválido").max(14, "CPF inválido"),
   matricula: z.string().min(1, "Matrícula é obrigatória"),

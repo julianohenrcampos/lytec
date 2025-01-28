@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { EmployeeFormValues } from "./types";
 
 interface EmployeeTableProps {
   filters: {
@@ -20,7 +21,7 @@ interface EmployeeTableProps {
     funcao?: string;
     empresa?: string;
   };
-  onEdit: (employee: any) => void;
+  onEdit: (employee: Partial<EmployeeFormValues>) => void;
 }
 
 export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {

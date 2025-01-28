@@ -4,9 +4,21 @@ import { EmployeeTable } from "@/components/employees/EmployeeTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { EmployeeFormValues } from "@/components/employees/types";
 
 const EmployeeManagement = () => {
   const [open, setOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Partial<EmployeeFormValues> | undefined>(undefined);
+  const [filters, setFilters] = useState({
+    nome: "",
+    funcao: "",
+    empresa: "",
+  });
+
+  const handleEdit = (employee: Partial<EmployeeFormValues>) => {
+    setSelectedEmployee(employee);
+    setOpen(true);
+  };
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -17,10 +29,17 @@ const EmployeeManagement = () => {
             <Plus className="w-4 h-4 mr-2" />
             Cadastrar Funcionário
           </Button>
-          <EmployeeFormDialog open={open} onOpenChange={setOpen} />
+          <EmployeeFormDialog 
+            open={open} 
+            onOpenChange={setOpen} 
+            initialData={selectedEmployee}
+          />
         </CardHeader>
         <CardContent>
-          <EmployeeTable />
+          <EmployeeTable 
+            filters={filters}
+            onEdit={handleEdit}
+          />
         </CardContent>
       </Card>
     </div>
