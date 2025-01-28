@@ -128,8 +128,8 @@ export function MassRequestFilters({ filters, onFilterChange }: FiltersProps) {
             <SelectContent>
               <SelectItem value="_all">Todos</SelectItem>
               {engineers?.map((engineer) => (
-                <SelectItem key={engineer} value={engineer}>
-                  {engineer}
+                <SelectItem key={engineer} value={engineer || "_none"}>
+                  {engineer || "Sem engenheiro"}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -150,8 +150,8 @@ export function MassRequestFilters({ filters, onFilterChange }: FiltersProps) {
             <SelectContent>
               <SelectItem value="_all">Todos</SelectItem>
               {costCenters?.map((cc) => (
-                <SelectItem key={cc.id} value={cc.nome}>
-                  {cc.nome}
+                <SelectItem key={cc.id} value={cc.nome || "_none"}>
+                  {cc.nome || "Sem centro de custo"}
                 </SelectItem>
               ))}
             </SelectContent>
