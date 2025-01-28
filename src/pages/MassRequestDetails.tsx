@@ -18,7 +18,18 @@ export default function MassRequestDetails() {
         .from("bd_requisicao")
         .select(`
           *,
-          bd_ruas_requisicao (*)
+          bd_ruas_requisicao (
+            id,
+            logradouro,
+            bairro,
+            largura,
+            comprimento,
+            area,
+            ligante,
+            traco,
+            espessura,
+            peso
+          )
         `)
         .eq("id", id)
         .single();

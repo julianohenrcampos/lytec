@@ -21,40 +21,42 @@ interface StreetDetailsProps {
 
 export function StreetDetails({ streets, totalArea, totalWeight }: StreetDetailsProps) {
   return (
-    <div>
-      <h2 className="font-semibold text-lg mb-4">Lista de Ruas</h2>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Logradouro</TableHead>
-            <TableHead>Bairro</TableHead>
-            <TableHead className="text-center">Largura (m)</TableHead>
-            <TableHead className="text-center">Comprimento (m)</TableHead>
-            <TableHead className="text-center">Área (m²)</TableHead>
-            <TableHead className="text-center">Pintura de Ligação</TableHead>
-            <TableHead className="text-center">Traço</TableHead>
-            <TableHead className="text-center">Espessura (m)</TableHead>
-            <TableHead className="text-center">Volume (t)</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {streets.map((street) => (
-            <TableRow key={street.id}>
-              <TableCell>{street.logradouro}</TableCell>
-              <TableCell>{street.bairro || "-"}</TableCell>
-              <TableCell className="text-center">{street.largura}</TableCell>
-              <TableCell className="text-center">{street.comprimento}</TableCell>
-              <TableCell className="text-center">{street.area}</TableCell>
-              <TableCell className="text-center">{street.ligante || "-"}</TableCell>
-              <TableCell className="text-center">{street.traco || "-"}</TableCell>
-              <TableCell className="text-center">{street.espessura}</TableCell>
-              <TableCell className="text-center">{street.peso}</TableCell>
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-semibold text-lg mb-4">Lista de Ruas</h2>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Logradouro</TableHead>
+              <TableHead>Bairro</TableHead>
+              <TableHead className="text-center">Largura (m)</TableHead>
+              <TableHead className="text-center">Comprimento (m)</TableHead>
+              <TableHead className="text-center">Área (m²)</TableHead>
+              <TableHead className="text-center">Pintura de Ligação</TableHead>
+              <TableHead className="text-center">Traço</TableHead>
+              <TableHead className="text-center">Espessura (m)</TableHead>
+              <TableHead className="text-center">Volume (t)</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {streets.map((street) => (
+              <TableRow key={street.id}>
+                <TableCell>{street.logradouro}</TableCell>
+                <TableCell>{street.bairro || "-"}</TableCell>
+                <TableCell className="text-center">{street.largura}</TableCell>
+                <TableCell className="text-center">{street.comprimento}</TableCell>
+                <TableCell className="text-center">{street.area}</TableCell>
+                <TableCell className="text-center">{street.ligante || "-"}</TableCell>
+                <TableCell className="text-center">{street.traco || "-"}</TableCell>
+                <TableCell className="text-center">{street.espessura}</TableCell>
+                <TableCell className="text-center">{street.peso}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
-      <div className="mt-6 border-t pt-6">
+      <div className="border-t pt-6">
         <div className="grid grid-cols-2 gap-6">
           <div className="flex flex-col">
             <h3 className="font-semibold text-sm text-gray-500 mb-1">Área Total</h3>
