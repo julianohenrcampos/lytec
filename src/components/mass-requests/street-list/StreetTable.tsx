@@ -13,11 +13,11 @@ interface StreetTableProps {
 
 export function StreetTable({ fields, onRemove, totalArea, totalWeight, totalLength }: StreetTableProps) {
   return (
-    <div className="w-full border-collapse border">
+    <div className="w-full border border-gray-200">
       <div className="overflow-x-auto">
         <Table>
           <StreetTableHeader />
-          <TableBody className="text-sm">
+          <TableBody>
             {fields.map((field, index) => (
               <StreetTableRow
                 key={field.id}
@@ -25,13 +25,11 @@ export function StreetTable({ fields, onRemove, totalArea, totalWeight, totalLen
                 onRemove={() => onRemove(index)}
               />
             ))}
-            {fields.length > 0 && (
-              <StreetTableTotals
-                totalArea={totalArea}
-                totalWeight={totalWeight}
-                totalLength={totalLength}
-              />
-            )}
+            <StreetTableTotals
+              totalArea={totalArea}
+              totalWeight={totalWeight}
+              totalLength={totalLength}
+            />
           </TableBody>
         </Table>
       </div>
