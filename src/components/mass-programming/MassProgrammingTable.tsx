@@ -78,7 +78,7 @@ export function MassProgrammingTable({ onEdit }: MassProgrammingTableProps) {
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="bg-white p-4 rounded-lg shadow">
       <Table>
         <TableHeader>
           <TableRow>
@@ -110,7 +110,7 @@ export function MassProgrammingTable({ onEdit }: MassProgrammingTableProps) {
               <TableCell>{program.volume}</TableCell>
               <TableCell className="text-right space-x-2">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
                   onClick={() => onEdit(program)}
                 >
@@ -119,7 +119,7 @@ export function MassProgrammingTable({ onEdit }: MassProgrammingTableProps) {
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="icon"
                       onClick={() => setSelectedId(program.id)}
                     >

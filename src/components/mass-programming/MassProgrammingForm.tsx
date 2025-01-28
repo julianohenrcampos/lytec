@@ -6,6 +6,7 @@ import { DateField } from "./form-fields/DateField";
 import { SelectFields } from "./form-fields/SelectFields";
 import { InputFields } from "./form-fields/InputFields";
 import { MassProgrammingFormProps } from "./types";
+import { Card } from "@/components/ui/card";
 
 export function MassProgrammingForm({ initialData, onSuccess }: MassProgrammingFormProps) {
   const { form, isSubmitting, onSubmit, handleDuplicate, handleNewLine } = useFormLogic(initialData, onSuccess);
@@ -13,18 +14,20 @@ export function MassProgrammingForm({ initialData, onSuccess }: MassProgrammingF
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <DateField form={form} />
-          <SelectFields
-            form={form}
-            plants={plants}
-            costCenters={costCenters}
-            managers={managers}
-            pointers={pointers}
-          />
-          <InputFields form={form} />
-        </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <Card className="p-6">
+          <div className="grid grid-cols-2 gap-4">
+            <DateField form={form} />
+            <SelectFields
+              form={form}
+              plants={plants}
+              costCenters={costCenters}
+              managers={managers}
+              pointers={pointers}
+            />
+            <InputFields form={form} />
+          </div>
+        </Card>
 
         <div className="flex justify-between">
           <div className="space-x-2">
@@ -47,7 +50,10 @@ export function MassProgrammingForm({ initialData, onSuccess }: MassProgrammingF
             <Button
               type="button"
               variant="outline"
-              onClick={() => form.reset()}
+              onClick={() => {
+                form.reset();
+                onSuccess();
+              }}
             >
               Cancelar
             </Button>
