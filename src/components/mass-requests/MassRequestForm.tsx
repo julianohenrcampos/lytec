@@ -21,15 +21,15 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           ...initialData,
           data: new Date(initialData.data),
           traco: initialData.traco,
-          streets: initialData.streets || Array.from({ length: 10 }, () => ({
-            logradouro: "",
-            bairro: "",
-            largura: 0,
-            comprimento: 0,
-            espessura: 0,
-            traco: "",
-            ligante: "",
-          })),
+          streets: initialData.streets || [{
+            logradouro: initialData.logradouro,
+            bairro: initialData.bairro,
+            largura: initialData.largura,
+            comprimento: initialData.comprimento,
+            espessura: initialData.espessura,
+            traco: initialData.traco,
+            ligante: initialData.ligante,
+          }],
         }
       : {
           centro_custo: "",
@@ -39,7 +39,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           data: new Date(),
           ligante: "",
           traco: "",
-          streets: Array.from({ length: 10 }, () => ({
+          streets: [{
             logradouro: "",
             bairro: "",
             largura: 0,
@@ -47,19 +47,20 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
             espessura: 0,
             traco: "",
             ligante: "",
-          })),
+          }],
         },
   });
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="p-6 bg-white shadow-lg rounded-lg max-w-5xl mx-auto">
-        <h2 className="text-xl font-bold mb-4 text-center">REQUISIÇÃO DE ASFALTO</h2>
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6 w-full max-w-full overflow-hidden px-1">
         <FormFields />
-        <div className="mt-4">
+
+        <div className="space-y-4">
           <StreetList />
         </div>
-        <div className="flex justify-end space-x-2 mt-4">
+
+        <div className="flex justify-end space-x-2">
           <Button
             type="button"
             variant="outline"

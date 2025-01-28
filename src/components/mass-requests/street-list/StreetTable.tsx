@@ -13,26 +13,26 @@ interface StreetTableProps {
 
 export function StreetTable({ fields, onRemove, totalArea, totalWeight, totalLength }: StreetTableProps) {
   return (
-    <div className="w-full border border-gray-200">
-      <div className="overflow-x-auto">
-        <Table>
-          <StreetTableHeader />
-          <TableBody>
-            {fields.map((field, index) => (
-              <StreetTableRow
-                key={field.id}
-                index={index}
-                onRemove={() => onRemove(index)}
-              />
-            ))}
+    <div className="rounded-md border overflow-x-auto">
+      <Table>
+        <StreetTableHeader />
+        <TableBody className="text-sm">
+          {fields.map((field, index) => (
+            <StreetTableRow
+              key={field.id}
+              index={index}
+              onRemove={() => onRemove(index)}
+            />
+          ))}
+          {fields.length > 0 && (
             <StreetTableTotals
               totalArea={totalArea}
               totalWeight={totalWeight}
               totalLength={totalLength}
             />
-          </TableBody>
-        </Table>
-      </div>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }
