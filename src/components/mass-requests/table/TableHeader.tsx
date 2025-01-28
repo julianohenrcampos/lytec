@@ -1,20 +1,23 @@
-import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  TableHeader,
+  TableRow,
+  TableHead,
+} from "@/components/ui/table";
 
 export function MassRequestTableHeader() {
   return (
-    <TableHeader>
+    <TableHeader className="bg-gray-100">
       <TableRow>
-        <TableHead className="w-[40px]">Expandir</TableHead>
-        <TableHead>Centro de Custo</TableHead>
-        <TableHead>Diretoria</TableHead>
-        <TableHead>Engenheiro Responsável</TableHead>
-        <TableHead>Data da Requisição</TableHead>
-        <TableHead>Endereço</TableHead>
-        <TableHead>Bairro</TableHead>
-        <TableHead className="text-right">Área Total (m²)</TableHead>
-        <TableHead className="text-right">Peso Total (t)</TableHead>
-        <TableHead>Tipo de Traço</TableHead>
-        <TableHead>Tipo de Ligante</TableHead>
+        <TableHead className="w-[100px]">DATA</TableHead>
+        <TableHead>LOGRADOURO</TableHead>
+        <TableHead>BAIRRO</TableHead>
+        <TableHead className="text-center">LARGURA (m)</TableHead>
+        <TableHead className="text-center">COMPRIMENTO (m)</TableHead>
+        <TableHead className="text-center">ÁREA (m²)</TableHead>
+        <TableHead className="text-center">PINTURA DE LIGAÇÃO</TableHead>
+        <TableHead className="text-center">TRAÇO</TableHead>
+        <TableHead className="text-center">ESPESSURA (m)</TableHead>
+        <TableHead className="text-center">VOLUME (t)</TableHead>
         <TableHead className="text-right">Ações</TableHead>
       </TableRow>
     </TableHeader>

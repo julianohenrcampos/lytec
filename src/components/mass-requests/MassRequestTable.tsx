@@ -1,58 +1,21 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
 import { Table, TableBody } from "@/components/ui/table";
-import { MassRequest } from "./types";
 import { MassRequestTableHeader } from "./table/TableHeader";
-import { MassRequestRow } from "./table/MassRequestRow";
-import { StreetRow } from "./table/StreetRow";
+import { Button } from "@/components/ui/button";
+import { Edit2, Trash2 } from "lucide-react";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MassRequestTableProps {
-  onEdit: (request: MassRequest) => void;
+  data: any[];
+  onEdit: (request: any) => void;
 }
 
-export function MassRequestTable({ onEdit }: MassRequestTableProps) {
+export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
-
-  const toggleRow = (id: string) => {
-    setExpandedRows(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
-
-  const { data: requests, isLoading } = useQuery({
-    queryKey: ["mass-requests"],
-    queryFn: async () => {
-      const { data: mainRequests, error: mainError } = await supabase
-        .from("bd_requisicao")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (mainError) throw mainError;
-
-      const requestsWithStreets = await Promise.all(
-        mainRequests.map(async (request) => {
-          const { data: streets, error: streetsError } = await supabase
-            .from("bd_ruas_requisicao")
-            .select("*")
-            .eq("requisicao_id", request.id);
-
-          if (streetsError) throw streetsError;
-
-          return {
-            ...request,
-            streets: streets || [],
-          };
-        })
-      );
-
-      return requestsWithStreets as MassRequest[];
-    },
-  });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -77,28 +40,40 @@ export function MassRequestTable({ onEdit }: MassRequestTableProps) {
     },
   });
 
-  if (isLoading) {
-    return <div>Carregando...</div>;
-  }
-
   return (
-    <div className="space-y-4">
+    <div className="border rounded-lg overflow-hidden">
       <Table>
         <MassRequestTableHeader />
         <TableBody>
-          {requests?.map((request) => (
-            <div key={request.id} className="border-b border-gray-200">
-              <MassRequestRow
-                request={request}
-                isExpanded={expandedRows[request.id]}
-                onToggleExpand={() => toggleRow(request.id)}
-                onEdit={onEdit}
-                onDelete={(id) => deleteMutation.mutate(id)}
-              />
-              {expandedRows[request.id] && request.streets?.map((street) => (
-                <StreetRow key={street.id} street={street} />
-              ))}
-            </div>
+          {data?.map((request) => (
+            <TableRow key={request.id}>
+              <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
+              <TableCell>{request.logradouro}</TableCell>
+              <TableCell>{request.bairro}</TableCell>
+              <TableCell className="text-center">{request.largura}</TableCell>
+              <TableCell className="text-center">{request.comprimento}</TableCell>
+              <TableCell className="text-center">{request.area}</TableCell>
+              <TableCell className="text-center">{request.ligante}</TableCell>
+              <TableCell className="text-center">{request.traco}</TableCell>
+              <TableCell className="text-center">{request.espessura}</TableCell>
+              <TableCell className="text-center">{request.peso}</TableCell>
+              <TableCell className="text-right space-x-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEdit(request)}
+                >
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => deleteMutation.mutate(request.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
         </TableBody>
       </Table>
