@@ -50,13 +50,18 @@ export const CompanyForm = ({ initialData, onSuccess }: CompanyFormProps) => {
 
   const createCompany = useMutation({
     mutationFn: async (values: CompanyFormValues) => {
-      const { error } = await supabase.from("bd_empresa_proprietaria").insert([
-        {
-          nome: values.nome,
-          cnpj: values.cnpj || null,
-        },
-      ]);
+      const { data, error } = await supabase
+        .from("bd_empresa_proprietaria")
+        .insert([
+          {
+            nome: values.nome,
+            cnpj: values.cnpj || null,
+          },
+        ])
+        .select();
+
       if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
@@ -66,7 +71,8 @@ export const CompanyForm = ({ initialData, onSuccess }: CompanyFormProps) => {
       form.reset();
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      console.error("Error creating company:", error);
       toast({
         variant: "destructive",
         title: "Erro ao cadastrar empresa",
@@ -77,14 +83,17 @@ export const CompanyForm = ({ initialData, onSuccess }: CompanyFormProps) => {
 
   const updateCompany = useMutation({
     mutationFn: async (values: CompanyFormValues) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("bd_empresa_proprietaria")
         .update({
           nome: values.nome,
           cnpj: values.cnpj || null,
         })
-        .eq("id", initialData?.id);
+        .eq("id", initialData?.id)
+        .select();
+
       if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
@@ -93,7 +102,8 @@ export const CompanyForm = ({ initialData, onSuccess }: CompanyFormProps) => {
       });
       onSuccess?.();
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      console.error("Error updating company:", error);
       toast({
         variant: "destructive",
         title: "Erro ao atualizar empresa",

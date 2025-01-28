@@ -92,7 +92,6 @@ export const CompanyTable = ({ onEdit }: CompanyTableProps) => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>ID</TableHead>
           <TableHead>Nome</TableHead>
           <TableHead>CNPJ</TableHead>
           <TableHead>Data de Cadastro</TableHead>
@@ -102,7 +101,6 @@ export const CompanyTable = ({ onEdit }: CompanyTableProps) => {
       <TableBody>
         {companies?.map((company) => (
           <TableRow key={company.id}>
-            <TableCell className="font-medium">{company.id}</TableCell>
             <TableCell>{company.nome}</TableCell>
             <TableCell>{company.cnpj || "-"}</TableCell>
             <TableCell>
