@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -59,8 +58,8 @@ export function MassRequestFilters({ filters, onFilterChange }: FiltersProps) {
   });
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow mb-6 space-y-4">
-      <div className="flex items-center gap-2 mb-2">
+    <div className="bg-white p-4 rounded-lg shadow mb-6">
+      <div className="flex items-center gap-2 mb-4">
         <Filter className="h-4 w-4" />
         <h2 className="text-sm font-medium">Filtros</h2>
       </div>
