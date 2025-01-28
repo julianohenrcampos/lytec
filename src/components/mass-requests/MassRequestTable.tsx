@@ -43,7 +43,7 @@ export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
   });
 
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="bg-white p-4 rounded-lg shadow">
       <Table>
         <MassRequestTableHeader />
         <TableBody>
