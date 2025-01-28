@@ -22,34 +22,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Eye, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface MassProgrammingTableProps {
+  data: any[];
   onEdit: (program: any) => void;
 }
 
-export function MassProgrammingTable({ onEdit }: MassProgrammingTableProps) {
+export function MassProgrammingTable({ data, onEdit }: MassProgrammingTableProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { toast } = useToast();
-
-  const { data: programs, isLoading } = useQuery({
-    queryKey: ["massProgramming"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("bd_programacaomassa")
-        .select(`
-          *,
-          bd_centrocusto (nome),
-          encarregado:bd_rhasfalto!bd_programacaomassa_encarregado_fkey (nome),
-          apontador:bd_rhasfalto!bd_programacaomassa_apontador_fkey (nome)
-        `)
-        .order("data_entrega", { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-  });
+  const navigate = useNavigate();
 
   const handleDelete = async (id: string) => {
     try {
@@ -73,10 +58,6 @@ export function MassProgrammingTable({ onEdit }: MassProgrammingTableProps) {
     }
   };
 
-  if (isLoading) {
-    return <div>Carregando...</div>;
-  }
-
   return (
     <div className="bg-white p-4 rounded-lg shadow">
       <Table>
@@ -95,7 +76,7 @@ export function MassProgrammingTable({ onEdit }: MassProgrammingTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {programs?.map((program) => (
+          {data?.map((program) => (
             <TableRow key={program.id}>
               <TableCell>
                 {format(new Date(program.data_entrega), "dd/MM/yyyy")}
@@ -109,6 +90,13 @@ export function MassProgrammingTable({ onEdit }: MassProgrammingTableProps) {
               <TableCell>{program.caminhao}</TableCell>
               <TableCell>{program.volume}</TableCell>
               <TableCell className="text-right space-x-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate(`/mass-programming/${program.id}`)}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
