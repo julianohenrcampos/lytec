@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 import {
   Table,
   TableBody,
@@ -9,24 +9,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useEmployeeFormData } from "./hooks/useEmployeeFormData";
+import { Button } from "@/components/ui/button";
+import { Pencil, Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-export const EmployeeTable = () => {
-  const [filters, setFilters] = React.useState({
-    nome: "",
-    funcao: "",
-    empresa: "",
-  });
+interface EmployeeTableProps {
+  filters: {
+    nome?: string;
+    funcao?: string;
+    empresa?: string;
+  };
+  onEdit: (employee: any) => void;
+}
 
-  const { funcoes, empresas } = useEmployeeFormData();
+export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
+  const { toast } = useToast();
 
   const { data: employees, isLoading } = useQuery({
     queryKey: ["employees", filters],
@@ -36,7 +34,9 @@ export const EmployeeTable = () => {
         .select(`
           *,
           funcao:funcao_id(nome),
-          empresa:empresa_id(nome)
+          empresa:empresa_id(nome),
+          empresa_proprietaria:empresa_proprietaria_id(nome),
+          centro_custo:centro_custo_id(nome)
         `);
 
       if (filters.nome) {
@@ -46,14 +46,21 @@ export const EmployeeTable = () => {
         query = query.eq("funcao_id", filters.funcao);
       }
       if (filters.empresa && filters.empresa !== "_all") {
-        query = query.eq("empresa_id", filters.empresa);
+        query = query.eq("empresa_proprietaria_id", filters.empresa);
       }
 
       const { data, error } = await query;
+      
       if (error) {
         console.error("Error fetching employees:", error);
-        throw error;
+        toast({
+          variant: "destructive",
+          title: "Erro ao carregar funcionários",
+          description: error.message,
+        });
+        return [];
       }
+      
       return data || [];
     },
   });
@@ -63,75 +70,46 @@ export const EmployeeTable = () => {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <Input
-            placeholder="Filtrar por nome"
-            value={filters.nome}
-            onChange={(e) => setFilters({ ...filters, nome: e.target.value })}
-          />
-        </div>
-        <div>
-          <Select
-            value={filters.funcao}
-            onValueChange={(value) => setFilters({ ...filters, funcao: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por função" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">Todas as funções</SelectItem>
-              {funcoes?.map((funcao) => (
-                <SelectItem key={funcao.id} value={funcao.id}>
-                  {funcao.nome}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Select
-            value={filters.empresa}
-            onValueChange={(value) => setFilters({ ...filters, empresa: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por empresa" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="_all">Todas as empresas</SelectItem>
-              {empresas?.map((empresa) => (
-                <SelectItem key={empresa.id} value={empresa.id}>
-                  {empresa.nome}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nome</TableHead>
-            <TableHead>Função</TableHead>
-            <TableHead>Empresa</TableHead>
-            <TableHead>Matrícula</TableHead>
-            <TableHead>Status</TableHead>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Nome</TableHead>
+          <TableHead>Função</TableHead>
+          <TableHead>Empresa</TableHead>
+          <TableHead>Empresa Proprietária</TableHead>
+          <TableHead>Centro de Custo</TableHead>
+          <TableHead>Data de Admissão</TableHead>
+          <TableHead className="text-right">Ações</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {employees?.map((employee) => (
+          <TableRow key={employee.id}>
+            <TableCell>{employee.nome}</TableCell>
+            <TableCell>{employee.funcao?.nome}</TableCell>
+            <TableCell>{employee.empresa?.nome}</TableCell>
+            <TableCell>{employee.empresa_proprietaria?.nome}</TableCell>
+            <TableCell>{employee.centro_custo?.nome}</TableCell>
+            <TableCell>
+              {employee.admissao ? format(new Date(employee.admissao), "dd/MM/yyyy") : "-"}
+            </TableCell>
+            <TableCell className="text-right">
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => onEdit(employee)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="icon">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {employees?.map((employee) => (
-            <TableRow key={employee.id}>
-              <TableCell>{employee.nome}</TableCell>
-              <TableCell>{employee.funcao?.nome}</TableCell>
-              <TableCell>{employee.empresa?.nome}</TableCell>
-              <TableCell>{employee.matricula}</TableCell>
-              <TableCell>{employee.ativo ? "Ativo" : "Inativo"}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
