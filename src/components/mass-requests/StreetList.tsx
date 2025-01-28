@@ -35,6 +35,8 @@ export function StreetList() {
       largura: 0,
       comprimento: 0,
       espessura: 0,
+      traco: "",
+      ligante: "",
     });
   };
 
@@ -51,40 +53,14 @@ export function StreetList() {
   }, 0);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">
-          {controlledFields.length} rua(s) adicionada(s)
-        </span>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Eye className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-7xl">
-            <DialogHeader className="flex flex-row items-center justify-between border-b pb-2">
-              <DialogTitle>Lista de Ruas</DialogTitle>
-              <div className="flex items-center gap-2">
-                <AddStreetButton onClick={handleAddStreet} />
-                <DialogClose asChild>
-                  <Button variant="outline" size="icon">
-                    <X className="h-4 w-4" />
-                    <span className="sr-only">Close</span>
-                  </Button>
-                </DialogClose>
-              </div>
-            </DialogHeader>
-            <StreetTable
-              fields={controlledFields}
-              onRemove={remove}
-              totalArea={totalArea}
-              totalWeight={totalWeight}
-              totalLength={totalLength}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+    <div className="w-full border-collapse border">
+      <StreetTable
+        fields={controlledFields}
+        onRemove={remove}
+        totalArea={totalArea}
+        totalWeight={totalWeight}
+        totalLength={totalLength}
+      />
     </div>
   );
 }

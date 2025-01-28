@@ -11,7 +11,6 @@ export function FormFields() {
       <DirectoryField />
       <ManagementField />
       <EngineerField />
-      <DateField />
     </div>
   );
 }

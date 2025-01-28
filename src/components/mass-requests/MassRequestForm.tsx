@@ -39,7 +39,7 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           data: new Date(),
           ligante: "",
           traco: "",
-          streets: [{
+          streets: Array.from({ length: 10 }, () => ({
             logradouro: "",
             bairro: "",
             largura: 0,
@@ -47,19 +47,18 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
             espessura: 0,
             traco: "",
             ligante: "",
-          }],
+          })),
         },
   });
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6 w-full max-w-full overflow-hidden px-1">
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6 w-full max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <h2 className="text-xl font-bold mb-4 text-center">REQUISIÇÃO DE ASFALTO</h2>
         <FormFields />
-
         <div className="space-y-4">
           <StreetList />
         </div>
-
         <div className="flex justify-end space-x-2">
           <Button
             type="button"
