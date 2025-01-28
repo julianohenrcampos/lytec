@@ -24,6 +24,15 @@ interface EmployeeTableProps {
   onEdit: (employee: Partial<EmployeeFormValues>) => void;
 }
 
+// Helper function to validate escolaridade
+const validateEscolaridade = (value: string | null): "Fundamental" | "Médio" | "Técnico" | "Superior" => {
+  const validValues = ["Fundamental", "Médio", "Técnico", "Superior"];
+  if (value && validValues.includes(value)) {
+    return value as "Fundamental" | "Médio" | "Técnico" | "Superior";
+  }
+  return "Médio"; // Default value if invalid
+};
+
 export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
   const { toast } = useToast();
 
@@ -70,6 +79,15 @@ export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
     return <div>Carregando...</div>;
   }
 
+  const handleEdit = (employee: any) => {
+    // Transform the employee data to match EmployeeFormValues
+    const formattedEmployee: Partial<EmployeeFormValues> = {
+      ...employee,
+      escolaridade: validateEscolaridade(employee.escolaridade),
+    };
+    onEdit(formattedEmployee);
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -99,7 +117,7 @@ export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => onEdit(employee)}
+                  onClick={() => handleEdit(employee)}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
