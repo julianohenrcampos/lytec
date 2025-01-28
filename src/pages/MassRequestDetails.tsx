@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 
 export default function MassRequestDetails() {
   const { id } = useParams();
@@ -38,40 +39,55 @@ export default function MassRequestDetails() {
 
   return (
     <div className="container mx-auto py-10">
-      <div className="mb-6">
-        <Button
-          variant="outline"
-          onClick={() => navigate("/mass-requests")}
-          className="mb-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Voltar
-        </Button>
-        <h1 className="text-2xl font-bold">Detalhes da Requisição</h1>
-      </div>
+      <Button
+        variant="outline"
+        onClick={() => navigate("/mass-requests")}
+        className="mb-6"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Voltar
+      </Button>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div>
-          <h2 className="font-semibold mb-2">Informações Gerais</h2>
-          <div className="space-y-2">
-            <p><span className="font-medium">Data:</span> {format(new Date(request.data), "dd/MM/yyyy")}</p>
-            <p><span className="font-medium">Centro de Custo:</span> {request.centro_custo}</p>
-            <p><span className="font-medium">Diretoria:</span> {request.diretoria || "-"}</p>
-            <p><span className="font-medium">Gerência:</span> {request.gerencia || "-"}</p>
-            <p><span className="font-medium">Engenheiro:</span> {request.engenheiro}</p>
+      <Card className="p-6 mb-8">
+        <div className="grid grid-cols-5 gap-6">
+          <div>
+            <h3 className="font-semibold text-sm text-gray-500 mb-1">Data</h3>
+            <p className="text-base">{format(new Date(request.data), "dd/MM/yyyy")}</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-gray-500 mb-1">Centro de Custo</h3>
+            <p className="text-base">{request.centro_custo}</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-gray-500 mb-1">Diretoria</h3>
+            <p className="text-base">{request.diretoria || "-"}</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-gray-500 mb-1">Gerência</h3>
+            <p className="text-base">{request.gerencia || "-"}</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-gray-500 mb-1">Engenheiro</h3>
+            <p className="text-base">{request.engenheiro}</p>
           </div>
         </div>
-        <div>
-          <h2 className="font-semibold mb-2">Totais</h2>
-          <div className="space-y-2">
-            <p><span className="font-medium">Área Total:</span> {request.area} m²</p>
-            <p><span className="font-medium">Peso Total:</span> {request.peso} t</p>
+      </Card>
+
+      <Card className="p-6 mb-8">
+        <div className="grid grid-cols-3 gap-6">
+          <div>
+            <h3 className="font-semibold text-sm text-gray-500 mb-1">Área Total</h3>
+            <p className="text-base">{request.area} m²</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-gray-500 mb-1">Peso Total</h3>
+            <p className="text-base">{request.peso} t</p>
           </div>
         </div>
-      </div>
+      </Card>
 
-      <div>
-        <h2 className="font-semibold mb-4">Lista de Ruas</h2>
+      <Card className="p-6">
+        <h2 className="font-semibold text-lg mb-4">Lista de Ruas</h2>
         <Table>
           <TableHeader>
             <TableRow>
@@ -102,7 +118,7 @@ export default function MassRequestDetails() {
             ))}
           </TableBody>
         </Table>
-      </div>
+      </Card>
     </div>
   );
 }
