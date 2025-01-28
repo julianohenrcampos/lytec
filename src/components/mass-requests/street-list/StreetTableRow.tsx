@@ -103,9 +103,8 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
             <SelectValue placeholder="Ligante" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Binder">Binder</SelectItem>
-            <SelectItem value="5A">5A</SelectItem>
-            <SelectItem value="4C">4C</SelectItem>
+            <SelectItem value="IMPRIMA">IMPRIMA</SelectItem>
+            <SelectItem value="RR">RR</SelectItem>
           </SelectContent>
         </Select>
       </TableCell>
