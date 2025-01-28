@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard,
@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function DashboardLayout({ children }: { children: React.ReactNode }) {
+export function DashboardLayout() {
   const { signOut } = useAuth();
   const location = useLocation();
 
@@ -82,7 +82,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
-          <main className="p-8">{children}</main>
+          <main className="p-8">
+            <Outlet />
+          </main>
         </div>
       </div>
     </div>
