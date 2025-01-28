@@ -21,7 +21,7 @@ interface StreetDetailsProps {
 
 export function StreetDetails({ streets, totalArea, totalWeight }: StreetDetailsProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h2 className="font-semibold text-lg mb-4">Lista de Ruas</h2>
         <Table>
@@ -64,8 +64,8 @@ export function StreetDetails({ streets, totalArea, totalWeight }: StreetDetails
         </Table>
       </div>
 
-      <div className="border-t pt-6">
-        <div className="grid grid-cols-2 gap-6">
+      <div className="border-t pt-4">
+        <div className="grid grid-cols-2 gap-4 max-w-md ml-auto">
           <div className="flex flex-col items-end">
             <h3 className="font-semibold text-sm text-gray-500 mb-1">Área Total</h3>
             <p className="text-base">{totalArea?.toFixed(2)} m²</p>
