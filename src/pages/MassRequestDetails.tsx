@@ -49,7 +49,7 @@ export default function MassRequestDetails() {
       </Button>
 
       <Card className="p-6 mb-8">
-        <div className="flex flex-wrap gap-24 px-16 justify-center">
+        <div className="flex flex-wrap gap-24 px-16">
           <div>
             <h3 className="font-semibold text-sm text-gray-500 mb-1">Data</h3>
             <p className="text-base">{format(new Date(request.data), "dd/MM/yyyy")}</p>
