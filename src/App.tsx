@@ -5,6 +5,7 @@ import { TeamDetails } from "@/components/teams/TeamDetails";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
+import MassProgramming from "@/pages/MassProgramming";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/teams" element={<TeamManagement />} />
             <Route path="/teams/:id" element={<TeamDetails />} />
+            <Route path="/mass-programming" element={<MassProgramming />} />
           </Route>
         </Routes>
       </BrowserRouter>
