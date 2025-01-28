@@ -59,7 +59,7 @@ export function MassRequestFilters({ filters, onFilterChange }: FiltersProps) {
 
   return (
     <div className="bg-white p-4 rounded-lg shadow mb-6">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex justify-end items-center gap-2 mb-4">
         <Filter className="h-4 w-4" />
         <h2 className="text-sm font-medium">Filtros</h2>
       </div>
