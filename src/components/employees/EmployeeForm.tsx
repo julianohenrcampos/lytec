@@ -23,32 +23,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { format, addDays } from "date-fns";
-
-const employeeSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório"),
-  cpf: z.string().min(11, "CPF inválido").max(14, "CPF inválido"),
-  matricula: z.string().min(1, "Matrícula é obrigatória"),
-  funcao_id: z.string().min(1, "Função é obrigatória"),
-  centro_custo_id: z.string().min(1, "Centro de Custo é obrigatório"),
-  empresa_id: z.string().min(1, "Empresa é obrigatória"),
-  equipe_id: z.string().optional(),
-  salario: z.coerce.number().min(1, "Salário é obrigatório"),
-  insalubridade: z.coerce.number().optional(),
-  periculosidade: z.coerce.number().optional(),
-  gratificacao: z.coerce.number().optional(),
-  adicional_noturno: z.coerce.number().optional(),
-  custo_passagem: z.coerce.number().optional(),
-  refeicao: z.coerce.number().optional(),
-  diarias: z.coerce.number().optional(),
-  admissao: z.string().min(1, "Data de Admissão é obrigatória"),
-  demissao: z.string().optional(),
-  ativo: z.boolean().default(true),
-  aviso: z.boolean().default(false),
-  endereco: z.string().optional(),
-  imagem: z.string().optional(),
-  escolaridade: z.enum(["Fundamental", "Médio", "Técnico", "Superior"]).default("Médio"),
-  genero: z.boolean().default(true),
-});
+import { employeeSchema } from "./types";
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
@@ -64,7 +39,7 @@ export const EmployeeForm = () => {
       matricula: "",
       funcao_id: "",
       centro_custo_id: "",
-      empresa_id: "",
+      empresa_proprietaria_id: "",
       equipe_id: "",
       salario: 0,
       insalubridade: 0,
@@ -101,10 +76,10 @@ export const EmployeeForm = () => {
     },
   });
 
-  const { data: empresas } = useQuery({
-    queryKey: ["empresas"],
+  const { data: empresasProprietarias } = useQuery({
+    queryKey: ["empresasProprietarias"],
     queryFn: async () => {
-      const { data } = await supabase.from("bd_empresa").select("*");
+      const { data } = await supabase.from("bd_empresa_proprietaria").select("*");
       return data || [];
     },
   });
@@ -129,7 +104,7 @@ export const EmployeeForm = () => {
           matricula: values.matricula,
           funcao_id: values.funcao_id,
           centro_custo_id: values.centro_custo_id,
-          empresa_id: values.empresa_id,
+          empresa_proprietaria_id: values.empresa_proprietaria_id,
           equipe_id: values.equipe_id || null,
           salario: Number(values.salario),
           insalubridade: values.insalubridade ? Number(values.insalubridade) : null,
@@ -276,18 +251,18 @@ export const EmployeeForm = () => {
 
           <FormField
             control={form.control}
-            name="empresa_id"
+            name="empresa_proprietaria_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Empresa</FormLabel>
+                <FormLabel>Empresa Proprietária</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma empresa" />
+                      <SelectValue placeholder="Selecione uma empresa proprietária" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {empresas?.map((empresa) => (
+                    {empresasProprietarias?.map((empresa) => (
                       <SelectItem key={empresa.id} value={empresa.id}>
                         {empresa.nome}
                       </SelectItem>

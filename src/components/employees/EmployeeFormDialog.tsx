@@ -28,7 +28,7 @@ export function EmployeeFormDialog({ open, onOpenChange, initialData }: Employee
       imagem: "",
       funcao_id: "",
       centro_custo_id: "",
-      empresa_id: "",
+      empresa_proprietaria_id: "",
       equipe_id: "",
       salario: 0,
       insalubridade: 0,
@@ -42,6 +42,7 @@ export function EmployeeFormDialog({ open, onOpenChange, initialData }: Employee
       demissao: "",
       ativo: true,
       aviso: false,
+      escolaridade: "Médio",
     },
   });
 
