@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export type FormStep = "personal" | "professional" | "contract" | "financial";
+
 export const employeeSchema = z.object({
   // Personal Data
   nome: z.string().min(1, "Nome é obrigatório"),

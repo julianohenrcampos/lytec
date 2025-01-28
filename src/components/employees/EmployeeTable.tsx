@@ -42,16 +42,19 @@ export const EmployeeTable = () => {
       if (filters.nome) {
         query = query.ilike("nome", `%${filters.nome}%`);
       }
-      if (filters.funcao) {
+      if (filters.funcao && filters.funcao !== "_all") {
         query = query.eq("funcao_id", filters.funcao);
       }
-      if (filters.empresa) {
+      if (filters.empresa && filters.empresa !== "_all") {
         query = query.eq("empresa_id", filters.empresa);
       }
 
       const { data, error } = await query;
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error("Error fetching employees:", error);
+        throw error;
+      }
+      return data || [];
     },
   });
 
