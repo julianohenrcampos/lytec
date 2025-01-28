@@ -6,6 +6,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import MassProgramming from "@/pages/MassProgramming";
+import PlantManagement from "@/pages/PlantManagement";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/teams" element={<TeamManagement />} />
             <Route path="/teams/:id" element={<TeamDetails />} />
             <Route path="/mass-programming" element={<MassProgramming />} />
+            <Route path="/plants" element={<PlantManagement />} />
           </Route>
         </Routes>
       </BrowserRouter>

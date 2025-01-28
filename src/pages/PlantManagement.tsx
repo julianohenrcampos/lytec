@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -34,6 +35,9 @@ export default function PlantManagement() {
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
               <DialogTitle>{selectedPlant ? "Editar Usina" : "Nova Usina"}</DialogTitle>
+              <DialogDescription>
+                Preencha os dados da usina nos campos abaixo.
+              </DialogDescription>
             </DialogHeader>
             <div className="mt-6">
               <PlantForm
