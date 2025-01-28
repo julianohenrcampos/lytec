@@ -126,7 +126,7 @@ export function MassRequestFilters({ filters, onFilterChange }: FiltersProps) {
               <SelectValue placeholder="Selecione um engenheiro" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos</SelectItem>
+              <SelectItem value="_all">Todos</SelectItem>
               {engineers?.map((engineer) => (
                 <SelectItem key={engineer} value={engineer}>
                   {engineer}
@@ -148,7 +148,7 @@ export function MassRequestFilters({ filters, onFilterChange }: FiltersProps) {
               <SelectValue placeholder="Selecione um centro de custo" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos</SelectItem>
+              <SelectItem value="_all">Todos</SelectItem>
               {costCenters?.map((cc) => (
                 <SelectItem key={cc.id} value={cc.nome}>
                   {cc.nome}
@@ -165,8 +165,8 @@ export function MassRequestFilters({ filters, onFilterChange }: FiltersProps) {
               onFilterChange({
                 startDate: null,
                 endDate: null,
-                engineer: "",
-                costCenter: "",
+                engineer: "_all",
+                costCenter: "_all",
               })
             }
           >
