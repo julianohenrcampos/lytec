@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MassProgrammingForm } from "@/components/mass-programming/MassProgrammingForm";
 import { MassProgrammingTable } from "@/components/mass-programming/MassProgrammingTable";
+import { MassProgrammingFilters } from "@/components/mass-programming/MassProgrammingFilters";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +17,42 @@ import { Plus } from "lucide-react";
 export default function MassProgramming() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingProgram, setEditingProgram] = useState<any>(null);
+  const [filters, setFilters] = useState({
+    date: null as Date | null,
+    costCenter: "_all",
+    manager: "_all",
+  });
+
+  const { data: programs, isLoading } = useQuery({
+    queryKey: ["massProgramming", filters],
+    queryFn: async () => {
+      let query = supabase
+        .from("bd_programacaomassa")
+        .select(`
+          *,
+          bd_centrocusto (nome),
+          encarregado:bd_rhasfalto!bd_programacaomassa_encarregado_fkey (nome),
+          apontador:bd_rhasfalto!bd_programacaomassa_apontador_fkey (nome)
+        `)
+        .order("data_entrega", { ascending: false });
+
+      if (filters.date) {
+        query = query.eq("data_entrega", filters.date.toISOString());
+      }
+
+      if (filters.costCenter !== "_all") {
+        query = query.eq("bd_centrocusto.nome", filters.costCenter);
+      }
+
+      if (filters.manager !== "_all") {
+        query = query.eq("encarregado", filters.manager);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const handleEdit = (program: any) => {
     setEditingProgram(program);
@@ -52,7 +89,13 @@ export default function MassProgramming() {
         </Dialog>
       </div>
 
-      <MassProgrammingTable onEdit={handleEdit} />
+      <MassProgrammingFilters filters={filters} onFilterChange={setFilters} />
+      
+      {isLoading ? (
+        <div>Carregando...</div>
+      ) : (
+        <MassProgrammingTable data={programs} onEdit={handleEdit} />
+      )}
     </div>
   );
 }
