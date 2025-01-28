@@ -55,90 +55,92 @@ export const TeamFormDialog = () => {
     },
   });
 
-  // Query to get teams for the name dropdown
-  const { data: teams } = useQuery({
-    queryKey: ["teams"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("bd_equipe")
-        .select("id, nome")
-        .order("nome");
-      return data || [];
-    },
-  });
-
-  // Query to get employees filtered by function
+  // Query to get encarregados (filtered by function)
   const { data: encarregados } = useQuery({
     queryKey: ["encarregados"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("bd_rhasfalto")
-        .select("id, nome, funcao_id, funcao:bd_funcao(id, nome)")
+        .select("id, nome, funcao:bd_funcao(nome)")
         .eq("ativo", true)
-        .eq("funcao:bd_funcao.nome", "Encarregado");
+        .eq("funcao.nome", "Encarregado");
+
+      if (error) throw error;
       return data || [];
     },
   });
 
+  // Query to get apontadores (filtered by function)
   const { data: apontadores } = useQuery({
     queryKey: ["apontadores"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("bd_rhasfalto")
-        .select("id, nome, funcao_id, funcao:bd_funcao(id, nome)")
+        .select("id, nome, funcao:bd_funcao(nome)")
         .eq("ativo", true)
-        .eq("funcao:bd_funcao.nome", "Apontador");
+        .eq("funcao.nome", "Apontador");
+
+      if (error) throw error;
       return data || [];
     },
   });
 
+  // Query to get all active employees for collaborator selection
   const { data: employees } = useQuery({
     queryKey: ["employees"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("id, nome, matricula")
         .eq("ativo", true);
+      
+      if (error) throw error;
       return data || [];
     },
   });
 
-  // Update selected employees when encarregado or apontador changes
+  // Watch for encarregado_id changes to update team name
   useEffect(() => {
     const encarregadoId = form.watch("encarregado_id");
-    const apontadorId = form.watch("apontador_id");
-    
-    if (encarregadoId || apontadorId) {
-      const uniqueEmployees = new Set([...selectedEmployees]);
-      
-      if (encarregadoId) uniqueEmployees.add(encarregadoId);
-      if (apontadorId) uniqueEmployees.add(apontadorId);
-      
-      setSelectedEmployees(Array.from(uniqueEmployees));
+    if (encarregadoId) {
+      const selectedEncarregado = encarregados?.find(e => e.id === encarregadoId);
+      if (selectedEncarregado) {
+        form.setValue("nome", `Equipe ${selectedEncarregado.nome}`);
+      }
     }
-  }, [form.watch("encarregado_id"), form.watch("apontador_id")]);
-
-  const filteredEmployees = employees?.filter(
-    (employee) =>
-      (employee.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        employee.matricula.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      !selectedEmployees.includes(employee.id)
-  );
+  }, [form.watch("encarregado_id"), encarregados]);
 
   const createTeam = useMutation({
     mutationFn: async (values: TeamFormValues) => {
-      const { error } = await supabase.from("bd_equipe").insert([
-        {
-          nome: values.nome,
-          encarregado_id: values.encarregado_id,
-          apontador_id: values.apontador_id,
-          colaboradores: selectedEmployees,
-        },
-      ]);
-      if (error) throw error;
+      // First create the team
+      const { data: teamData, error: teamError } = await supabase
+        .from("bd_equipe")
+        .insert([
+          {
+            nome: values.nome,
+            encarregado_id: values.encarregado_id,
+            apontador_id: values.apontador_id,
+            colaboradores: selectedEmployees,
+          },
+        ])
+        .select()
+        .single();
+
+      if (teamError) throw teamError;
+
+      // Then update all selected employees with the new team_id
+      const { error: updateError } = await supabase
+        .from("bd_rhasfalto")
+        .update({ equipe_id: teamData.id })
+        .in("id", selectedEmployees);
+
+      if (updateError) throw updateError;
+
+      return teamData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teams"] });
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
       toast({ title: "Equipe cadastrada com sucesso!" });
       setOpen(false);
       form.reset();
@@ -160,7 +162,7 @@ export const TeamFormDialog = () => {
   const handleAddEmployee = (employeeId: string) => {
     if (!selectedEmployees.includes(employeeId)) {
       setSelectedEmployees([...selectedEmployees, employeeId]);
-      setSearchTerm(""); // Clear search after adding
+      setSearchTerm("");
     }
   };
 
@@ -187,6 +189,13 @@ export const TeamFormDialog = () => {
     setSelectedEmployees(selectedEmployees.filter((id) => id !== employeeId));
   };
 
+  const filteredEmployees = employees?.filter(
+    (employee) =>
+      (employee.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        employee.matricula.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      !selectedEmployees.includes(employee.id)
+  );
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -207,20 +216,9 @@ export const TeamFormDialog = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome da Equipe</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um nome para a equipe" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {teams?.map((team) => (
-                        <SelectItem key={team.id} value={team.nome}>
-                          {team.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <Input {...field} disabled placeholder="Nome será gerado automaticamente" />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
