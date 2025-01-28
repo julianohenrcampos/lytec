@@ -21,32 +21,47 @@ const EmployeeManagement = () => {
     setOpen(true);
   };
 
+  const handleView = (employee: Partial<EmployeeFormValues>) => {
+    // TODO: Implement view functionality in a new page or dialog
+    console.log("View employee:", employee);
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Gerenciamento de Funcionários</CardTitle>
-          <Button onClick={() => setOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Cadastrar Funcionário
-          </Button>
-          <EmployeeFormDialog 
-            open={open} 
-            onOpenChange={setOpen} 
-            initialData={selectedEmployee}
-          />
+        <CardHeader>
+          <CardTitle>Filtros</CardTitle>
         </CardHeader>
         <CardContent>
           <EmployeeFilters 
             filters={filters}
             onFilterChange={setFilters}
           />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Lista de Funcionários</CardTitle>
+          <Button onClick={() => setOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Cadastrar Funcionário
+          </Button>
+        </CardHeader>
+        <CardContent>
           <EmployeeTable 
             filters={filters}
             onEdit={handleEdit}
+            onView={handleView}
           />
         </CardContent>
       </Card>
+
+      <EmployeeFormDialog 
+        open={open} 
+        onOpenChange={setOpen} 
+        initialData={selectedEmployee}
+      />
     </div>
   );
 };

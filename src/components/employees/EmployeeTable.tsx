@@ -13,9 +13,10 @@ interface EmployeeTableProps {
     centro_custo: string;
   };
   onEdit: (employee: Partial<EmployeeFormValues>) => void;
+  onView: (employee: Partial<EmployeeFormValues>) => void;
 }
 
-export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
+export const EmployeeTable = ({ filters, onEdit, onView }: EmployeeTableProps) => {
   const { toast } = useToast();
 
   const { data: employees, isLoading } = useQuery({
@@ -69,6 +70,7 @@ export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
             key={employee.id} 
             employee={employee} 
             onEdit={onEdit}
+            onView={onView}
           />
         ))}
       </TableBody>

@@ -4,9 +4,9 @@ export const EmployeeTableHeader = () => {
   return (
     <TableHeader>
       <TableRow>
+        <TableHead>Imagem</TableHead>
         <TableHead>Nome</TableHead>
         <TableHead>Função</TableHead>
-        <TableHead>Empresa</TableHead>
         <TableHead>Empresa Proprietária</TableHead>
         <TableHead>Centro de Custo</TableHead>
         <TableHead>Data de Admissão</TableHead>
