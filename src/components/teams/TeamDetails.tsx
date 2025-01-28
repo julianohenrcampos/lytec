@@ -24,7 +24,7 @@ export function TeamDetails() {
           *,
           encarregado:bd_rhasfalto!bd_equipe_encarregado_id_fkey(nome),
           apontador:bd_rhasfalto!bd_equipe_apontador_id_fkey(nome),
-          membros:bd_rhasfalto(id, nome, matricula)
+          membros:bd_rhasfalto!bd_rhasfalto_equipe_id_fkey(id, nome, matricula)
         `)
         .eq("id", id)
         .single();

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
-const TeamManagement = () => {
+export default function TeamManagement() {
   const [filters, setFilters] = useState({
     teamName: "",
   });
@@ -52,6 +52,4 @@ const TeamManagement = () => {
       />
     </div>
   );
-};
-
-export default TeamManagement;
+}
