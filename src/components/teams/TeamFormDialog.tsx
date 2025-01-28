@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,33 +11,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, X } from "lucide-react";
-import { z } from "zod";
-
-const teamSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório"),
-  encarregado_id: z.string().min(1, "Encarregado é obrigatório"),
-  apontador_id: z.string().min(1, "Apontador é obrigatório"),
-});
-
-type TeamFormValues = z.infer<typeof teamSchema>;
+import { Plus } from "lucide-react";
+import { TeamNameField } from "./TeamNameField";
+import { EmployeeSelect } from "./EmployeeSelect";
+import { CollaboratorSearch } from "./CollaboratorSearch";
+import { teamSchema, TeamFormValues } from "./types";
 
 export const TeamFormDialog = () => {
   const [open, setOpen] = useState(false);
@@ -55,50 +35,63 @@ export const TeamFormDialog = () => {
     },
   });
 
-  // Query to get encarregados (filtered by function)
-  const { data: encarregados } = useQuery({
-    queryKey: ["encarregados"],
+  // Query to get function IDs first
+  const { data: functionIds } = useQuery({
+    queryKey: ["function-ids"],
     queryFn: async () => {
-      const { data: funcaoData } = await supabase
+      const { data: encarregadoFunc } = await supabase
         .from("bd_funcao")
         .select("id")
         .eq("nome", "Encarregado")
         .single();
 
-      if (!funcaoData) return [];
-
-      const { data, error } = await supabase
-        .from("bd_rhasfalto")
-        .select("id, nome")
-        .eq("ativo", true)
-        .eq("funcao_id", funcaoData.id);
-
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
-  // Query to get apontadores (filtered by function)
-  const { data: apontadores } = useQuery({
-    queryKey: ["apontadores"],
-    queryFn: async () => {
-      const { data: funcaoData } = await supabase
+      const { data: apontadorFunc } = await supabase
         .from("bd_funcao")
         .select("id")
         .eq("nome", "Apontador")
         .single();
 
-      if (!funcaoData) return [];
+      return {
+        encarregadoId: encarregadoFunc?.id,
+        apontadorId: apontadorFunc?.id,
+      };
+    },
+  });
+
+  // Query to get encarregados using the function ID
+  const { data: encarregados } = useQuery({
+    queryKey: ["encarregados", functionIds?.encarregadoId],
+    queryFn: async () => {
+      if (!functionIds?.encarregadoId) return [];
 
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("id, nome")
         .eq("ativo", true)
-        .eq("funcao_id", funcaoData.id);
+        .eq("funcao_id", functionIds.encarregadoId);
 
       if (error) throw error;
       return data || [];
     },
+    enabled: !!functionIds?.encarregadoId,
+  });
+
+  // Query to get apontadores using the function ID
+  const { data: apontadores } = useQuery({
+    queryKey: ["apontadores", functionIds?.apontadorId],
+    queryFn: async () => {
+      if (!functionIds?.apontadorId) return [];
+
+      const { data, error } = await supabase
+        .from("bd_rhasfalto")
+        .select("id, nome")
+        .eq("ativo", true)
+        .eq("funcao_id", functionIds.apontadorId);
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!functionIds?.apontadorId,
   });
 
   // Query to get all active employees for collaborator selection
@@ -226,127 +219,33 @@ export const TeamFormDialog = () => {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="nome"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome da Equipe</FormLabel>
-                  <FormControl>
-                    <Input {...field} disabled placeholder="Nome será gerado automaticamente" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
+            <TeamNameField form={form} />
+            
+            <EmployeeSelect
+              form={form}
               name="encarregado_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Encarregado</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um encarregado" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {encarregados?.map((employee) => (
-                        <SelectItem key={employee.id} value={employee.id}>
-                          {employee.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Encarregado"
+              employees={encarregados}
+              placeholder="Selecione um encarregado"
             />
 
-            <FormField
-              control={form.control}
+            <EmployeeSelect
+              form={form}
               name="apontador_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Apontador</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um apontador" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {apontadores?.map((employee) => (
-                        <SelectItem key={employee.id} value={employee.id}>
-                          {employee.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Apontador"
+              employees={apontadores}
+              placeholder="Selecione um apontador"
             />
 
-            <div className="space-y-2">
-              <FormLabel>Colaboradores</FormLabel>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Buscar colaborador..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="flex-1"
-                />
-                <Button type="button" variant="outline">
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="border rounded-md p-2 min-h-[100px] space-y-2">
-                {selectedEmployees.map((employeeId) => {
-                  const employee = employees?.find((e) => e.id === employeeId);
-                  return (
-                    <div
-                      key={employeeId}
-                      className="flex items-center justify-between bg-secondary p-2 rounded-md"
-                    >
-                      <span>{employee?.nome}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveEmployee(employeeId)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {searchTerm && (
-                <div className="border rounded-md mt-2">
-                  {filteredEmployees?.map((employee) => (
-                    <div
-                      key={employee.id}
-                      className="p-2 hover:bg-secondary cursor-pointer flex justify-between items-center"
-                    >
-                      <span>{employee.nome} - {employee.matricula}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleAddEmployee(employee.id)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <CollaboratorSearch
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              filteredEmployees={filteredEmployees}
+              selectedEmployees={selectedEmployees}
+              onAddEmployee={handleAddEmployee}
+              onRemoveEmployee={handleRemoveEmployee}
+              employees={employees}
+            />
 
             <div className="flex justify-end space-x-2">
               <Button
