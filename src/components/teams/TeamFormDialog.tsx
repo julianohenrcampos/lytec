@@ -55,6 +55,43 @@ export const TeamFormDialog = () => {
     },
   });
 
+  // Query to get teams for the name dropdown
+  const { data: teams } = useQuery({
+    queryKey: ["teams"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("bd_equipe")
+        .select("id, nome")
+        .order("nome");
+      return data || [];
+    },
+  });
+
+  // Query to get employees filtered by function
+  const { data: encarregados } = useQuery({
+    queryKey: ["encarregados"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("bd_rhasfalto")
+        .select("id, nome, funcao_id, funcao:bd_funcao(id, nome)")
+        .eq("ativo", true)
+        .eq("funcao:bd_funcao.nome", "Encarregado");
+      return data || [];
+    },
+  });
+
+  const { data: apontadores } = useQuery({
+    queryKey: ["apontadores"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("bd_rhasfalto")
+        .select("id, nome, funcao_id, funcao:bd_funcao(id, nome)")
+        .eq("ativo", true)
+        .eq("funcao:bd_funcao.nome", "Apontador");
+      return data || [];
+    },
+  });
+
   const { data: employees } = useQuery({
     queryKey: ["employees"],
     queryFn: async () => {
@@ -123,6 +160,7 @@ export const TeamFormDialog = () => {
   const handleAddEmployee = (employeeId: string) => {
     if (!selectedEmployees.includes(employeeId)) {
       setSelectedEmployees([...selectedEmployees, employeeId]);
+      setSearchTerm(""); // Clear search after adding
     }
   };
 
@@ -130,7 +168,6 @@ export const TeamFormDialog = () => {
     const encarregadoId = form.getValues("encarregado_id");
     const apontadorId = form.getValues("apontador_id");
     
-    // Prevent removing if employee is encarregado or apontador
     if (employeeId === encarregadoId) {
       toast({
         variant: "destructive",
@@ -170,9 +207,20 @@ export const TeamFormDialog = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome da Equipe</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione um nome para a equipe" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {teams?.map((team) => (
+                        <SelectItem key={team.id} value={team.nome}>
+                          {team.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -191,7 +239,7 @@ export const TeamFormDialog = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {employees?.map((employee) => (
+                      {encarregados?.map((employee) => (
                         <SelectItem key={employee.id} value={employee.id}>
                           {employee.nome}
                         </SelectItem>
@@ -216,7 +264,7 @@ export const TeamFormDialog = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {employees?.map((employee) => (
+                      {apontadores?.map((employee) => (
                         <SelectItem key={employee.id} value={employee.id}>
                           {employee.nome}
                         </SelectItem>
@@ -269,10 +317,17 @@ export const TeamFormDialog = () => {
                   {filteredEmployees?.map((employee) => (
                     <div
                       key={employee.id}
-                      className="p-2 hover:bg-secondary cursor-pointer"
-                      onClick={() => handleAddEmployee(employee.id)}
+                      className="p-2 hover:bg-secondary cursor-pointer flex justify-between items-center"
                     >
-                      {employee.nome} - {employee.matricula}
+                      <span>{employee.nome} - {employee.matricula}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleAddEmployee(employee.id)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
                 </div>
