@@ -8,10 +8,10 @@ import {
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { EmployeeFormValues } from "./types";
+import { EmployeeWithRelations } from "./types";
 
 interface EmployeeViewDialogProps {
-  employee: Partial<EmployeeFormValues> | undefined;
+  employee: Partial<EmployeeWithRelations> | undefined;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -82,15 +82,15 @@ export const EmployeeViewDialog: React.FC<EmployeeViewDialogProps> = ({
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Função</p>
-                <p>{employee.funcao?.nome}</p>
+                <p>{employee.funcao?.nome || "-"}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Centro de Custo</p>
-                <p>{employee.centro_custo?.nome}</p>
+                <p>{employee.centro_custo?.nome || "-"}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Empresa Proprietária</p>
-                <p>{employee.empresa_proprietaria?.nome}</p>
+                <p>{employee.empresa_proprietaria?.nome || "-"}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Equipe</p>

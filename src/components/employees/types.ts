@@ -30,3 +30,11 @@ export const employeeSchema = z.object({
 });
 
 export type EmployeeFormValues = z.infer<typeof employeeSchema>;
+
+export interface EmployeeWithRelations extends EmployeeFormValues {
+  funcao?: { id: string; nome: string };
+  centro_custo?: { id: string; nome: string };
+  empresa_proprietaria?: { id: string; nome: string };
+  equipe?: { id: string; nome: string };
+  ferias?: string;
+}
