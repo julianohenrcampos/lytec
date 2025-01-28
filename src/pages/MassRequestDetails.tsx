@@ -74,19 +74,6 @@ export default function MassRequestDetails() {
       </Card>
 
       <Card className="p-6 mb-8">
-        <div className="grid grid-cols-3 gap-6">
-          <div className="flex flex-col">
-            <h3 className="font-semibold text-sm text-gray-500 mb-1">Área Total</h3>
-            <p className="text-base">{request.area} m²</p>
-          </div>
-          <div className="flex flex-col">
-            <h3 className="font-semibold text-sm text-gray-500 mb-1">Peso Total</h3>
-            <p className="text-base">{request.peso} t</p>
-          </div>
-        </div>
-      </Card>
-
-      <Card className="p-6">
         <h2 className="font-semibold text-lg mb-4">Lista de Ruas</h2>
         <Table>
           <TableHeader>
@@ -118,6 +105,19 @@ export default function MassRequestDetails() {
             ))}
           </TableBody>
         </Table>
+      </Card>
+
+      <Card className="p-6">
+        <div className="grid grid-cols-3 gap-6">
+          <div className="flex flex-col">
+            <h3 className="font-semibold text-sm text-gray-500 mb-1">Área Total</h3>
+            <p className="text-base">{request.area} m²</p>
+          </div>
+          <div className="flex flex-col">
+            <h3 className="font-semibold text-sm text-gray-500 mb-1">Peso Total</h3>
+            <p className="text-base">{request.peso} t</p>
+          </div>
+        </div>
       </Card>
     </div>
   );
