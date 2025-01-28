@@ -1,19 +1,10 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Table, TableBody } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { EmployeeFormValues } from "./types";
+import { EmployeeTableHeader } from "./table/EmployeeTableHeader";
+import { EmployeeTableRow } from "./table/EmployeeTableRow";
 
 interface EmployeeTableProps {
   filters: {
@@ -23,15 +14,6 @@ interface EmployeeTableProps {
   };
   onEdit: (employee: Partial<EmployeeFormValues>) => void;
 }
-
-// Helper function to validate escolaridade
-const validateEscolaridade = (value: string | null): "Fundamental" | "Médio" | "Técnico" | "Superior" => {
-  const validValues = ["Fundamental", "Médio", "Técnico", "Superior"];
-  if (value && validValues.includes(value)) {
-    return value as "Fundamental" | "Médio" | "Técnico" | "Superior";
-  }
-  return "Médio"; // Default value if invalid
-};
 
 export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
   const { toast } = useToast();
@@ -79,54 +61,16 @@ export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
     return <div>Carregando...</div>;
   }
 
-  const handleEdit = (employee: any) => {
-    // Transform the employee data to match EmployeeFormValues
-    const formattedEmployee: Partial<EmployeeFormValues> = {
-      ...employee,
-      escolaridade: validateEscolaridade(employee.escolaridade),
-    };
-    onEdit(formattedEmployee);
-  };
-
   return (
     <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nome</TableHead>
-          <TableHead>Função</TableHead>
-          <TableHead>Empresa</TableHead>
-          <TableHead>Empresa Proprietária</TableHead>
-          <TableHead>Centro de Custo</TableHead>
-          <TableHead>Data de Admissão</TableHead>
-          <TableHead className="text-right">Ações</TableHead>
-        </TableRow>
-      </TableHeader>
+      <EmployeeTableHeader />
       <TableBody>
         {employees?.map((employee) => (
-          <TableRow key={employee.id}>
-            <TableCell>{employee.nome}</TableCell>
-            <TableCell>{employee.funcao?.nome}</TableCell>
-            <TableCell>{employee.empresa?.nome}</TableCell>
-            <TableCell>{employee.empresa_proprietaria?.nome}</TableCell>
-            <TableCell>{employee.centro_custo?.nome}</TableCell>
-            <TableCell>
-              {employee.admissao ? format(new Date(employee.admissao), "dd/MM/yyyy") : "-"}
-            </TableCell>
-            <TableCell className="text-right">
-              <div className="flex justify-end space-x-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleEdit(employee)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="icon">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
+          <EmployeeTableRow 
+            key={employee.id} 
+            employee={employee} 
+            onEdit={onEdit}
+          />
         ))}
       </TableBody>
     </Table>
