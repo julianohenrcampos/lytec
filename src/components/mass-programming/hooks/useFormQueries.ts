@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export function useFormQueries() {
+  // Query for plants
   const { data: plants } = useQuery({
     queryKey: ["plants"],
     queryFn: async () => {
@@ -14,6 +15,7 @@ export function useFormQueries() {
     },
   });
 
+  // Query for cost centers
   const { data: costCenters } = useQuery({
     queryKey: ["costCenters"],
     queryFn: async () => {
@@ -26,7 +28,7 @@ export function useFormQueries() {
     },
   });
 
-  // First, get the function IDs
+  // Query for function IDs
   const { data: funcoes } = useQuery({
     queryKey: ["funcoes"],
     queryFn: async () => {
@@ -38,48 +40,64 @@ export function useFormQueries() {
     },
   });
 
-  // Then use the function IDs to get managers
+  // Query for managers (encarregados)
   const { data: managers } = useQuery({
     queryKey: ["managers", funcoes],
     queryFn: async () => {
       if (!funcoes) return [];
-      const encarregadoFunc = funcoes.find(f => f.nome.toLowerCase() === "encarregado");
-      if (!encarregadoFunc) return [];
+      
+      const encarregadoFunc = funcoes.find(
+        (f) => f.nome.toLowerCase() === "encarregado"
+      );
+      
+      if (!encarregadoFunc) {
+        console.warn("Função 'encarregado' não encontrada");
+        return [];
+      }
 
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("id, nome")
         .eq("funcao_id", encarregadoFunc.id)
         .order("nome");
+
       if (error) throw error;
-      return data;
+      return data || [];
     },
     enabled: !!funcoes,
   });
 
-  // And use the function IDs to get pointers
+  // Query for pointers (apontadores)
   const { data: pointers } = useQuery({
     queryKey: ["pointers", funcoes],
     queryFn: async () => {
       if (!funcoes) return [];
-      const apontadorFunc = funcoes.find(f => f.nome.toLowerCase() === "apontador");
-      if (!apontadorFunc) return [];
+      
+      const apontadorFunc = funcoes.find(
+        (f) => f.nome.toLowerCase() === "apontador"
+      );
+      
+      if (!apontadorFunc) {
+        console.warn("Função 'apontador' não encontrada");
+        return [];
+      }
 
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("id, nome")
         .eq("funcao_id", apontadorFunc.id)
         .order("nome");
+
       if (error) throw error;
-      return data;
+      return data || [];
     },
     enabled: !!funcoes,
   });
 
   return {
-    plants,
-    costCenters,
-    managers,
-    pointers,
+    plants: plants || [],
+    costCenters: costCenters || [],
+    managers: managers || [],
+    pointers: pointers || [],
   };
 }
