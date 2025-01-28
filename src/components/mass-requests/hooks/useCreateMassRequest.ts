@@ -18,6 +18,7 @@ export function useCreateMassRequest(onSuccess?: () => void) {
       const firstStreet = values.streets[0];
       const { area, peso } = calculateStreetMetrics(firstStreet);
 
+      // Create the main request
       const { data: requestData, error: requestError } = await supabase
         .from("bd_requisicao")
         .insert([{
@@ -33,37 +34,36 @@ export function useCreateMassRequest(onSuccess?: () => void) {
           espessura: firstStreet.espessura,
           area: area,
           peso: peso,
-          traco: firstStreet.traco,
-          ligante: firstStreet.ligante,
+          traco: values.traco,
+          ligante: values.ligante,
         }])
         .select()
         .single();
 
       if (requestError) throw requestError;
 
-      if (values.streets.length > 1) {
-        const streetsToInsert = values.streets.slice(1).map(street => {
-          const metrics = calculateStreetMetrics(street);
-          return {
-            requisicao_id: requestData.id,
-            logradouro: street.logradouro,
-            bairro: street.bairro,
-            largura: street.largura,
-            comprimento: street.comprimento,
-            espessura: street.espessura,
-            traco: street.traco,
-            ligante: street.ligante,
-            area: metrics.area,
-            peso: metrics.peso,
-          };
-        });
+      // Insert all streets, including the first one
+      const streetsToInsert = values.streets.map(street => {
+        const metrics = calculateStreetMetrics(street);
+        return {
+          requisicao_id: requestData.id,
+          logradouro: street.logradouro,
+          bairro: street.bairro,
+          largura: street.largura,
+          comprimento: street.comprimento,
+          espessura: street.espessura,
+          traco: street.traco || values.traco,
+          ligante: street.ligante || values.ligante,
+          area: metrics.area,
+          peso: metrics.peso,
+        };
+      });
 
-        const { error: streetsError } = await supabase
-          .from("bd_ruas_requisicao")
-          .insert(streetsToInsert);
+      const { error: streetsError } = await supabase
+        .from("bd_ruas_requisicao")
+        .insert(streetsToInsert);
 
-        if (streetsError) throw streetsError;
-      }
+      if (streetsError) throw streetsError;
 
       return requestData;
     },
