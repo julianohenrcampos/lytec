@@ -7,3 +7,13 @@ export const teamSchema = z.object({
 });
 
 export type TeamFormValues = z.infer<typeof teamSchema>;
+
+export interface Team {
+  id: string;
+  nome: string;
+  encarregado_id: string;
+  apontador_id: string;
+  colaboradores: string[];
+  created_at: string;
+  updated_at: string;
+}

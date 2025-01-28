@@ -9,18 +9,27 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Plus } from "lucide-react";
 import { TeamNameField } from "./TeamNameField";
 import { EmployeeSelect } from "./EmployeeSelect";
 import { CollaboratorSearch } from "./CollaboratorSearch";
 import { teamSchema, TeamFormValues } from "./types";
 
-export const TeamFormDialog = () => {
-  const [open, setOpen] = useState(false);
+interface TeamFormDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  editingTeam?: {
+    id: string;
+    nome: string;
+    encarregado_id: string;
+    apontador_id: string;
+    colaboradores: string[];
+  } | null;
+}
+
+export const TeamFormDialog = ({ isOpen, onClose, editingTeam }: TeamFormDialogProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const { toast } = useToast();
@@ -35,7 +44,26 @@ export const TeamFormDialog = () => {
     },
   });
 
-  // Query to get function IDs first
+  // Effect to set form values when editing
+  useEffect(() => {
+    if (editingTeam) {
+      form.reset({
+        nome: editingTeam.nome,
+        encarregado_id: editingTeam.encarregado_id,
+        apontador_id: editingTeam.apontador_id,
+      });
+      setSelectedEmployees(editingTeam.colaboradores || []);
+    } else {
+      form.reset({
+        nome: "",
+        encarregado_id: "",
+        apontador_id: "",
+      });
+      setSelectedEmployees([]);
+    }
+  }, [editingTeam, form]);
+
+  // Query to get function IDs
   const { data: functionIds } = useQuery({
     queryKey: ["function-ids"],
     queryFn: async () => {
@@ -58,43 +86,39 @@ export const TeamFormDialog = () => {
     },
   });
 
-  // Query to get encarregados using the function ID
+  // Query to get encarregados
   const { data: encarregados } = useQuery({
     queryKey: ["encarregados", functionIds?.encarregadoId],
     queryFn: async () => {
       if (!functionIds?.encarregadoId) return [];
-
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("id, nome")
         .eq("ativo", true)
         .eq("funcao_id", functionIds.encarregadoId);
-
       if (error) throw error;
-      return data || [];
+      return data;
     },
     enabled: !!functionIds?.encarregadoId,
   });
 
-  // Query to get apontadores using the function ID
+  // Query to get apontadores
   const { data: apontadores } = useQuery({
     queryKey: ["apontadores", functionIds?.apontadorId],
     queryFn: async () => {
       if (!functionIds?.apontadorId) return [];
-
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("id, nome")
         .eq("ativo", true)
         .eq("funcao_id", functionIds.apontadorId);
-
       if (error) throw error;
-      return data || [];
+      return data;
     },
     enabled: !!functionIds?.apontadorId,
   });
 
-  // Query to get all active employees for collaborator selection
+  // Query to get all active employees
   const { data: employees } = useQuery({
     queryKey: ["employees"],
     queryFn: async () => {
@@ -102,20 +126,65 @@ export const TeamFormDialog = () => {
         .from("bd_rhasfalto")
         .select("id, nome, matricula")
         .eq("ativo", true);
-      
       if (error) throw error;
-      return data || [];
+      return data;
     },
   });
 
-  // Watch for encarregado_id changes to update team name and add to collaborators
+  const createOrUpdateTeam = useMutation({
+    mutationFn: async (values: TeamFormValues) => {
+      const teamData = {
+        nome: values.nome,
+        encarregado_id: values.encarregado_id,
+        apontador_id: values.apontador_id,
+        colaboradores: selectedEmployees,
+      };
+
+      if (editingTeam) {
+        const { error: updateError } = await supabase
+          .from("bd_equipe")
+          .update(teamData)
+          .eq("id", editingTeam.id);
+        if (updateError) throw updateError;
+      } else {
+        const { error: insertError } = await supabase
+          .from("bd_equipe")
+          .insert([teamData]);
+        if (insertError) throw insertError;
+      }
+
+      // Update employee team assignments
+      const { error: employeeUpdateError } = await supabase
+        .from("bd_rhasfalto")
+        .update({ equipe_id: editingTeam?.id || null })
+        .in("id", selectedEmployees);
+
+      if (employeeUpdateError) throw employeeUpdateError;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+      toast({ title: `Equipe ${editingTeam ? "atualizada" : "cadastrada"} com sucesso!` });
+      onClose();
+      form.reset();
+      setSelectedEmployees([]);
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: `Erro ao ${editingTeam ? "atualizar" : "cadastrar"} equipe`,
+        description: error.message,
+      });
+    },
+  });
+
+  // Watch for encarregado_id changes to update team name
   useEffect(() => {
     const encarregadoId = form.watch("encarregado_id");
     if (encarregadoId) {
       const selectedEncarregado = encarregados?.find(e => e.id === encarregadoId);
       if (selectedEncarregado) {
         form.setValue("nome", `Equipe ${selectedEncarregado.nome}`);
-        // Add encarregado to collaborators if not already present
         if (!selectedEmployees.includes(encarregadoId)) {
           setSelectedEmployees(prev => [...prev, encarregadoId]);
         }
@@ -123,62 +192,13 @@ export const TeamFormDialog = () => {
     }
   }, [form.watch("encarregado_id"), encarregados]);
 
-  // Watch for apontador_id changes to add to collaborators
+  // Watch for apontador_id changes
   useEffect(() => {
     const apontadorId = form.watch("apontador_id");
     if (apontadorId && !selectedEmployees.includes(apontadorId)) {
       setSelectedEmployees(prev => [...prev, apontadorId]);
     }
   }, [form.watch("apontador_id")]);
-
-  const createTeam = useMutation({
-    mutationFn: async (values: TeamFormValues) => {
-      // First create the team
-      const { data: teamData, error: teamError } = await supabase
-        .from("bd_equipe")
-        .insert([
-          {
-            nome: values.nome,
-            encarregado_id: values.encarregado_id,
-            apontador_id: values.apontador_id,
-            colaboradores: selectedEmployees,
-          },
-        ])
-        .select()
-        .single();
-
-      if (teamError) throw teamError;
-
-      // Then update all selected employees with the new team_id
-      const { error: updateError } = await supabase
-        .from("bd_rhasfalto")
-        .update({ equipe_id: teamData.id })
-        .in("id", selectedEmployees);
-
-      if (updateError) throw updateError;
-
-      return teamData;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
-      queryClient.invalidateQueries({ queryKey: ["employees"] });
-      toast({ title: "Equipe cadastrada com sucesso!" });
-      setOpen(false);
-      form.reset();
-      setSelectedEmployees([]);
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Erro ao cadastrar equipe",
-        description: error.message,
-      });
-    },
-  });
-
-  const onSubmit = (values: TeamFormValues) => {
-    createTeam.mutate(values);
-  };
 
   const handleAddEmployee = (employeeId: string) => {
     if (!selectedEmployees.includes(employeeId)) {
@@ -217,17 +237,15 @@ export const TeamFormDialog = () => {
       !selectedEmployees.includes(employee.id)
   );
 
+  const onSubmit = (values: TeamFormValues) => {
+    createOrUpdateTeam.mutate(values);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Adicionar Equipe
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Nova Equipe</DialogTitle>
+          <DialogTitle>{editingTeam ? "Editar" : "Nova"} Equipe</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -263,7 +281,7 @@ export const TeamFormDialog = () => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setOpen(false)}
+                onClick={onClose}
               >
                 Cancelar
               </Button>
