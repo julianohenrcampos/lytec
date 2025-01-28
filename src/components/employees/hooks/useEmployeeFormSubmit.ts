@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { EmployeeFormValues } from "../types";
+import { Employee, EmployeeFormValues } from "../types";
 import { format, addDays } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
 interface UseEmployeeFormSubmitOptions {
   onSuccess?: () => void;
-  initialData?: Partial<EmployeeFormValues>;
+  initialData?: Employee;
 }
 
 export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) => {
