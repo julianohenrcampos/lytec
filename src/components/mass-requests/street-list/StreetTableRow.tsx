@@ -39,32 +39,32 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
   const volume = area * Number(espessura || 0) * 2.4;
 
   return (
-    <TableRow className="border-b hover:bg-muted/50">
-      <TableCell className="h-8 px-2 text-center">
+    <TableRow>
+      <TableCell className="border p-2">
         <Input
           type="text"
           value={data ? format(data, "dd/MM/yyyy") : ""}
           readOnly
-          className="h-7 text-center bg-muted border-0"
+          className="bg-transparent border-0 p-0 text-center"
         />
       </TableCell>
-      <TableCell className="h-8 px-2">
+      <TableCell className="border p-2">
         <Input
           type="text"
           {...register(`streets.${index}.logradouro`, {
             required: true,
           })}
-          className="h-7 border-0"
+          className="bg-transparent border-0 p-0"
         />
       </TableCell>
-      <TableCell className="h-8 px-2">
+      <TableCell className="border p-2">
         <Input
           type="text"
           {...register(`streets.${index}.bairro`)}
-          className="h-7 border-0"
+          className="bg-transparent border-0 p-0"
         />
       </TableCell>
-      <TableCell className="h-8 px-2">
+      <TableCell className="border p-2">
         <Input
           type="number"
           step="0.01"
@@ -72,10 +72,10 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
             required: true,
             valueAsNumber: true,
           })}
-          className="h-7 text-center border-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="bg-transparent border-0 p-0 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </TableCell>
-      <TableCell className="h-8 px-2">
+      <TableCell className="border p-2">
         <Input
           type="number"
           step="0.01"
@@ -83,23 +83,23 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
             required: true,
             valueAsNumber: true,
           })}
-          className="h-7 text-center border-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="bg-transparent border-0 p-0 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </TableCell>
-      <TableCell className="h-8 px-2">
+      <TableCell className="border p-2">
         <Input
           type="number"
           value={area.toFixed(2)}
           readOnly
-          className="h-7 text-center bg-muted border-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="bg-transparent border-0 p-0 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </TableCell>
-      <TableCell className="h-8 px-2">
+      <TableCell className="border p-2">
         <Select
           {...register(`streets.${index}.ligante`)}
           defaultValue=""
         >
-          <SelectTrigger className="h-7 border-0">
+          <SelectTrigger className="bg-transparent border-0 h-7">
             <SelectValue placeholder="Ligante" />
           </SelectTrigger>
           <SelectContent>
@@ -109,12 +109,12 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           </SelectContent>
         </Select>
       </TableCell>
-      <TableCell className="h-8 px-2">
+      <TableCell className="border p-2">
         <Select
           {...register(`streets.${index}.traco`)}
           defaultValue=""
         >
-          <SelectTrigger className="h-7 border-0">
+          <SelectTrigger className="bg-transparent border-0 h-7">
             <SelectValue placeholder="Traço" />
           </SelectTrigger>
           <SelectContent>
@@ -124,7 +124,7 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
           </SelectContent>
         </Select>
       </TableCell>
-      <TableCell className="h-8 px-2">
+      <TableCell className="border p-2">
         <Input
           type="number"
           step="0.01"
@@ -132,18 +132,18 @@ export function StreetTableRow({ index, onRemove }: StreetTableRowProps) {
             required: true,
             valueAsNumber: true,
           })}
-          className="h-7 text-center border-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="bg-transparent border-0 p-0 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </TableCell>
-      <TableCell className="h-8 px-2">
+      <TableCell className="border p-2">
         <Input
           type="number"
           value={volume.toFixed(2)}
           readOnly
-          className="h-7 text-center bg-muted border-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="bg-transparent border-0 p-0 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </TableCell>
-      <TableCell className="h-8 w-8 px-2">
+      <TableCell className="border p-2 w-8">
         <Button
           type="button"
           variant="ghost"

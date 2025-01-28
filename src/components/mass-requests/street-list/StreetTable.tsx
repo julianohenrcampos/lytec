@@ -13,7 +13,7 @@ interface StreetTableProps {
 
 export function StreetTable({ fields, onRemove, totalArea, totalWeight, totalLength }: StreetTableProps) {
   return (
-    <div className="rounded-md border">
+    <div className="w-full border-collapse border">
       <div className="overflow-x-auto">
         <Table>
           <StreetTableHeader />
