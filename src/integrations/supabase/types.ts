@@ -221,6 +221,70 @@ export type Database = {
         }
         Relationships: []
       }
+      bd_programacaomassa: {
+        Row: {
+          apontador: string
+          caminhao: string | null
+          centro_custo_id: string
+          created_at: string
+          data_entrega: string
+          encarregado: string
+          id: string
+          logradouro: string
+          tipo_lancamento: string
+          usina: string
+          volume: number | null
+        }
+        Insert: {
+          apontador: string
+          caminhao?: string | null
+          centro_custo_id: string
+          created_at?: string
+          data_entrega: string
+          encarregado: string
+          id?: string
+          logradouro: string
+          tipo_lancamento: string
+          usina: string
+          volume?: number | null
+        }
+        Update: {
+          apontador?: string
+          caminhao?: string | null
+          centro_custo_id?: string
+          created_at?: string
+          data_entrega?: string
+          encarregado?: string
+          id?: string
+          logradouro?: string
+          tipo_lancamento?: string
+          usina?: string
+          volume?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bd_programacaomassa_apontador_fkey"
+            columns: ["apontador"]
+            isOneToOne: false
+            referencedRelation: "bd_rhasfalto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bd_programacaomassa_centro_custo_id_fkey"
+            columns: ["centro_custo_id"]
+            isOneToOne: false
+            referencedRelation: "bd_centrocusto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bd_programacaomassa_encarregado_fkey"
+            columns: ["encarregado"]
+            isOneToOne: false
+            referencedRelation: "bd_rhasfalto"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bd_requisicao: {
         Row: {
           area: number | null

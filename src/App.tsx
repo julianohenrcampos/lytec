@@ -21,6 +21,7 @@ import TruckEquipmentManagement from "./pages/TruckEquipmentManagement";
 import PlantManagement from "./pages/PlantManagement";
 import MassRequestManagement from "./pages/MassRequestManagement";
 import MassRequestDetails from "./pages/MassRequestDetails";
+import MassProgramming from "./pages/MassProgramming";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
@@ -58,6 +59,7 @@ function AppRoutes() {
       <Route path="/plants" element={<ProtectedRoute><PlantManagement /></ProtectedRoute>} />
       <Route path="/mass-requests" element={<ProtectedRoute><MassRequestManagement /></ProtectedRoute>} />
       <Route path="/mass-requests/:id" element={<ProtectedRoute><MassRequestDetails /></ProtectedRoute>} />
+      <Route path="/mass-programming" element={<ProtectedRoute><MassProgramming /></ProtectedRoute>} />
     </Routes>
   );
 }
