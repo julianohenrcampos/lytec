@@ -67,11 +67,11 @@ export function StreetDetails({ streets, totalArea, totalWeight }: StreetDetails
       <div className="border-t pt-4">
         <div className="grid grid-cols-2 gap-4 max-w-md ml-auto">
           <div className="flex flex-col items-end">
-            <h3 className="font-semibold text-sm text-gray-500 mb-1">Área Total</h3>
+            <h3 className="font-semibold text-sm text-gray-500 mb-1 px-3">Área Total</h3>
             <p className="text-base px-3">{totalArea?.toFixed(2)} m²</p>
           </div>
           <div className="flex flex-col items-end">
-            <h3 className="font-semibold text-sm text-gray-500 mb-1">Peso Total</h3>
+            <h3 className="font-semibold text-sm text-gray-500 mb-1 px-3">Peso Total</h3>
             <p className="text-base px-3">{totalWeight?.toFixed(2)} t</p>
           </div>
         </div>
