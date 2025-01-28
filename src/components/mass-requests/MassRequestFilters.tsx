@@ -66,52 +66,28 @@ export function MassRequestFilters({ filters, onFilterChange }: FiltersProps) {
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Período</label>
-          <div className="flex gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start text-left font-normal">
-                  {filters.startDate ? (
-                    format(filters.startDate, "dd/MM/yyyy")
-                  ) : (
-                    <span>Data inicial</span>
-                  )}
-                  <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={filters.startDate || undefined}
-                  onSelect={(date) =>
-                    onFilterChange({ ...filters, startDate: date })
-                  }
-                />
-              </PopoverContent>
-            </Popover>
-            
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start text-left font-normal">
-                  {filters.endDate ? (
-                    format(filters.endDate, "dd/MM/yyyy")
-                  ) : (
-                    <span>Data final</span>
-                  )}
-                  <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={filters.endDate || undefined}
-                  onSelect={(date) =>
-                    onFilterChange({ ...filters, endDate: date })
-                  }
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+          <label className="text-sm font-medium">Data</label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-full justify-start text-left font-normal">
+                {filters.startDate ? (
+                  format(filters.startDate, "dd/MM/yyyy")
+                ) : (
+                  <span>Selecione uma data</span>
+                )}
+                <Calendar className="ml-auto h-4 w-4 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={filters.startDate || undefined}
+                onSelect={(date) =>
+                  onFilterChange({ ...filters, startDate: date, endDate: date })
+                }
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="space-y-2">
@@ -161,6 +137,7 @@ export function MassRequestFilters({ filters, onFilterChange }: FiltersProps) {
         <div className="flex items-end">
           <Button
             variant="outline"
+            className="w-full"
             onClick={() =>
               onFilterChange({
                 startDate: null,
