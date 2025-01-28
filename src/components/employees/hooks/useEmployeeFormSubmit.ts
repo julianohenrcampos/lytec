@@ -101,6 +101,7 @@ export const useEmployeeFormSubmit = (options?: UseEmployeeFormSubmitOptions) =>
       options?.onSuccess?.();
     },
     onError: (error: Error) => {
+      console.error("Mutation error:", error);
       toast({
         variant: "destructive",
         title: "Erro ao salvar funcionário",
