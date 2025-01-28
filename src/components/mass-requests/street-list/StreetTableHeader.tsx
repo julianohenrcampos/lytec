@@ -10,7 +10,7 @@ export function StreetTableHeader() {
         <TableHead className="w-[8%] text-center font-medium">Largura (m)</TableHead>
         <TableHead className="w-[10%] text-center font-medium">Comprimento (m)</TableHead>
         <TableHead className="w-[8%] text-center font-medium">Área (m²)</TableHead>
-        <TableHead className="w-[10%] text-center font-medium">Pintura de Ligação</TableHead>
+        <TableHead className="w-[10%] text-center font-medium">Ligante</TableHead>
         <TableHead className="w-[8%] text-center font-medium">Traço</TableHead>
         <TableHead className="w-[8%] text-center font-medium">Espessura (m)</TableHead>
         <TableHead className="w-[8%] text-center font-medium">Volume (t)</TableHead>
