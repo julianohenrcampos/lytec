@@ -26,7 +26,6 @@ export const EmployeeTable = ({ filters, onEdit }: EmployeeTableProps) => {
         .select(`
           *,
           funcao:funcao_id(nome),
-          empresa:empresa_id(nome),
           empresa_proprietaria:empresa_proprietaria_id(nome),
           centro_custo:centro_custo_id(nome)
         `);
