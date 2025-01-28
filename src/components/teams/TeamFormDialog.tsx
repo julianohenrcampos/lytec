@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,7 @@ import { TeamNameField } from "./TeamNameField";
 import { EmployeeSelect } from "./EmployeeSelect";
 import { CollaboratorSearch } from "./CollaboratorSearch";
 import { teamSchema, TeamFormValues } from "./types";
+import { useTeamQueries } from "./hooks/useTeamQueries";
 
 interface TeamFormDialogProps {
   isOpen: boolean;
@@ -34,6 +35,7 @@ export const TeamFormDialog = ({ isOpen, onClose, editingTeam }: TeamFormDialogP
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { useEmployeesByFunction, useAllEmployees } = useTeamQueries();
 
   const form = useForm<TeamFormValues>({
     resolver: zodResolver(teamSchema),
@@ -44,7 +46,10 @@ export const TeamFormDialog = ({ isOpen, onClose, editingTeam }: TeamFormDialogP
     },
   });
 
-  // Effect to set form values when editing
+  const { data: encarregados } = useEmployeesByFunction("Encarregado");
+  const { data: apontadores } = useEmployeesByFunction("Apontador");
+  const { data: employees } = useAllEmployees();
+
   useEffect(() => {
     if (editingTeam) {
       form.reset({
@@ -62,74 +67,6 @@ export const TeamFormDialog = ({ isOpen, onClose, editingTeam }: TeamFormDialogP
       setSelectedEmployees([]);
     }
   }, [editingTeam, form]);
-
-  // Query to get function IDs
-  const { data: functionIds } = useQuery({
-    queryKey: ["function-ids"],
-    queryFn: async () => {
-      const { data: encarregadoFunc } = await supabase
-        .from("bd_funcao")
-        .select("id")
-        .eq("nome", "Encarregado")
-        .single();
-
-      const { data: apontadorFunc } = await supabase
-        .from("bd_funcao")
-        .select("id")
-        .eq("nome", "Apontador")
-        .single();
-
-      return {
-        encarregadoId: encarregadoFunc?.id,
-        apontadorId: apontadorFunc?.id,
-      };
-    },
-  });
-
-  // Query to get encarregados
-  const { data: encarregados } = useQuery({
-    queryKey: ["encarregados", functionIds?.encarregadoId],
-    queryFn: async () => {
-      if (!functionIds?.encarregadoId) return [];
-      const { data, error } = await supabase
-        .from("bd_rhasfalto")
-        .select("id, nome")
-        .eq("ativo", true)
-        .eq("funcao_id", functionIds.encarregadoId);
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!functionIds?.encarregadoId,
-  });
-
-  // Query to get apontadores
-  const { data: apontadores } = useQuery({
-    queryKey: ["apontadores", functionIds?.apontadorId],
-    queryFn: async () => {
-      if (!functionIds?.apontadorId) return [];
-      const { data, error } = await supabase
-        .from("bd_rhasfalto")
-        .select("id, nome")
-        .eq("ativo", true)
-        .eq("funcao_id", functionIds.apontadorId);
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!functionIds?.apontadorId,
-  });
-
-  // Query to get all active employees
-  const { data: employees } = useQuery({
-    queryKey: ["employees"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("bd_rhasfalto")
-        .select("id, nome, matricula")
-        .eq("ativo", true);
-      if (error) throw error;
-      return data;
-    },
-  });
 
   const createOrUpdateTeam = useMutation({
     mutationFn: async (values: TeamFormValues) => {
@@ -153,7 +90,6 @@ export const TeamFormDialog = ({ isOpen, onClose, editingTeam }: TeamFormDialogP
         if (insertError) throw insertError;
       }
 
-      // Update employee team assignments
       const { error: employeeUpdateError } = await supabase
         .from("bd_rhasfalto")
         .update({ equipe_id: editingTeam?.id || null })
@@ -178,7 +114,6 @@ export const TeamFormDialog = ({ isOpen, onClose, editingTeam }: TeamFormDialogP
     },
   });
 
-  // Watch for encarregado_id changes to update team name
   useEffect(() => {
     const encarregadoId = form.watch("encarregado_id");
     if (encarregadoId) {
@@ -192,7 +127,6 @@ export const TeamFormDialog = ({ isOpen, onClose, editingTeam }: TeamFormDialogP
     }
   }, [form.watch("encarregado_id"), encarregados]);
 
-  // Watch for apontador_id changes
   useEffect(() => {
     const apontadorId = form.watch("apontador_id");
     if (apontadorId && !selectedEmployees.includes(apontadorId)) {
