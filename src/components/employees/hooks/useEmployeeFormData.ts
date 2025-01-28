@@ -26,18 +26,6 @@ export const useEmployeeFormData = () => {
     },
   });
 
-  const { data: empresas } = useQuery({
-    queryKey: ["empresas"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("bd_empresa")
-        .select("*")
-        .order("nome");
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
   const { data: empresasProprietarias } = useQuery({
     queryKey: ["empresasProprietarias"],
     queryFn: async () => {
@@ -65,7 +53,6 @@ export const useEmployeeFormData = () => {
   return {
     funcoes: funcoes || [],
     centrosCusto: centrosCusto || [],
-    empresas: empresas || [],
     empresasProprietarias: empresasProprietarias || [],
     equipes: equipes || [],
   };

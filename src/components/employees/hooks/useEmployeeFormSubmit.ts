@@ -25,7 +25,6 @@ export const useEmployeeFormSubmit = ({ onSuccess, initialData }: UseEmployeeFor
         matricula: values.matricula,
         funcao_id: values.funcao_id,
         centro_custo_id: values.centro_custo_id,
-        empresa_id: values.empresa_id,
         empresa_proprietaria_id: values.empresa_proprietaria_id,
         equipe_id: values.equipe_id || null,
         salario: Number(values.salario),

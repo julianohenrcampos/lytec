@@ -98,24 +98,6 @@ export type Database = {
         }
         Relationships: []
       }
-      bd_empresa: {
-        Row: {
-          created_at: string
-          id: string
-          nome: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          nome: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          nome?: string
-        }
-        Relationships: []
-      }
       bd_empresa_proprietaria: {
         Row: {
           cnpj: string | null
@@ -355,7 +337,6 @@ export type Database = {
           demissao: string | null
           departamento_id: string | null
           diarias: number | null
-          empresa_id: string
           empresa_proprietaria_id: string | null
           endereco: string | null
           equipe_id: string | null
@@ -385,7 +366,6 @@ export type Database = {
           demissao?: string | null
           departamento_id?: string | null
           diarias?: number | null
-          empresa_id: string
           empresa_proprietaria_id?: string | null
           endereco?: string | null
           equipe_id?: string | null
@@ -415,7 +395,6 @@ export type Database = {
           demissao?: string | null
           departamento_id?: string | null
           diarias?: number | null
-          empresa_id?: string
           empresa_proprietaria_id?: string | null
           endereco?: string | null
           equipe_id?: string | null
@@ -446,13 +425,6 @@ export type Database = {
             columns: ["departamento_id"]
             isOneToOne: false
             referencedRelation: "bd_departamento"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bd_rhasfalto_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "bd_empresa"
             referencedColumns: ["id"]
           },
           {

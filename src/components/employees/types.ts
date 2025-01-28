@@ -9,7 +9,6 @@ export const employeeSchema = z.object({
   matricula: z.string().min(1, "Matrícula é obrigatória"),
   funcao_id: z.string().min(1, "Função é obrigatória"),
   centro_custo_id: z.string().min(1, "Centro de Custo é obrigatório"),
-  empresa_id: z.string().min(1, "Empresa é obrigatória"),
   empresa_proprietaria_id: z.string().min(1, "Empresa Proprietária é obrigatória"),
   equipe_id: z.string().optional(),
   salario: z.coerce.number().min(1, "Salário é obrigatório"),

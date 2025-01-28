@@ -27,7 +27,7 @@ interface ProfessionalDataFormProps {
 }
 
 export const ProfessionalDataForm: React.FC<ProfessionalDataFormProps> = ({ form, onSubmit, initialData }) => {
-  const { funcoes, centrosCusto, empresas, equipes } = useEmployeeFormData();
+  const { funcoes, centrosCusto, empresasProprietarias, equipes } = useEmployeeFormData();
 
   return (
     <div className="space-y-4">
@@ -83,18 +83,18 @@ export const ProfessionalDataForm: React.FC<ProfessionalDataFormProps> = ({ form
 
       <FormField
         control={form.control}
-        name="empresa_id"
+        name="empresa_proprietaria_id"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Empresa</FormLabel>
+            <FormLabel>Empresa Proprietária</FormLabel>
             <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione uma empresa" />
+                  <SelectValue placeholder="Selecione uma empresa proprietária" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {empresas?.map((empresa) => (
+                {empresasProprietarias?.map((empresa) => (
                   <SelectItem key={empresa.id} value={empresa.id}>
                     {empresa.nome}
                   </SelectItem>
