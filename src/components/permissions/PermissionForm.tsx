@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
 
 interface FormValues {
   usuario_id?: string;
@@ -24,6 +25,7 @@ export function PermissionForm() {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const form = useForm<FormValues>();
 
   const createPermission = useMutation({
     mutationFn: async (values: FormValues) => {
@@ -69,9 +71,10 @@ export function PermissionForm() {
         <DialogHeader>
           <DialogTitle>Nova Permissão</DialogTitle>
         </DialogHeader>
-        <Form onSubmit={handleSubmit}>
-          <div className="space-y-4">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <FormField
+              control={form.control}
               name="usuario_id"
               render={({ field }) => (
                 <FormItem>
@@ -94,6 +97,7 @@ export function PermissionForm() {
               )}
             />
             <FormField
+              control={form.control}
               name="tela"
               render={({ field }) => (
                 <FormItem>
@@ -117,6 +121,7 @@ export function PermissionForm() {
               )}
             />
             <FormField
+              control={form.control}
               name="acesso"
               render={({ field }) => (
                 <FormItem>
@@ -145,7 +150,7 @@ export function PermissionForm() {
             >
               {createPermission.isPending ? "Criando..." : "Criar Permissão"}
             </Button>
-          </div>
+          </form>
         </Form>
       </DialogContent>
     </Dialog>
