@@ -19,10 +19,9 @@ export default function MassRequestManagement() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingRequest, setEditingRequest] = useState<MassRequest | null>(null);
   const [filters, setFilters] = useState({
-    startDate: null as Date | null,
-    endDate: null as Date | null,
-    engineer: user?.email || "",
-    costCenter: "_all",
+    data_inicio: null as Date | null,
+    data_fim: null as Date | null,
+    centro_custo: "_all",
   });
 
   const handleSuccess = () => {

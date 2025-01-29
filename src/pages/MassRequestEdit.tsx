@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { MassRequestForm } from "@/components/mass-requests/MassRequestForm";
-import { AuthProvider } from "@/hooks/useAuth";
 
 export default function MassRequestEdit() {
   const { id } = useParams();
@@ -37,22 +36,20 @@ export default function MassRequestEdit() {
   }
 
   return (
-    <AuthProvider>
-      <div className="container mx-auto py-10">
-        <Button
-          variant="outline"
-          onClick={() => navigate("/mass-requests")}
-          className="mb-6"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Voltar
-        </Button>
+    <div className="container mx-auto py-10">
+      <Button
+        variant="outline"
+        onClick={() => navigate("/mass-requests")}
+        className="mb-6"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Voltar
+      </Button>
 
-        <Card className="p-6">
-          <h1 className="text-2xl font-bold mb-6">Editar Requisição de Massa</h1>
-          <MassRequestForm initialData={request} onSuccess={handleSuccess} />
-        </Card>
-      </div>
-    </AuthProvider>
+      <Card className="p-6">
+        <h1 className="text-2xl font-bold mb-6">Editar Requisição de Massa</h1>
+        <MassRequestForm initialData={request} onSuccess={handleSuccess} />
+      </Card>
+    </div>
   );
 }
