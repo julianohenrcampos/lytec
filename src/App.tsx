@@ -1,18 +1,22 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import MassRequestManagement from "./pages/MassRequestManagement";
-import MassRequestEdit from "./pages/MassRequestEdit";
-import MassRequestDetails from "./pages/MassRequestDetails";
+import { BrowserRouter as Router } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "@/hooks/useAuth";
+import { AppRoutes } from "./routes";
+import { Toaster } from "@/components/ui/sonner";
+import "./App.css";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<MassRequestManagement />} />
-        <Route path="/mass-requests" element={<MassRequestManagement />} />
-        <Route path="/mass-requests/:id/edit" element={<MassRequestEdit />} />
-        <Route path="/mass-requests/:id" element={<MassRequestDetails />} />
-      </Routes>
-    </Router>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <AppRoutes />
+          <Toaster />
+        </Router>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
