@@ -62,7 +62,13 @@ export default function MassRequestManagement() {
 
       <MassRequestFilters filters={filters} onFilterChange={setFilters} />
       
-      <MassRequestTable filters={filters} />
+      <MassRequestTable 
+        filters={{
+          data_inicio: filters.startDate || new Date(),
+          data_fim: filters.endDate || new Date(),
+          centro_custo: filters.costCenter
+        }} 
+      />
     </div>
   );
 }
