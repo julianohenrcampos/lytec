@@ -22,7 +22,17 @@ export function MassRequestForm({ initialData, onSuccess }: MassRequestFormProps
           ...initialData,
           data: new Date(initialData.data),
           traco: initialData.traco,
-          streets: initialData.streets || [], // Use streets array if it exists
+          streets: initialData.bd_ruas_requisicao?.map(street => ({
+            logradouro: street.logradouro,
+            bairro: street.bairro,
+            largura: street.largura,
+            comprimento: street.comprimento,
+            espessura: street.espessura,
+            traco: street.traco || initialData.traco,
+            ligante: street.ligante || initialData.ligante,
+            area: street.area,
+            peso: street.peso,
+          })) || [],
         }
       : {
           centro_custo: "",
