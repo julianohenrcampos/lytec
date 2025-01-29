@@ -203,6 +203,38 @@ export type Database = {
         }
         Relationships: []
       }
+      bd_permissoes: {
+        Row: {
+          acesso: boolean | null
+          created_at: string
+          id: string
+          tela: string
+          usuario_id: string | null
+        }
+        Insert: {
+          acesso?: boolean | null
+          created_at?: string
+          id?: string
+          tela: string
+          usuario_id?: string | null
+        }
+        Update: {
+          acesso?: boolean | null
+          created_at?: string
+          id?: string
+          tela?: string
+          usuario_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bd_permissoes_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "bd_rhasfalto"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bd_programacaomassa: {
         Row: {
           apontador: string
