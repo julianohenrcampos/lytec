@@ -20,6 +20,7 @@ export interface SupabaseValues {
   apontador: string;
   caminhao?: string;
   volume?: number;
+  requisicao_id?: string;
 }
 
 export interface MassProgrammingFormProps {
