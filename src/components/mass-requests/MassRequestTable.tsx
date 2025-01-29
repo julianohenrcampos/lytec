@@ -24,8 +24,12 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
   const { data: userPermission } = useQuery({
     queryKey: ["user-permission", user?.id],
     queryFn: async () => {
-      if (!user?.id) return null;
-      
+      if (!user?.id) {
+        console.log("No user ID available");
+        return null;
+      }
+
+      console.log("Fetching permissions for user:", user.id);
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("permissao_usuario")
@@ -37,6 +41,7 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
         return null;
       }
 
+      console.log("User permission data:", data);
       return data?.permissao_usuario;
     },
     enabled: !!user?.id,
@@ -45,6 +50,7 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
   const { data: requests, isLoading } = useQuery({
     queryKey: ["mass-requests", filters],
     queryFn: async () => {
+      console.log("Fetching mass requests with filters:", filters);
       let query = supabase
         .from("bd_requisicao")
         .select(`
@@ -76,6 +82,7 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
         return [];
       }
 
+      console.log("Mass requests data:", data);
       return data?.map(request => ({
         ...request,
         quantidade_programada: request.bd_programacaomassa?.reduce((acc: number, curr: any) => acc + (curr.volume || 0), 0) || 0
