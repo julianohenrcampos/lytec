@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -53,7 +53,11 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
     queryFn: async () => {
       let query = supabase
         .from("bd_requisicao")
-        .select("*, bd_ruas_requisicao(*)")
+        .select(`
+          *,
+          bd_ruas_requisicao(*),
+          bd_programacaomassa(volume)
+        `)
         .order("created_at", { ascending: false });
 
       if (filters.data_inicio && filters.data_fim) {
@@ -77,12 +81,21 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
         return [];
       }
 
-      return data;
+      return data?.map(request => ({
+        ...request,
+        quantidade_programada: request.bd_programacaomassa?.reduce((acc: number, curr: any) => acc + (curr.volume || 0), 0) || 0
+      }));
     },
   });
 
   const handleNewProgramming = (request: MassRequest) => {
     navigate("/mass-programming/new", {
+      state: { request },
+    });
+  };
+
+  const handleEdit = (request: MassRequest) => {
+    navigate(`/mass-requests/${request.id}/edit`, {
       state: { request },
     });
   };
@@ -116,6 +129,14 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
             <TableCell>{request.peso}</TableCell>
             <TableCell>{request.quantidade_programada}</TableCell>
             <TableCell className="text-right space-x-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleEdit(request)}
+                title="Editar"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
               {userPermission === "planejamento" && (
                 <Button
                   variant="ghost"

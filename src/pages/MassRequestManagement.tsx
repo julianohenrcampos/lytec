@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { MassRequestFilters } from "@/components/mass-requests/MassRequestFilters";
 import { MassRequestTable } from "@/components/mass-requests/MassRequestTable";
 import { MassRequestForm } from "@/components/mass-requests/MassRequestForm";
@@ -22,11 +20,6 @@ export default function MassRequestManagement() {
     data_fim: null as Date | null,
     centro_custo: "_all",
   });
-
-  const handleEdit = (request: any) => {
-    setEditingRequest(request);
-    setIsOpen(true);
-  };
 
   const handleSuccess = () => {
     setIsOpen(false);
