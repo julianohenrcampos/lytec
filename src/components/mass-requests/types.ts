@@ -30,6 +30,7 @@ export interface MassRequest {
   streets?: Street[];
   created_at?: string;
   quantidade_programada?: number;
+  bd_ruas_requisicao?: Street[];
 }
 
 export interface FormValues {
