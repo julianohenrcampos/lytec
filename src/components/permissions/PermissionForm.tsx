@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
@@ -45,7 +44,11 @@ export function PermissionForm({ open, onOpenChange }: PermissionFormProps) {
     mutationFn: async (values: FormValues) => {
       const { error } = await supabase
         .from("bd_permissoes")
-        .insert([values]);
+        .insert({
+          usuario_id: values.usuario_id,
+          tela: values.tela,
+          acesso: values.acesso,
+        });
       if (error) throw error;
     },
     onSuccess: () => {
