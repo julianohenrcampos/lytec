@@ -24,10 +24,12 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
   const { data: userPermission } = useQuery({
     queryKey: ["user-permission", user?.id],
     queryFn: async () => {
+      if (!user?.id) return null;
+      
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("permissao_usuario")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .maybeSingle();
 
       if (error) {
@@ -37,6 +39,7 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
 
       return data?.permissao_usuario;
     },
+    enabled: !!user?.id,
   });
 
   const { data: requests, isLoading } = useQuery({
@@ -76,8 +79,9 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
       return data?.map(request => ({
         ...request,
         quantidade_programada: request.bd_programacaomassa?.reduce((acc: number, curr: any) => acc + (curr.volume || 0), 0) || 0
-      }));
+      })) || [];
     },
+    enabled: true,
   });
 
   const handleNewProgramming = (request: MassRequest) => {
