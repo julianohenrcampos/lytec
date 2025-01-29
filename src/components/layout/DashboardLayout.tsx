@@ -40,7 +40,7 @@ export function DashboardLayout() {
     <div className="min-h-screen bg-gray-100">
       <div className="flex h-screen">
         {/* Sidebar */}
-        <div className="w-64 bg-white shadow-lg">
+        <div className="w-64 bg-white shadow-lg flex-shrink-0">
           <div className="flex flex-col h-full">
             <div className="p-4">
               <h1 className="text-xl font-bold">RH Asfalto</h1>
@@ -82,7 +82,7 @@ export function DashboardLayout() {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
-          <main className="p-8">
+          <main className="p-6">
             <Outlet />
           </main>
         </div>
