@@ -13,6 +13,11 @@ export default function MassProgrammingDetails() {
   const { data: programming, isLoading } = useQuery({
     queryKey: ["mass-programming", id],
     queryFn: async () => {
+      // Check if id is a valid UUID
+      if (!id || id === 'new') {
+        return null;
+      }
+
       const { data, error } = await supabase
         .from("bd_programacaomassa")
         .select(`
@@ -22,11 +27,12 @@ export default function MassProgrammingDetails() {
           apontador:bd_rhasfalto!bd_programacaomassa_apontador_fkey (nome)
         `)
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
     },
+    enabled: !!id && id !== 'new',
   });
 
   if (isLoading) {
