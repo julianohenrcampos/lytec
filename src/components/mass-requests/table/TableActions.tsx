@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, List, Trash } from "lucide-react";
+import { Eye, Pencil, List, Trash, Truck } from "lucide-react";
 import { MassRequest } from "../types";
 import {
   Dialog,
@@ -38,6 +38,7 @@ export function TableActions({
 
   return (
     <div className="flex justify-end items-center gap-2">
+      <Truck className="h-4 w-4 text-gray-500" />
       <Button
         variant="ghost"
         size="icon"

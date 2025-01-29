@@ -1,9 +1,7 @@
-import { format } from "date-fns";
-import { TableCell, TableRow as UITableRow } from "@/components/ui/table";
+import { TableCell } from "@/components/ui/table";
 import { MassRequest } from "../types";
 import { TableActions } from "./TableActions";
 import { cn } from "@/lib/utils";
-import { Truck } from "lucide-react";
 
 interface TableRowProps {
   request: MassRequest;
@@ -14,7 +12,7 @@ interface TableRowProps {
   onNewProgramming: (request: MassRequest) => void;
 }
 
-export function MassRequestTableRow({
+export function TableRow({
   request,
   userPermission,
   onView,
@@ -25,22 +23,18 @@ export function MassRequestTableRow({
   const isProgrammed = request.quantidade_programada >= request.peso;
 
   return (
-    <UITableRow 
+    <tr
       className={cn(
+        "hover:bg-muted/50 data-[state=selected]:bg-muted",
         isProgrammed && "bg-green-50"
       )}
     >
-      <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
       <TableCell>{request.centro_custo}</TableCell>
+      <TableCell>{request.logradouro}</TableCell>
       <TableCell>{request.engenheiro}</TableCell>
       <TableCell>{request.area}</TableCell>
       <TableCell>{request.peso}</TableCell>
-      <TableCell>
-        <div className="flex items-center gap-2">
-          <Truck className="h-4 w-4 text-gray-500" />
-          {request.quantidade_programada}
-        </div>
-      </TableCell>
+      <TableCell>{request.quantidade_programada}</TableCell>
       <TableCell>
         <TableActions
           request={request}
@@ -51,6 +45,6 @@ export function MassRequestTableRow({
           onNewProgramming={onNewProgramming}
         />
       </TableCell>
-    </UITableRow>
+    </tr>
   );
 }
