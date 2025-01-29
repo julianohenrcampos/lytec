@@ -1,112 +1,76 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 import { FormValues, SupabaseValues } from "../types";
+import { useLocation } from "react-router-dom";
 
 export function useFormLogic(initialData: any, onSuccess: () => void) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const location = useLocation();
+  const requestData = location.state;
 
   const form = useForm<FormValues>({
-    defaultValues: initialData ? {
-      ...initialData,
-      data_entrega: new Date(initialData.data_entrega)
-    } : {
+    defaultValues: initialData || {
       data_entrega: new Date(),
       tipo_lancamento: "",
       usina: "",
-      centro_custo_id: "",
-      logradouro: "",
+      centro_custo_id: requestData?.centro_custo_id || "",
+      logradouro: requestData?.logradouro || "",
       encarregado: "",
       apontador: "",
       caminhao: "",
-      volume: 0,
-    },
-  });
-
-  const createMutation = useMutation({
-    mutationFn: async (values: FormValues) => {
-      const supabaseValues: SupabaseValues = {
-        ...values,
-        data_entrega: format(values.data_entrega, 'yyyy-MM-dd')
-      };
-
-      const { data, error } = await supabase
-        .from("bd_programacaomassa")
-        .insert([supabaseValues])
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["massProgramming"] });
-      form.reset();
-      onSuccess();
-      toast({
-        title: "Programação criada com sucesso",
-        variant: "default",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Erro ao criar programação",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async (values: FormValues) => {
-      if (!initialData) throw new Error("No program selected for editing");
-
-      const supabaseValues: SupabaseValues = {
-        ...values,
-        data_entrega: format(values.data_entrega, 'yyyy-MM-dd')
-      };
-
-      const { data, error } = await supabase
-        .from("bd_programacaomassa")
-        .update(supabaseValues)
-        .eq("id", initialData.id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["massProgramming"] });
-      form.reset();
-      onSuccess();
-      toast({
-        title: "Programação atualizada com sucesso",
-        variant: "default",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Erro ao atualizar programação",
-        description: error.message,
-        variant: "destructive",
-      });
+      volume: requestData?.volume || undefined,
     },
   });
 
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
     try {
+      const supabaseValues: SupabaseValues = {
+        ...values,
+        data_entrega: values.data_entrega.toISOString(),
+        requisicao_id: requestData?.requisicao_id,
+      };
+
       if (initialData) {
-        await updateMutation.mutateAsync(values);
+        await supabase
+          .from("bd_programacaomassa")
+          .update(supabaseValues)
+          .eq("id", initialData.id);
       } else {
-        await createMutation.mutateAsync(values);
+        await supabase.from("bd_programacaomassa").insert(supabaseValues);
+
+        // Update the quantidade_programada in bd_requisicao
+        if (requestData?.requisicao_id) {
+          const { data: requisicao } = await supabase
+            .from("bd_requisicao")
+            .select("quantidade_programada")
+            .eq("id", requestData.requisicao_id)
+            .single();
+
+          await supabase
+            .from("bd_requisicao")
+            .update({
+              quantidade_programada: (requisicao?.quantidade_programada || 0) + (values.volume || 0),
+            })
+            .eq("id", requestData.requisicao_id);
+        }
       }
+
+      toast({
+        title: initialData
+          ? "Programação atualizada com sucesso!"
+          : "Programação criada com sucesso!",
+      });
+      onSuccess();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao salvar programação",
+        description: error.message,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -116,8 +80,7 @@ export function useFormLogic(initialData: any, onSuccess: () => void) {
     const currentValues = form.getValues();
     form.reset({
       ...currentValues,
-      caminhao: "",
-      volume: 0,
+      data_entrega: new Date(),
     });
   };
 
@@ -131,7 +94,7 @@ export function useFormLogic(initialData: any, onSuccess: () => void) {
       encarregado: "",
       apontador: "",
       caminhao: "",
-      volume: 0,
+      volume: undefined,
     });
   };
 

@@ -213,6 +213,7 @@ export type Database = {
           encarregado: string
           id: string
           logradouro: string
+          requisicao_id: string | null
           tipo_lancamento: string
           usina: string
           volume: number | null
@@ -226,6 +227,7 @@ export type Database = {
           encarregado: string
           id?: string
           logradouro: string
+          requisicao_id?: string | null
           tipo_lancamento: string
           usina: string
           volume?: number | null
@@ -239,6 +241,7 @@ export type Database = {
           encarregado?: string
           id?: string
           logradouro?: string
+          requisicao_id?: string | null
           tipo_lancamento?: string
           usina?: string
           volume?: number | null
@@ -265,6 +268,13 @@ export type Database = {
             referencedRelation: "bd_rhasfalto"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "bd_programacaomassa_requisicao_id_fkey"
+            columns: ["requisicao_id"]
+            isOneToOne: false
+            referencedRelation: "bd_requisicao"
+            referencedColumns: ["id"]
+          },
         ]
       }
       bd_requisicao: {
@@ -284,6 +294,7 @@ export type Database = {
           ligante: string | null
           logradouro: string
           peso: number | null
+          quantidade_programada: number | null
           traco: string | null
         }
         Insert: {
@@ -302,6 +313,7 @@ export type Database = {
           ligante?: string | null
           logradouro: string
           peso?: number | null
+          quantidade_programada?: number | null
           traco?: string | null
         }
         Update: {
@@ -320,6 +332,7 @@ export type Database = {
           ligante?: string | null
           logradouro?: string
           peso?: number | null
+          quantidade_programada?: number | null
           traco?: string | null
         }
         Relationships: []
@@ -351,6 +364,9 @@ export type Database = {
           matricula: string
           nome: string
           periculosidade: number | null
+          permissao_usuario:
+            | Database["public"]["Enums"]["user_permission"]
+            | null
           refeicao: number | null
           salario: number
         }
@@ -380,6 +396,9 @@ export type Database = {
           matricula: string
           nome: string
           periculosidade?: number | null
+          permissao_usuario?:
+            | Database["public"]["Enums"]["user_permission"]
+            | null
           refeicao?: number | null
           salario: number
         }
@@ -409,6 +428,9 @@ export type Database = {
           matricula?: string
           nome?: string
           periculosidade?: number | null
+          permissao_usuario?:
+            | Database["public"]["Enums"]["user_permission"]
+            | null
           refeicao?: number | null
           salario?: number
         }
@@ -559,7 +581,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_permission: "engenheiro" | "planejamento" | "balanca" | "apontador"
     }
     CompositeTypes: {
       [_ in never]: never

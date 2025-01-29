@@ -2,10 +2,10 @@ import { format } from "date-fns";
 import { Table, TableBody } from "@/components/ui/table";
 import { MassRequestTableHeader } from "./table/TableHeader";
 import { Button } from "@/components/ui/button";
-import { Edit2, Eye, Trash2 } from "lucide-react";
+import { Edit2, Eye, Trash2, Plus } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
@@ -18,6 +18,24 @@ export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  // Query to check if user has planning permission
+  const { data: userPermission } = useQuery({
+    queryKey: ["user-permission"],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from("bd_rhasfalto")
+        .select("permissao_usuario")
+        .eq("id", user.id)
+        .single();
+
+      if (error) throw error;
+      return data?.permissao_usuario;
+    }
+  });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -41,6 +59,17 @@ export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
       });
     },
   });
+
+  const handleNewProgramming = (request: any) => {
+    navigate("/mass-programming", {
+      state: {
+        centro_custo_id: request.centro_custo,
+        logradouro: `${request.logradouro}${request.bairro ? ` - ${request.bairro}` : ''}`,
+        volume: request.peso,
+        requisicao_id: request.id
+      }
+    });
+  };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow">
@@ -77,6 +106,15 @@ export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
+                  {userPermission === 'planejamento' && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleNewProgramming(request)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
