@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, Plus, Truck, Trash } from "lucide-react";
+import { Eye, Pencil, Truck2, Trash } from "lucide-react";
 import { MassRequest } from "../types";
 import {
   Dialog,
@@ -75,7 +75,7 @@ export function TableActions({
               title="Nova Programação"
               disabled={isProgrammed}
             >
-              <Truck className="h-4 w-4" />
+              <Truck2 className="h-4 w-4" />
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl">
