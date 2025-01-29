@@ -18,37 +18,9 @@ export default function MassRequestManagement() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingRequest, setEditingRequest] = useState<any>(null);
   const [filters, setFilters] = useState({
-    startDate: null as Date | null,
-    endDate: null as Date | null,
-    engineer: "_all",
-    costCenter: "_all",
-  });
-
-  const { data: requests, isLoading } = useQuery({
-    queryKey: ["mass-requests", filters],
-    queryFn: async () => {
-      let query = supabase
-        .from("bd_requisicao")
-        .select("*, bd_ruas_requisicao(*)");
-
-      if (filters.startDate && filters.endDate) {
-        query = query.gte('data', filters.startDate.toISOString())
-                    .lte('data', filters.endDate.toISOString());
-      }
-
-      if (filters.engineer !== "_all") {
-        query = query.eq('engenheiro', filters.engineer);
-      }
-
-      if (filters.costCenter !== "_all") {
-        query = query.eq('centro_custo', filters.costCenter);
-      }
-
-      const { data, error } = await query.order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    },
+    data_inicio: null as Date | null,
+    data_fim: null as Date | null,
+    centro_custo: "_all",
   });
 
   const handleEdit = (request: any) => {
@@ -88,11 +60,13 @@ export default function MassRequestManagement() {
 
       <MassRequestFilters filters={filters} onFilterChange={setFilters} />
       
-      {isLoading ? (
-        <div>Carregando...</div>
-      ) : (
-        <MassRequestTable data={requests || []} onEdit={handleEdit} />
-      )}
+      <MassRequestTable 
+        filters={{
+          data_inicio: filters.data_inicio?.toISOString().split('T')[0],
+          data_fim: filters.data_fim?.toISOString().split('T')[0],
+          centro_custo: filters.centro_custo === "_all" ? undefined : filters.centro_custo,
+        }} 
+      />
     </div>
   );
 }
