@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, List, Trash, Truck } from "lucide-react";
+import { Eye, Pencil, Trash, Truck } from "lucide-react";
 import { MassRequest } from "../types";
 import {
   Dialog,
@@ -30,6 +30,7 @@ export function TableActions({
 }: TableActionsProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const isProgrammed = request.quantidade_programada >= request.peso;
+  const canProgram = userPermission === "planejamento" && !isProgrammed;
 
   const handleProgrammingSuccess = () => {
     setIsDialogOpen(false);
@@ -38,34 +39,32 @@ export function TableActions({
 
   return (
     <div className="flex justify-end items-center gap-2">
-      {userPermission === "planejamento" && (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              title="Nova Programação"
-              disabled={isProgrammed}
-            >
-              <Truck className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle>Nova Programação</DialogTitle>
-            </DialogHeader>
-            <MassProgrammingForm
-              initialData={{
-                centro_custo_id: request.centro_custo,
-                logradouro: request.logradouro,
-                volume: request.peso - (request.quantidade_programada || 0),
-                requisicao_id: request.id,
-              }}
-              onSuccess={handleProgrammingSuccess}
-            />
-          </DialogContent>
-        </Dialog>
-      )}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            title="Nova Programação"
+            disabled={!canProgram}
+          >
+            <Truck className="h-4 w-4" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Nova Programação</DialogTitle>
+          </DialogHeader>
+          <MassProgrammingForm
+            initialData={{
+              centro_custo_id: request.centro_custo,
+              logradouro: request.logradouro,
+              volume: request.peso - (request.quantidade_programada || 0),
+              requisicao_id: request.id,
+            }}
+            onSuccess={handleProgrammingSuccess}
+          />
+        </DialogContent>
+      </Dialog>
       <Button
         variant="ghost"
         size="icon"
