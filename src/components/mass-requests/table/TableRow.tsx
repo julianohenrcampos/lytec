@@ -24,7 +24,13 @@ export function MassRequestTableRow({
   const isProgrammed = request.quantidade_programada >= request.peso;
 
   return (
-    <UITableRow className={cn(isProgrammed && "bg-green-50")}>
+    <UITableRow 
+      className={cn(
+        "cursor-pointer hover:bg-muted/50 transition-colors",
+        isProgrammed && "bg-green-50"
+      )}
+      onClick={() => !isProgrammed && onNewProgramming(request)}
+    >
       <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
       <TableCell>{request.centro_custo}</TableCell>
       <TableCell>{request.engenheiro}</TableCell>

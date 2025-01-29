@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, Truck, Trash } from "lucide-react";
+import { Eye, Pencil, List, Trash } from "lucide-react";
 import { MassRequest } from "../types";
 import {
   Dialog,
@@ -33,7 +33,6 @@ export function TableActions({
 
   const handleProgrammingSuccess = () => {
     setIsDialogOpen(false);
-    // Refresh the table data through the parent component
     onNewProgramming(request);
   };
 
@@ -75,7 +74,7 @@ export function TableActions({
               title="Nova Programação"
               disabled={isProgrammed}
             >
-              <Truck className="h-4 w-4" />
+              <List className="h-4 w-4" />
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl">
