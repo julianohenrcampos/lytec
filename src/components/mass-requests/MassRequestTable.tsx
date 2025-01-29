@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil } from "lucide-react";
+import { Eye, Pencil, Plus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -11,32 +11,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { MassRequest } from "./types";
 
 interface MassRequestTableProps {
   filters: {
-    data_inicio?: string;
-    data_fim?: string;
-    centro_custo?: string;
+    data_inicio: Date | null;
+    data_fim: Date | null;
+    centro_custo: string;
   };
 }
 
 export function MassRequestTable({ filters }: MassRequestTableProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const { data: userPermission } = useQuery({
-    queryKey: ["userPermission"],
+    queryKey: ["user-permission", user?.id],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return null;
-
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("permissao_usuario")
-        .eq("id", user.id)
+        .eq("id", user?.id)
         .maybeSingle();
 
       if (error) {
@@ -44,12 +43,12 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
         return null;
       }
 
-      return data?.permissao_usuario || null;
+      return data?.permissao_usuario;
     },
   });
 
   const { data: requests, isLoading } = useQuery({
-    queryKey: ["massRequests", filters],
+    queryKey: ["mass-requests", filters],
     queryFn: async () => {
       let query = supabase
         .from("bd_requisicao")
@@ -62,21 +61,22 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
 
       if (filters.data_inicio && filters.data_fim) {
         query = query
-          .gte("data", filters.data_inicio)
-          .lte("data", filters.data_fim);
+          .gte("data", filters.data_inicio.toISOString())
+          .lte("data", filters.data_fim.toISOString());
       }
 
-      if (filters.centro_custo) {
+      if (filters.centro_custo !== "_all") {
         query = query.eq("centro_custo", filters.centro_custo);
       }
 
       const { data, error } = await query;
 
       if (error) {
+        console.error("Error fetching mass requests:", error);
         toast({
           variant: "destructive",
           title: "Erro ao carregar requisições",
-          description: error.message,
+          description: "Ocorreu um erro ao carregar as requisições de massa.",
         });
         return [];
       }
@@ -100,6 +100,31 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
     });
   };
 
+  const handleView = (request: MassRequest) => {
+    navigate(`/mass-requests/${request.id}`);
+  };
+
+  const handleDelete = async (request: MassRequest) => {
+    const { error } = await supabase
+      .from("bd_requisicao")
+      .delete()
+      .eq("id", request.id);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao excluir requisição",
+        description: "Ocorreu um erro ao excluir a requisição de massa.",
+      });
+      return;
+    }
+
+    toast({
+      title: "Requisição excluída",
+      description: "A requisição de massa foi excluída com sucesso.",
+    });
+  };
+
   if (isLoading) {
     return <div>Carregando...</div>;
   }
@@ -110,46 +135,68 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
         <TableRow>
           <TableHead>Data</TableHead>
           <TableHead>Centro de Custo</TableHead>
-          <TableHead>Logradouro</TableHead>
           <TableHead>Engenheiro</TableHead>
-          <TableHead>Quantidade</TableHead>
-          <TableHead>Quantidade Programada</TableHead>
+          <TableHead>Área (m²)</TableHead>
+          <TableHead>Volume (t)</TableHead>
+          <TableHead>Qtd. Programada</TableHead>
           <TableHead className="text-right">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {requests?.map((request) => (
-          <TableRow key={request.id}>
-            <TableCell>
-              {new Date(request.data).toLocaleDateString()}
-            </TableCell>
-            <TableCell>{request.centro_custo}</TableCell>
-            <TableCell>{request.logradouro}</TableCell>
-            <TableCell>{request.engenheiro}</TableCell>
-            <TableCell>{request.peso}</TableCell>
-            <TableCell>{request.quantidade_programada}</TableCell>
-            <TableCell className="text-right space-x-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleEdit(request)}
-                title="Editar"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              {userPermission === "planejamento" && (
+        {requests && requests.length > 0 ? (
+          requests.map((request) => (
+            <TableRow key={request.id}>
+              <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
+              <TableCell>{request.centro_custo}</TableCell>
+              <TableCell>{request.engenheiro}</TableCell>
+              <TableCell>{request.area}</TableCell>
+              <TableCell>{request.peso}</TableCell>
+              <TableCell>{request.quantidade_programada}</TableCell>
+              <TableCell className="text-right space-x-2">
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleNewProgramming(request)}
-                  title="Nova Programação"
+                  onClick={() => handleView(request)}
+                  title="Visualizar"
                 >
-                  <Plus className="h-4 w-4" />
+                  <Eye className="h-4 w-4" />
                 </Button>
-              )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleEdit(request)}
+                  title="Editar"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleDelete(request)}
+                  title="Excluir"
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+                {userPermission === "planejamento" && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleNewProgramming(request)}
+                    title="Nova Programação"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={7} className="text-center">
+              Nenhuma requisição encontrada
             </TableCell>
           </TableRow>
-        ))}
+        )}
       </TableBody>
     </Table>
   );

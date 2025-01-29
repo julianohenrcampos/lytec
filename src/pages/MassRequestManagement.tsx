@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { MassRequest } from "@/components/mass-requests/types";
 
 export default function MassRequestManagement() {
   const [isOpen, setIsOpen] = useState(false);
-  const [editingRequest, setEditingRequest] = useState<any>(null);
+  const [editingRequest, setEditingRequest] = useState<MassRequest | null>(null);
   const [filters, setFilters] = useState({
     data_inicio: null as Date | null,
     data_fim: null as Date | null,
@@ -54,11 +55,7 @@ export default function MassRequestManagement() {
       <MassRequestFilters filters={filters} onFilterChange={setFilters} />
       
       <MassRequestTable 
-        filters={{
-          data_inicio: filters.data_inicio?.toISOString().split('T')[0],
-          data_fim: filters.data_fim?.toISOString().split('T')[0],
-          centro_custo: filters.centro_custo === "_all" ? undefined : filters.centro_custo,
-        }} 
+        filters={filters}
       />
     </div>
   );
