@@ -111,6 +111,7 @@ export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
                       variant="ghost"
                       size="icon"
                       onClick={() => handleNewProgramming(request)}
+                      title="Nova Programação"
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
