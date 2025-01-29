@@ -15,7 +15,6 @@ import { DepartmentForm, type FormValues } from "@/components/departments/Depart
 import { DepartmentTable } from "@/components/departments/DepartmentTable";
 
 type Department = Database["public"]["Tables"]["bd_departamento"]["Row"];
-type DepartmentInsert = Database["public"]["Tables"]["bd_departamento"]["Insert"];
 
 export default function DepartmentManagement() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,12 +36,9 @@ export default function DepartmentManagement() {
 
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      const departmentData: DepartmentInsert = {
-        nome: values.nome,
-      };
       const { error } = await supabase
         .from("bd_departamento")
-        .insert([departmentData]);
+        .insert([{ nome: values.nome }]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -65,12 +61,9 @@ export default function DepartmentManagement() {
   const updateMutation = useMutation({
     mutationFn: async (values: FormValues) => {
       if (!editingDepartment?.id) return;
-      const departmentData: DepartmentInsert = {
-        nome: values.nome,
-      };
       const { error } = await supabase
         .from("bd_departamento")
-        .update(departmentData)
+        .update({ nome: values.nome })
         .eq("id", editingDepartment.id);
       if (error) throw error;
     },
