@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -23,6 +24,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -35,18 +37,29 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
   async function onSubmit(values: LoginFormValues) {
     setIsLoading(true);
     try {
-      await signIn({
+      const { error } = await signIn({
         email: values.email,
         password: values.password,
       });
+      
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Erro ao fazer login",
+          description: error.message || "Email ou senha incorretos",
+        });
+        return;
+      }
+
       toast({
         title: "Login realizado com sucesso!",
       });
+      navigate("/");
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Erro ao fazer login",
-        description: "Email ou senha incorretos",
+        description: "Ocorreu um erro inesperado",
       });
     } finally {
       setIsLoading(false);
