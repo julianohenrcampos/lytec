@@ -1,26 +1,26 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
-import { ForgotPassword } from "./pages/ForgotPassword";
-import { ResetPassword } from "./pages/ResetPassword";
-import { Dashboard } from "./pages/Dashboard";
-import { EmployeeManagement } from "./pages/EmployeeManagement";
-import { CompanyManagement } from "./pages/CompanyManagement";
-import { DepartmentManagement } from "./pages/DepartmentManagement";
-import { FunctionManagement } from "./pages/FunctionManagement";
-import { CostCenterManagement } from "./pages/CostCenterManagement";
-import { FleetManagement } from "./pages/FleetManagement";
-import { TruckEquipmentManagement } from "./pages/TruckEquipmentManagement";
-import { PlantManagement } from "./pages/PlantManagement";
-import { MassRequestManagement } from "./pages/MassRequestManagement";
-import { MassRequestDetails } from "./pages/MassRequestDetails";
-import { MassRequestEdit } from "./pages/MassRequestEdit";
-import { MassProgramming } from "./pages/MassProgramming";
-import { MassProgrammingDetails } from "./pages/MassProgrammingDetails";
-import { TeamManagement } from "./pages/TeamManagement";
-import { Profile } from "./pages/Profile";
-import { Settings } from "./pages/Settings";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Dashboard from "./pages/Dashboard";
+import EmployeeManagement from "./pages/EmployeeManagement";
+import CompanyManagement from "./pages/CompanyManagement";
+import DepartmentManagement from "./pages/DepartmentManagement";
+import FunctionManagement from "./pages/FunctionManagement";
+import CostCenterManagement from "./pages/CostCenterManagement";
+import FleetManagement from "./pages/FleetManagement";
+import TruckEquipmentManagement from "./pages/TruckEquipmentManagement";
+import PlantManagement from "./pages/PlantManagement";
+import MassRequestManagement from "./pages/MassRequestManagement";
+import MassRequestDetails from "./pages/MassRequestDetails";
+import MassRequestEdit from "./pages/MassRequestEdit";
+import MassProgramming from "./pages/MassProgramming";
+import MassProgrammingDetails from "./pages/MassProgrammingDetails";
+import TeamManagement from "./pages/TeamManagement";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 export function AppRoutes() {
   return (
