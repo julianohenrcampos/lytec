@@ -1,20 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Eye, Pencil, Plus, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { format } from "date-fns";
+import { Table, TableBody } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { MassRequest } from "./types";
+import { MassRequestTableHeader } from "./table/TableHeader";
+import { MassRequestTableRow } from "./table/TableRow";
 
 interface MassRequestTableProps {
   filters: {
@@ -131,73 +123,26 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
 
   return (
     <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Data</TableHead>
-          <TableHead>Centro de Custo</TableHead>
-          <TableHead>Engenheiro</TableHead>
-          <TableHead>Área (m²)</TableHead>
-          <TableHead>Volume (t)</TableHead>
-          <TableHead>Qtd. Programada</TableHead>
-          <TableHead className="text-right">Ações</TableHead>
-        </TableRow>
-      </TableHeader>
+      <MassRequestTableHeader />
       <TableBody>
         {requests && requests.length > 0 ? (
           requests.map((request) => (
-            <TableRow key={request.id}>
-              <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
-              <TableCell>{request.centro_custo}</TableCell>
-              <TableCell>{request.engenheiro}</TableCell>
-              <TableCell>{request.area}</TableCell>
-              <TableCell>{request.peso}</TableCell>
-              <TableCell>{request.quantidade_programada}</TableCell>
-              <TableCell>
-                <div className="flex justify-end items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleView(request)}
-                    title="Visualizar"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleEdit(request)}
-                    title="Editar"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(request)}
-                    title="Excluir"
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                  {userPermission === "planejamento" && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleNewProgramming(request)}
-                      title="Nova Programação"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
+            <MassRequestTableRow
+              key={request.id}
+              request={request}
+              userPermission={userPermission}
+              onView={handleView}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onNewProgramming={handleNewProgramming}
+            />
           ))
         ) : (
-          <TableRow>
-            <TableCell colSpan={7} className="text-center">
+          <tr>
+            <td colSpan={7} className="text-center py-4">
               Nenhuma requisição encontrada
-            </TableCell>
-          </TableRow>
+            </td>
+          </tr>
         )}
       </TableBody>
     </Table>

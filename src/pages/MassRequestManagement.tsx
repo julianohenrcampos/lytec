@@ -12,10 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { MassRequest } from "@/components/mass-requests/types";
-import { useAuth } from "@/hooks/useAuth";
 
 export default function MassRequestManagement() {
-  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [editingRequest, setEditingRequest] = useState<MassRequest | null>(null);
   const [filters, setFilters] = useState({
