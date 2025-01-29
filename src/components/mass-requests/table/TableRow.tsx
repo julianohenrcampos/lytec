@@ -3,6 +3,7 @@ import { TableCell, TableRow as UITableRow } from "@/components/ui/table";
 import { MassRequest } from "../types";
 import { TableActions } from "./TableActions";
 import { cn } from "@/lib/utils";
+import { Truck } from "lucide-react";
 
 interface TableRowProps {
   request: MassRequest;
@@ -34,7 +35,12 @@ export function MassRequestTableRow({
       <TableCell>{request.engenheiro}</TableCell>
       <TableCell>{request.area}</TableCell>
       <TableCell>{request.peso}</TableCell>
-      <TableCell>{request.quantidade_programada}</TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Truck className="h-4 w-4 text-gray-500" />
+          {request.quantidade_programada}
+        </div>
+      </TableCell>
       <TableCell>
         <TableActions
           request={request}
