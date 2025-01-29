@@ -29,6 +29,7 @@ export interface MassRequest {
   traco?: string;
   streets?: Street[];
   created_at?: string;
+  quantidade_programada?: number;
 }
 
 export interface FormValues {

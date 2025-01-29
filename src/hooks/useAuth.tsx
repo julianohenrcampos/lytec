@@ -1,16 +1,20 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import type { User, AuthError } from "@supabase/supabase-js";
 
 interface AuthCredentials {
   email: string;
   password: string;
 }
 
+interface AuthResponse {
+  error: AuthError | null;
+}
+
 interface AuthContextType {
   user: User | null;
-  signIn: (credentials: AuthCredentials) => Promise<void>;
-  signUp: (credentials: AuthCredentials) => Promise<void>;
+  signIn: (credentials: AuthCredentials) => Promise<AuthResponse>;
+  signUp: (credentials: AuthCredentials) => Promise<AuthResponse>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
@@ -34,20 +38,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async ({ email, password }: AuthCredentials) => {
+  const signIn = async ({ email, password }: AuthCredentials): Promise<AuthResponse> => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) throw error;
+    return { error };
   };
 
-  const signUp = async ({ email, password }: AuthCredentials) => {
+  const signUp = async ({ email, password }: AuthCredentials): Promise<AuthResponse> => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
     });
-    if (error) throw error;
+    return { error };
   };
 
   const signOut = async () => {

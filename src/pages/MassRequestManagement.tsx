@@ -13,12 +13,18 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { MassRequest } from "@/components/mass-requests/types";
 
+interface Filters {
+  data_inicio: Date | null;
+  data_fim: Date | null;
+  centro_custo: string;
+}
+
 export default function MassRequestManagement() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingRequest, setEditingRequest] = useState<MassRequest | null>(null);
-  const [filters, setFilters] = useState({
-    data_inicio: null as Date | null,
-    data_fim: null as Date | null,
+  const [filters, setFilters] = useState<Filters>({
+    data_inicio: null,
+    data_fim: null,
     centro_custo: "_all",
   });
 
@@ -55,7 +61,12 @@ export default function MassRequestManagement() {
       <MassRequestFilters filters={filters} onFilterChange={setFilters} />
       
       <MassRequestTable 
-        filters={filters}
+        filters={{
+          startDate: filters.data_inicio,
+          endDate: filters.data_fim,
+          costCenter: filters.centro_custo,
+          engineer: "_all"
+        }}
       />
     </div>
   );
