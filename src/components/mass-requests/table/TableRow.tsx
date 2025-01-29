@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { TableCell, TableRow as UITableRow } from "@/components/ui/table";
 import { MassRequest } from "../types";
 import { TableActions } from "./TableActions";
+import { cn } from "@/lib/utils";
 
 interface TableRowProps {
   request: MassRequest;
@@ -20,8 +21,10 @@ export function MassRequestTableRow({
   onDelete,
   onNewProgramming,
 }: TableRowProps) {
+  const isProgrammed = request.quantidade_programada >= request.peso;
+
   return (
-    <UITableRow>
+    <UITableRow className={cn(isProgrammed && "bg-green-50")}>
       <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
       <TableCell>{request.centro_custo}</TableCell>
       <TableCell>{request.engenheiro}</TableCell>
