@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
+import { MassRequest } from "./types";
 
 interface MassRequestTableProps {
   filters: {
@@ -52,7 +53,7 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
     queryFn: async () => {
       let query = supabase
         .from("bd_requisicao")
-        .select("*")
+        .select("*, bd_ruas_requisicao(*)")
         .order("created_at", { ascending: false });
 
       if (filters.data_inicio && filters.data_fim) {
@@ -80,7 +81,7 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
     },
   });
 
-  const handleNewProgramming = (request: any) => {
+  const handleNewProgramming = (request: MassRequest) => {
     navigate("/mass-programming/new", {
       state: { request },
     });

@@ -35,7 +35,7 @@ export function useFormQueries() {
       const { data: encarregadoFunc, error: funcError } = await supabase
         .from("bd_funcao")
         .select("id")
-        .ilike("nome", "encarregado")
+        .ilike("nome", "%encarregado%")
         .maybeSingle();
 
       if (funcError) {
@@ -70,7 +70,7 @@ export function useFormQueries() {
       const { data: apontadorFunc, error: funcError } = await supabase
         .from("bd_funcao")
         .select("id")
-        .ilike("nome", "apontador")
+        .ilike("nome", "%apontador%")
         .maybeSingle();
 
       if (funcError) {
