@@ -2,6 +2,14 @@ import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { EmployeeFormValues } from "../types";
 import { PermissionsForm } from "./PermissionsForm";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 interface ContractDataFormProps {
   form: UseFormReturn<EmployeeFormValues>;
