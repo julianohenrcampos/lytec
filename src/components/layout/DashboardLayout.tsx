@@ -11,6 +11,7 @@ import {
   Factory,
   FileText,
   Calendar,
+  Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -24,7 +25,22 @@ export function DashboardLayout() {
 
   const menuItems = [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { path: "/employees", label: "Funcionários", icon: Users },
+    { 
+      path: "/employees", 
+      label: "Funcionários", 
+      icon: Users,
+      action: {
+        icon: Plus,
+        label: "Novo Funcionário",
+        onClick: () => {
+          // This will be handled by the page component
+          const newButton = document.querySelector('[data-new-employee]');
+          if (newButton instanceof HTMLButtonElement) {
+            newButton.click();
+          }
+        }
+      }
+    },
     { path: "/teams", label: "Equipes", icon: Users },
     { path: "/companies", label: "Empresas", icon: Building2 },
     { path: "/functions", label: "Funções", icon: Briefcase },
@@ -50,7 +66,7 @@ export function DashboardLayout() {
                 {menuItems.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <li key={item.path}>
+                    <li key={item.path} className="relative">
                       <Link
                         to={item.path}
                         className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
@@ -62,6 +78,17 @@ export function DashboardLayout() {
                         <Icon className="w-5 h-5" />
                         <span>{item.label}</span>
                       </Link>
+                      {item.action && isActive(item.path) && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-2 top-1/2 -translate-y-1/2"
+                          onClick={item.action.onClick}
+                        >
+                          <item.action.icon className="h-4 w-4" />
+                          <span className="sr-only">{item.action.label}</span>
+                        </Button>
+                      )}
                     </li>
                   );
                 })}
@@ -88,5 +115,6 @@ export function DashboardLayout() {
         </div>
       </div>
     </div>
+  </div>
   );
 }
