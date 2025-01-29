@@ -41,25 +41,27 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
         email: values.email,
         password: values.password,
       });
-      
+
       if (error) {
         toast({
           variant: "destructive",
           title: "Erro ao fazer login",
           description: error.message || "Email ou senha incorretos",
         });
+        setIsLoading(false);
         return;
       }
 
       toast({
         title: "Login realizado com sucesso!",
       });
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
+      console.error("Login error:", error);
       toast({
         variant: "destructive",
         title: "Erro ao fazer login",
-        description: "Ocorreu um erro inesperado",
+        description: "Ocorreu um erro inesperado ao tentar fazer login",
       });
     } finally {
       setIsLoading(false);
