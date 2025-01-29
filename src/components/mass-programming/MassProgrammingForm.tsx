@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card";
 
 export function MassProgrammingForm({ initialData, onSuccess }: MassProgrammingFormProps) {
   const { form, isSubmitting, onSubmit, handleDuplicate, handleNewLine } = useFormLogic(initialData, onSuccess);
-  const { plants, costCenters, managers, pointers } = useFormQueries();
+  const { usinas, costCenters, encarregados, apontadores } = useFormQueries();
 
   return (
     <Form {...form}>
@@ -20,10 +20,10 @@ export function MassProgrammingForm({ initialData, onSuccess }: MassProgrammingF
             <DateField form={form} />
             <SelectFields
               form={form}
-              plants={plants}
+              plants={usinas}
               costCenters={costCenters}
-              managers={managers}
-              pointers={pointers}
+              managers={encarregados}
+              pointers={apontadores}
             />
             <InputFields form={form} />
           </div>
