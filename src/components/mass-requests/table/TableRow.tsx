@@ -1,11 +1,23 @@
 import { format } from "date-fns";
-import { TableCell, TableRow as UITableRow } from "@/components/ui/table";
+import { Edit, Eye, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { MassRequest } from "../types";
-import { TableActions } from "./TableActions";
 
-interface TableRowProps {
+interface MassRequestTableRowProps {
   request: MassRequest;
-  userPermission?: string;
+  userPermission?: string | null;
   onView: (request: MassRequest) => void;
   onEdit: (request: MassRequest) => void;
   onDelete: (request: MassRequest) => void;
@@ -19,25 +31,68 @@ export function MassRequestTableRow({
   onEdit,
   onDelete,
   onNewProgramming,
-}: TableRowProps) {
+}: MassRequestTableRowProps) {
   return (
-    <UITableRow>
+    <TableRow>
       <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
       <TableCell>{request.centro_custo}</TableCell>
+      <TableCell>{request.diretoria || "-"}</TableCell>
+      <TableCell>{request.gerencia || "-"}</TableCell>
       <TableCell>{request.engenheiro}</TableCell>
-      <TableCell>{request.area}</TableCell>
-      <TableCell>{request.peso}</TableCell>
-      <TableCell>{request.quantidade_programada}</TableCell>
-      <TableCell>
-        <TableActions
-          request={request}
-          userPermission={userPermission}
-          onView={onView}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onNewProgramming={onNewProgramming}
-        />
+      <TableCell>{request.logradouro}</TableCell>
+      <TableCell>{request.bairro || "-"}</TableCell>
+      <TableCell>{request.area?.toFixed(2) || "-"}</TableCell>
+      <TableCell>{request.peso?.toFixed(2) || "-"}</TableCell>
+      <TableCell>{request.quantidade_programada?.toFixed(2) || "0.00"}</TableCell>
+      <TableCell>{request.traco || "-"}</TableCell>
+      <TableCell>{request.ligante || "-"}</TableCell>
+      <TableCell className="text-right space-x-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onView(request)}
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onEdit(request)}
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+        {userPermission === "planejamento" && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onNewProgramming(request)}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        )}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja excluir esta requisição?
+                Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={() => onDelete(request)}>
+                Confirmar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </TableCell>
-    </UITableRow>
+    </TableRow>
   );
 }
