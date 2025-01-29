@@ -19,6 +19,7 @@ import MassRequestEdit from "./pages/MassRequestEdit";
 import MassProgramming from "./pages/MassProgramming";
 import MassProgrammingDetails from "./pages/MassProgrammingDetails";
 import TeamManagement from "./pages/TeamManagement";
+import PermissionManagement from "./pages/PermissionManagement";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 
@@ -47,6 +48,7 @@ export function AppRoutes() {
         <Route path="/mass-requests/:id/edit" element={<MassRequestEdit />} />
         <Route path="/mass-programming" element={<MassProgramming />} />
         <Route path="/mass-programming/:id" element={<MassProgrammingDetails />} />
+        <Route path="/permissions" element={<PermissionManagement />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
