@@ -152,41 +152,43 @@ export function MassRequestTable({ filters }: MassRequestTableProps) {
               <TableCell>{request.area}</TableCell>
               <TableCell>{request.peso}</TableCell>
               <TableCell>{request.quantidade_programada}</TableCell>
-              <TableCell className="text-right space-x-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleView(request)}
-                  title="Visualizar"
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleEdit(request)}
-                  title="Editar"
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(request)}
-                  title="Excluir"
-                >
-                  <Trash className="h-4 w-4" />
-                </Button>
-                {userPermission === "planejamento" && (
+              <TableCell>
+                <div className="flex justify-end items-center gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleNewProgramming(request)}
-                    title="Nova Programação"
+                    onClick={() => handleView(request)}
+                    title="Visualizar"
                   >
-                    <Plus className="h-4 w-4" />
+                    <Eye className="h-4 w-4" />
                   </Button>
-                )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleEdit(request)}
+                    title="Editar"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(request)}
+                    title="Excluir"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                  {userPermission === "planejamento" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleNewProgramming(request)}
+                      title="Nova Programação"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
               </TableCell>
             </TableRow>
           ))
