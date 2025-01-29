@@ -12,7 +12,7 @@ interface TableRowProps {
   onNewProgramming: (request: MassRequest) => void;
 }
 
-export function TableRow({
+export function MassRequestTableRow({
   request,
   userPermission,
   onView,
