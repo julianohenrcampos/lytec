@@ -97,13 +97,15 @@ export function RegisterForm() {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? "Criando conta..." : "Criar conta"}
-        </Button>
+        <div className="space-y-2">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? "Criando conta..." : "Criar conta"}
+          </Button>
+        </div>
       </form>
     </Form>
   );
