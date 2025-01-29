@@ -46,9 +46,16 @@ export function useFormQueries() {
     queryFn: async () => {
       if (!funcoes) return [];
       
-      const encarregadoFunc = funcoes.find(
-        (f) => f.nome.toLowerCase() === "encarregado"
-      );
+      const { data: encarregadoFunc, error: funcError } = await supabase
+        .from("bd_funcao")
+        .select("id")
+        .ilike("nome", "encarregado")
+        .maybeSingle();
+      
+      if (funcError) {
+        console.error("Error fetching encarregado function:", funcError);
+        return [];
+      }
       
       if (!encarregadoFunc) {
         console.warn("Função 'encarregado' não encontrada");
@@ -73,9 +80,16 @@ export function useFormQueries() {
     queryFn: async () => {
       if (!funcoes) return [];
       
-      const apontadorFunc = funcoes.find(
-        (f) => f.nome.toLowerCase() === "apontador"
-      );
+      const { data: apontadorFunc, error: funcError } = await supabase
+        .from("bd_funcao")
+        .select("id")
+        .ilike("nome", "apontador")
+        .maybeSingle();
+      
+      if (funcError) {
+        console.error("Error fetching apontador function:", funcError);
+        return [];
+      }
       
       if (!apontadorFunc) {
         console.warn("Função 'apontador' não encontrada");
