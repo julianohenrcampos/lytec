@@ -1,127 +1,134 @@
-import { format } from "date-fns";
-import { Table, TableBody } from "@/components/ui/table";
-import { MassRequestTableHeader } from "./table/TableHeader";
-import { Button } from "@/components/ui/button";
-import { Edit2, Eye, Trash2, Plus } from "lucide-react";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
 
 interface MassRequestTableProps {
-  data: any[];
-  onEdit: (request: any) => void;
+  filters: {
+    data_inicio?: string;
+    data_fim?: string;
+    centro_custo?: string;
+  };
 }
 
-export function MassRequestTable({ data, onEdit }: MassRequestTableProps) {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+export function MassRequestTable({ filters }: MassRequestTableProps) {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  // Query to check if user has planning permission
   const { data: userPermission } = useQuery({
-    queryKey: ["user-permission"],
+    queryKey: ["userPermission"],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      
       if (!user) return null;
 
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("permissao_usuario")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
-      return data?.permissao_usuario;
-    }
+      if (error) {
+        console.error("Error fetching user permission:", error);
+        return null;
+      }
+
+      return data?.permissao_usuario || null;
+    },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase
+  const { data: requests, isLoading } = useQuery({
+    queryKey: ["massRequests", filters],
+    queryFn: async () => {
+      let query = supabase
         .from("bd_requisicao")
-        .delete()
-        .eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mass-requests"] });
-      toast({
-        title: "Requisição excluída com sucesso!",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        variant: "destructive",
-        title: "Erro ao excluir requisição",
-        description: error.message,
-      });
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (filters.data_inicio && filters.data_fim) {
+        query = query
+          .gte("data", filters.data_inicio)
+          .lte("data", filters.data_fim);
+      }
+
+      if (filters.centro_custo) {
+        query = query.eq("centro_custo", filters.centro_custo);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Erro ao carregar requisições",
+          description: error.message,
+        });
+        return [];
+      }
+
+      return data;
     },
   });
 
   const handleNewProgramming = (request: any) => {
-    navigate("/mass-programming", {
-      state: {
-        centro_custo_id: request.centro_custo,
-        logradouro: `${request.logradouro}${request.bairro ? ` - ${request.bairro}` : ''}`,
-        volume: request.peso,
-        requisicao_id: request.id
-      }
+    navigate("/mass-programming/new", {
+      state: { request },
     });
   };
 
+  if (isLoading) {
+    return <div>Carregando...</div>;
+  }
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <Table>
-        <MassRequestTableHeader />
-        <TableBody>
-          {data?.map((request) => (
-            <TableRow key={request.id}>
-              <TableCell>{format(new Date(request.data), "dd/MM/yyyy")}</TableCell>
-              <TableCell>{request.centro_custo}</TableCell>
-              <TableCell>{request.diretoria || "-"}</TableCell>
-              <TableCell>{request.gerencia || "-"}</TableCell>
-              <TableCell>{request.engenheiro}</TableCell>
-              <TableCell>
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => navigate(`/mass-requests/${request.id}`)}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onEdit(request)}
-                  >
-                    <Edit2 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => deleteMutation.mutate(request.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                  {userPermission === 'planejamento' && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleNewProgramming(request)}
-                      title="Nova Programação"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Data</TableHead>
+          <TableHead>Centro de Custo</TableHead>
+          <TableHead>Logradouro</TableHead>
+          <TableHead>Engenheiro</TableHead>
+          <TableHead>Quantidade</TableHead>
+          <TableHead>Quantidade Programada</TableHead>
+          <TableHead className="text-right">Ações</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {requests?.map((request) => (
+          <TableRow key={request.id}>
+            <TableCell>
+              {new Date(request.data).toLocaleDateString()}
+            </TableCell>
+            <TableCell>{request.centro_custo}</TableCell>
+            <TableCell>{request.logradouro}</TableCell>
+            <TableCell>{request.engenheiro}</TableCell>
+            <TableCell>{request.peso}</TableCell>
+            <TableCell>{request.quantidade_programada}</TableCell>
+            <TableCell className="text-right space-x-2">
+              {userPermission === "planejamento" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleNewProgramming(request)}
+                  title="Nova Programação"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
