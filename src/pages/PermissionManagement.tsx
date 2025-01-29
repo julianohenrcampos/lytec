@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PermissionForm } from "@/components/permissions/PermissionForm";
@@ -10,15 +9,20 @@ export default function PermissionManagement() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("bd_permissoes")
-        .select("*");
+        .select(`
+          id,
+          tela,
+          acesso,
+          usuario_id,
+          created_at
+        `);
+
       if (error) throw error;
       return data;
     },
   });
 
-  if (isLoading) {
-    return <div>Carregando...</div>;
-  }
+  if (isLoading) return <div>Carregando...</div>;
 
   return (
     <div className="container mx-auto py-6">

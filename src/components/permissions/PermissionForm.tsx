@@ -1,23 +1,17 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
+import { Plus } from "lucide-react";
 
 interface FormValues {
   usuario_id?: string;
-  tela: string;
+  tela?: string;
   acesso?: boolean;
 }
 
@@ -29,27 +23,33 @@ export function PermissionForm() {
 
   const createPermission = useMutation({
     mutationFn: async (values: FormValues) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("bd_permissoes")
-        .insert({
-          usuario_id: values.usuario_id,
-          tela: values.tela,
-          acesso: values.acesso,
-        });
+        .insert([
+          {
+            usuario_id: values.usuario_id,
+            tela: values.tela,
+            acesso: values.acesso,
+          },
+        ])
+        .select();
+
       if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["permissions"] });
       toast({
-        title: "Permissão criada com sucesso!",
+        title: "Sucesso",
+        description: "Permissão criada com sucesso",
       });
       setOpen(false);
     },
     onError: (error) => {
       console.error("Error creating permission:", error);
       toast({
-        title: "Erro ao criar permissão",
-        description: "Tente novamente mais tarde",
+        title: "Erro",
+        description: "Erro ao criar permissão",
         variant: "destructive",
       });
     },
@@ -62,9 +62,8 @@ export function PermissionForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
+        <Button variant="outline" size="icon">
           <Plus className="h-4 w-4" />
-          Nova Permissão
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -81,8 +80,8 @@ export function PermissionForm() {
                   <FormLabel>Usuário</FormLabel>
                   <FormControl>
                     <Select
-                      value={field.value}
                       onValueChange={field.onChange}
+                      defaultValue={field.value}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione um usuário" />
@@ -104,8 +103,8 @@ export function PermissionForm() {
                   <FormLabel>Tela</FormLabel>
                   <FormControl>
                     <Select
-                      value={field.value}
                       onValueChange={field.onChange}
+                      defaultValue={field.value}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione uma tela" />
@@ -128,8 +127,8 @@ export function PermissionForm() {
                   <FormLabel>Acesso</FormLabel>
                   <FormControl>
                     <Select
-                      value={field.value?.toString()}
                       onValueChange={(value) => field.onChange(value === "true")}
+                      defaultValue={field.value?.toString()}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o tipo de acesso" />
@@ -143,10 +142,10 @@ export function PermissionForm() {
                 </FormItem>
               )}
             />
-            <Button 
-              type="submit" 
-              disabled={createPermission.isPending}
+            <Button
+              type="submit"
               className="w-full"
+              disabled={createPermission.isPending}
             >
               {createPermission.isPending ? "Criando..." : "Criar Permissão"}
             </Button>
