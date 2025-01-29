@@ -7,6 +7,7 @@ import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import MassProgramming from "@/pages/MassProgramming";
 import PlantManagement from "@/pages/PlantManagement";
+import MassRequestManagement from "@/pages/MassRequestManagement";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/teams/:id" element={<TeamDetails />} />
             <Route path="/mass-programming" element={<MassProgramming />} />
             <Route path="/plants" element={<PlantManagement />} />
+            <Route path="/mass-requests" element={<MassRequestManagement />} />
           </Route>
         </Routes>
       </BrowserRouter>

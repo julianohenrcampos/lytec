@@ -20,8 +20,8 @@ export default function MassRequestManagement() {
   const [filters, setFilters] = useState({
     startDate: null as Date | null,
     endDate: null as Date | null,
-    engineer: "",
-    costCenter: "",
+    engineer: "_all",
+    costCenter: "_all",
   });
 
   const { data: requests, isLoading } = useQuery({
@@ -36,11 +36,11 @@ export default function MassRequestManagement() {
                     .lte('data', filters.endDate.toISOString());
       }
 
-      if (filters.engineer) {
+      if (filters.engineer !== "_all") {
         query = query.eq('engenheiro', filters.engineer);
       }
 
-      if (filters.costCenter) {
+      if (filters.costCenter !== "_all") {
         query = query.eq('centro_custo', filters.costCenter);
       }
 
@@ -91,7 +91,7 @@ export default function MassRequestManagement() {
       {isLoading ? (
         <div>Carregando...</div>
       ) : (
-        <MassRequestTable data={requests} onEdit={handleEdit} />
+        <MassRequestTable data={requests || []} onEdit={handleEdit} />
       )}
     </div>
   );
