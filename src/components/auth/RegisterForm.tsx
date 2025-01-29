@@ -5,8 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const registerSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -21,8 +22,8 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -36,20 +37,24 @@ export function RegisterForm() {
   async function onSubmit(values: RegisterFormValues) {
     setIsLoading(true);
     try {
-      await signUp({
+      const { error } = await signUp({
         email: values.email,
         password: values.password,
       });
-      toast({
-        title: "Conta criada com sucesso!",
-        description: "Verifique seu email para confirmar o cadastro",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao criar conta",
-        description: "Tente novamente mais tarde",
-      });
+      
+      if (error) {
+        if (error.message.includes("already registered")) {
+          toast.error("Este email já está registrado");
+        } else {
+          toast.error("Erro ao criar conta: " + error.message);
+        }
+        return;
+      }
+
+      toast.success("Conta criada com sucesso!");
+      navigate("/login");
+    } catch (error: any) {
+      toast.error("Erro ao criar conta: " + error.message);
     } finally {
       setIsLoading(false);
     }
