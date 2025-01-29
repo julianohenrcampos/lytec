@@ -32,6 +32,7 @@ export function useFormQueries() {
     queryKey: ["encarregados", funcoes],
     enabled: !!funcoes,
     queryFn: async () => {
+      console.log("Fetching encarregado function...");
       const { data: encarregadoFunc, error: funcError } = await supabase
         .from("bd_funcao")
         .select("id")
@@ -47,6 +48,8 @@ export function useFormQueries() {
         console.warn("Função 'encarregado' não encontrada");
         return [];
       }
+
+      console.log("Found encarregado function:", encarregadoFunc);
 
       const { data: employees, error: empError } = await supabase
         .from("bd_rhasfalto")
@@ -67,6 +70,7 @@ export function useFormQueries() {
     queryKey: ["apontadores", funcoes],
     enabled: !!funcoes,
     queryFn: async () => {
+      console.log("Fetching apontador function...");
       const { data: apontadorFunc, error: funcError } = await supabase
         .from("bd_funcao")
         .select("id")
@@ -82,6 +86,8 @@ export function useFormQueries() {
         console.warn("Função 'apontador' não encontrada");
         return [];
       }
+
+      console.log("Found apontador function:", apontadorFunc);
 
       const { data: employees, error: empError } = await supabase
         .from("bd_rhasfalto")
