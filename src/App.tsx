@@ -8,6 +8,12 @@ import Dashboard from "@/pages/Dashboard";
 import MassProgramming from "@/pages/MassProgramming";
 import PlantManagement from "@/pages/PlantManagement";
 import MassRequestManagement from "@/pages/MassRequestManagement";
+import TruckEquipmentManagement from "@/pages/TruckEquipmentManagement";
+import FleetManagement from "@/pages/FleetManagement";
+import CostCenterManagement from "@/pages/CostCenterManagement";
+import FunctionManagement from "@/pages/FunctionManagement";
+import CompanyManagement from "@/pages/CompanyManagement";
+import EmployeeManagement from "@/pages/EmployeeManagement";
 
 function App() {
   return (
@@ -22,6 +28,12 @@ function App() {
             <Route path="/mass-programming" element={<MassProgramming />} />
             <Route path="/plants" element={<PlantManagement />} />
             <Route path="/mass-requests" element={<MassRequestManagement />} />
+            <Route path="/trucks-equipment" element={<TruckEquipmentManagement />} />
+            <Route path="/fleets" element={<FleetManagement />} />
+            <Route path="/cost-centers" element={<CostCenterManagement />} />
+            <Route path="/functions" element={<FunctionManagement />} />
+            <Route path="/companies" element={<CompanyManagement />} />
+            <Route path="/employees" element={<EmployeeManagement />} />
           </Route>
         </Routes>
       </BrowserRouter>
