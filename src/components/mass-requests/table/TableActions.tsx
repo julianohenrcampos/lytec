@@ -38,7 +38,14 @@ export function TableActions({
 
   return (
     <div className="flex justify-end items-center gap-2">
-      <Truck className="h-4 w-4 text-gray-500" />
+      <Button
+        variant="ghost"
+        size="icon"
+        disabled={isProgrammed}
+        className="cursor-default"
+      >
+        <Truck className="h-4 w-4 text-gray-500" />
+      </Button>
       <Button
         variant="ghost"
         size="icon"
