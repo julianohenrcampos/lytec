@@ -82,21 +82,23 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? "Entrando..." : "Entrar"}
-        </Button>
-        <Button
-          type="button"
-          variant="link"
-          className="w-full"
-          onClick={onForgotPassword}
-        >
-          Esqueceu a senha?
-        </Button>
+        <div className="space-y-2">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? "Entrando..." : "Entrar"}
+          </Button>
+          <Button
+            type="button"
+            variant="link"
+            className="w-full"
+            onClick={onForgotPassword}
+          >
+            Esqueceu a senha?
+          </Button>
+        </div>
       </form>
     </Form>
   );
