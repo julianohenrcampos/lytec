@@ -37,6 +37,12 @@ export function TableActions({
     onNewProgramming(request);
   };
 
+  const handleTruckClick = () => {
+    if (canProgram) {
+      setIsDialogOpen(true);
+    }
+  };
+
   return (
     <div className="flex justify-end items-center gap-2">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -46,6 +52,7 @@ export function TableActions({
             size="icon"
             title="Nova Programação"
             disabled={!canProgram}
+            onClick={handleTruckClick}
           >
             <Truck className="h-4 w-4" />
           </Button>
