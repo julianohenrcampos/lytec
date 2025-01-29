@@ -38,14 +38,34 @@ export function TableActions({
 
   return (
     <div className="flex justify-end items-center gap-2">
-      <Button
-        variant="ghost"
-        size="icon"
-        disabled={isProgrammed}
-        className="cursor-default"
-      >
-        <Truck className="h-4 w-4 text-gray-500" />
-      </Button>
+      {userPermission === "planejamento" && (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              title="Nova Programação"
+              disabled={isProgrammed}
+            >
+              <Truck className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>Nova Programação</DialogTitle>
+            </DialogHeader>
+            <MassProgrammingForm
+              initialData={{
+                centro_custo_id: request.centro_custo,
+                logradouro: request.logradouro,
+                volume: request.peso - (request.quantidade_programada || 0),
+                requisicao_id: request.id,
+              }}
+              onSuccess={handleProgrammingSuccess}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
       <Button
         variant="ghost"
         size="icon"
@@ -73,34 +93,6 @@ export function TableActions({
       >
         <Trash className="h-4 w-4" />
       </Button>
-      {userPermission === "planejamento" && (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              title="Nova Programação"
-              disabled={isProgrammed}
-            >
-              <List className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle>Nova Programação</DialogTitle>
-            </DialogHeader>
-            <MassProgrammingForm
-              initialData={{
-                centro_custo_id: request.centro_custo,
-                logradouro: request.logradouro,
-                volume: request.peso - (request.quantidade_programada || 0),
-                requisicao_id: request.id,
-              }}
-              onSuccess={handleProgrammingSuccess}
-            />
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 }
