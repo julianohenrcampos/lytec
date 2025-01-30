@@ -644,6 +644,30 @@ export type Database = {
         }
         Relationships: []
       }
+      permission_screens: {
+        Row: {
+          can_access: boolean | null
+          created_at: string
+          id: string
+          permission_level: Database["public"]["Enums"]["user_permission"]
+          screen_name: string
+        }
+        Insert: {
+          can_access?: boolean | null
+          created_at?: string
+          id?: string
+          permission_level: Database["public"]["Enums"]["user_permission"]
+          screen_name: string
+        }
+        Update: {
+          can_access?: boolean | null
+          created_at?: string
+          id?: string
+          permission_level?: Database["public"]["Enums"]["user_permission"]
+          screen_name?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -687,6 +711,9 @@ export type Database = {
         | "rh"
         | "transporte"
         | "logistica"
+        | "motorista"
+        | "operador"
+        | "encarregado"
     }
     CompositeTypes: {
       [_ in never]: never

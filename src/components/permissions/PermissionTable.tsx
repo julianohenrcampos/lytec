@@ -22,6 +22,10 @@ export function PermissionTable({ permissions }: PermissionTableProps) {
       rh: "RH",
       transporte: "Transporte",
       logistica: "Logística",
+      motorista: "Motorista",
+      operador: "Operador",
+      apontador: "Apontador",
+      encarregado: "Encarregado"
     };
     return levels[level as keyof typeof levels] || level;
   };
