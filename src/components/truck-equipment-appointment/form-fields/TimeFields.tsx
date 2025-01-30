@@ -14,7 +14,7 @@ interface TimeFieldsProps {
 
 export function TimeFields({ form }: TimeFieldsProps) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="space-y-4">
       <FormField
         control={form.control}
         name="hora_inicial"
