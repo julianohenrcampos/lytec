@@ -42,6 +42,32 @@ export function PermissionFormFields({ form, users, isLoadingUsers }: Permission
       />
       <FormField
         control={form.control}
+        name="permissao_usuario"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nível de Permissão</FormLabel>
+            <FormControl>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o nível de permissão" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Administrador</SelectItem>
+                  <SelectItem value="rh">RH</SelectItem>
+                  <SelectItem value="transporte">Transporte</SelectItem>
+                  <SelectItem value="logistica">Logística</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
         name="tela"
         render={({ field }) => (
           <FormItem>

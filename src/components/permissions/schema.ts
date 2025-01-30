@@ -10,6 +10,7 @@ export const permissionFormSchema = z.object({
   acesso: z.boolean({
     required_error: "Selecione o tipo de acesso",
   }),
+  permissao_usuario: z.enum(['admin', 'rh', 'transporte', 'logistica']).optional(),
 });
 
 export type PermissionFormValues = z.infer<typeof permissionFormSchema>;

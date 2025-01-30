@@ -22,6 +22,17 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
 
   const createPermission = useMutation({
     mutationFn: async (values: PermissionFormValues) => {
+      // First update the user's permission level
+      if (values.permissao_usuario) {
+        const { error: updateError } = await supabase
+          .from("bd_rhasfalto")
+          .update({ permissao_usuario: values.permissao_usuario })
+          .eq("id", values.usuario_id);
+
+        if (updateError) throw updateError;
+      }
+
+      // Then create the screen-level permission
       const { data, error } = await supabase
         .from("bd_permissoes")
         .insert([{
