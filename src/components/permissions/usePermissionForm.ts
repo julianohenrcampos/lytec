@@ -2,6 +2,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+interface CreatePermissionParams {
+  usuario_id: string;
+  tela: string;
+  acesso: boolean;
+  permissao_usuario?: "admin" | "rh" | "transporte" | "logistica" | "motorista" | "operador" | "apontador" | "encarregado";
+}
+
 export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -26,12 +33,7 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
   });
 
   const createPermission = useMutation({
-    mutationFn: async (values: {
-      usuario_id: string;
-      tela: string;
-      acesso: boolean;
-      permissao_usuario?: "admin" | "rh" | "transporte" | "logistica" | "motorista" | "operador" | "apontador" | "encarregado";
-    }) => {
+    mutationFn: async (values: CreatePermissionParams) => {
       // First update the user's permission level
       if (values.permissao_usuario) {
         const { error: updateError } = await supabase

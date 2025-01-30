@@ -8,9 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { permissionFormSchema, type PermissionFormValues } from "./schema";
 import { usePermissionForm } from "./usePermissionForm";
 import { PermissionFormFields } from "./PermissionFormFields";
+import { useToast } from "@/hooks/use-toast";
 
 export function PermissionForm() {
   const [open, setOpen] = useState(false);
+  const { toast } = useToast();
+  
   const form = useForm<PermissionFormValues>({
     resolver: zodResolver(permissionFormSchema),
     defaultValues: {
@@ -28,19 +31,27 @@ export function PermissionForm() {
 
   const handleSubmit = async (values: PermissionFormValues) => {
     try {
-      // Transform the telas object into an array of permission entries
-      const permissions = Object.entries(values.telas)
+      const selectedScreens = Object.entries(values.telas)
         .filter(([_, isSelected]) => isSelected)
-        .map(([screen]) => ({
+        .map(([screen]) => screen);
+
+      if (selectedScreens.length === 0) {
+        toast({
+          title: "Erro",
+          description: "Selecione pelo menos uma tela",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create a permission entry for each selected screen
+      for (const screen of selectedScreens) {
+        await createPermission.mutateAsync({
           usuario_id: values.usuario_id,
           tela: screen,
           acesso: values.acesso,
           permissao_usuario: values.permissao_usuario,
-        }));
-
-      // Create a permission entry for each selected screen
-      for (const permission of permissions) {
-        await createPermission.mutateAsync(permission);
+        });
       }
     } catch (error) {
       console.error('Error creating permissions:', error);
