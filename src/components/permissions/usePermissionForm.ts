@@ -15,7 +15,10 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
         .select("id, nome")
         .order("nome");
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching users:", error);
+        throw error;
+      }
       return data;
     },
   });

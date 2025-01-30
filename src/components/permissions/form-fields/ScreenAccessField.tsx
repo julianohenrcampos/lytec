@@ -7,6 +7,26 @@ interface ScreenAccessFieldProps {
   form: UseFormReturn<PermissionFormValues>;
 }
 
+// This array should be updated whenever new routes are added
+const availableScreens = [
+  { value: "dashboard", label: "Dashboard" },
+  { value: "employees", label: "Funcionários" },
+  { value: "teams", label: "Equipes" },
+  { value: "companies", label: "Empresas" },
+  { value: "functions", label: "Funções" },
+  { value: "cost-centers", label: "Centros de Custo" },
+  { value: "fleets", label: "Frotas" },
+  { value: "trucks-equipment", label: "Caminhões e Equipamentos" },
+  { value: "plants", label: "Usinas" },
+  { value: "mass-requests", label: "Requisições de Massa" },
+  { value: "mass-programming", label: "Programação de Massa" },
+  { value: "permissions", label: "Permissões" },
+  { value: "profile", label: "Perfil" },
+  { value: "settings", label: "Configurações" },
+  { value: "inspection-checklist", label: "Checklist de Inspeção" },
+  { value: "checklist-list", label: "Lista de Checklists" },
+];
+
 export function ScreenAccessField({ form }: ScreenAccessFieldProps) {
   return (
     <FormField
@@ -24,12 +44,11 @@ export function ScreenAccessField({ form }: ScreenAccessFieldProps) {
                 <SelectValue placeholder="Selecione uma tela" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="dashboard">Dashboard</SelectItem>
-                <SelectItem value="employees">Funcionários</SelectItem>
-                <SelectItem value="permissions">Permissões</SelectItem>
-                <SelectItem value="mass-requests">Requisições de Massa</SelectItem>
-                <SelectItem value="mass-programming">Programação de Massa</SelectItem>
-                <SelectItem value="checklist">Checklist</SelectItem>
+                {availableScreens.map((screen) => (
+                  <SelectItem key={screen.value} value={screen.value}>
+                    {screen.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </FormControl>
