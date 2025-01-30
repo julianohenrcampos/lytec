@@ -16,7 +16,7 @@ import {
   ClipboardCheck,
   HardHat,
   Boxes,
-  Scale,
+  CalendarRange,
   ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -93,8 +93,8 @@ export function DashboardLayout() {
     },
     {
       id: "mass-planning",
-      label: "Cadastro Planejamento de Massa",
-      icon: Scale,
+      label: "Planejamento",
+      icon: CalendarRange,
       items: [
         { path: "/mass-requests", label: "Requisição de Massa", icon: FileText },
         { path: "/mass-programming", label: "Programação de Massa", icon: Calendar },
