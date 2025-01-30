@@ -9,6 +9,69 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bd_apontamentocaminhaoequipamento: {
+        Row: {
+          abastecimento: number | null
+          anotacoes: string | null
+          caminhao_equipamento_id: string
+          centro_custo_id: string
+          checklist: Json
+          created_at: string
+          data: string
+          hora_final: string
+          hora_inicial: string
+          horimetro_final: number
+          horimetro_inicial: number
+          id: string
+          status: Database["public"]["Enums"]["equipment_status"]
+        }
+        Insert: {
+          abastecimento?: number | null
+          anotacoes?: string | null
+          caminhao_equipamento_id: string
+          centro_custo_id: string
+          checklist?: Json
+          created_at?: string
+          data: string
+          hora_final: string
+          hora_inicial: string
+          horimetro_final: number
+          horimetro_inicial: number
+          id?: string
+          status: Database["public"]["Enums"]["equipment_status"]
+        }
+        Update: {
+          abastecimento?: number | null
+          anotacoes?: string | null
+          caminhao_equipamento_id?: string
+          centro_custo_id?: string
+          checklist?: Json
+          created_at?: string
+          data?: string
+          hora_final?: string
+          hora_inicial?: string
+          horimetro_final?: number
+          horimetro_inicial?: number
+          id?: string
+          status?: Database["public"]["Enums"]["equipment_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bd_apontamentocaminhaoequipamento_caminhao_equipamento_id_fkey"
+            columns: ["caminhao_equipamento_id"]
+            isOneToOne: false
+            referencedRelation: "bd_caminhaoequipamento"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bd_apontamentocaminhaoequipamento_centro_custo_id_fkey"
+            columns: ["centro_custo_id"]
+            isOneToOne: false
+            referencedRelation: "bd_centrocusto"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bd_caminhaoequipamento: {
         Row: {
           aluguel: number | null
@@ -613,6 +676,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      checklist_status: "C" | "NC" | "NA"
+      equipment_status: "Operando" | "Em Manutenção" | "Parado"
       user_permission: "engenheiro" | "planejamento" | "balanca" | "apontador"
     }
     CompositeTypes: {
