@@ -5,11 +5,13 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { GeneralInfoForm } from "@/components/truck-equipment-appointment/GeneralInfoForm";
 import { ChecklistForm } from "@/components/truck-equipment-appointment/ChecklistForm";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function InspectionChecklist() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const form = useForm();
+  const isMobile = useIsMobile();
 
   const handleSubmit = async (data: any) => {
     try {
@@ -45,16 +47,16 @@ export default function InspectionChecklist() {
   };
 
   return (
-    <div className="container mx-auto py-6">
-      <Card>
-        <CardHeader>
+    <div className={`${isMobile ? 'p-0' : 'container mx-auto py-6'}`}>
+      <Card className={`${isMobile ? 'rounded-none shadow-none border-0' : ''}`}>
+        <CardHeader className={`${isMobile ? 'px-4 py-3' : ''}`}>
           <CardTitle>
             {currentStep === 1
               ? "Apontamento de Caminhão/Equipamentos"
               : "Checklist - Itens a Serem Inspecionados"}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className={`${isMobile ? 'p-4' : ''}`}>
           {currentStep === 1 ? (
             <GeneralInfoForm
               form={form}

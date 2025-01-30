@@ -9,6 +9,7 @@ import { TimeFields } from "./form-fields/TimeFields";
 import { HourmeterFields } from "./form-fields/HourmeterFields";
 import { AdditionalFields } from "./form-fields/AdditionalFields";
 import { OperatorField } from "./form-fields/OperatorField";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface GeneralInfoFormProps {
   form: UseFormReturn<any>;
@@ -16,6 +17,8 @@ interface GeneralInfoFormProps {
 }
 
 export function GeneralInfoForm({ form, onNext }: GeneralInfoFormProps) {
+  const isMobile = useIsMobile();
+  
   const canProceed = () => {
     const values = form.getValues();
     return (
@@ -43,8 +46,8 @@ export function GeneralInfoForm({ form, onNext }: GeneralInfoFormProps) {
 
   return (
     <Form {...form}>
-      <form className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form className="space-y-4">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'md:grid-cols-2 gap-6'}`}>
           <div className="space-y-4">
             <DateField form={form} />
             <CostCenterField form={form} />
@@ -59,7 +62,11 @@ export function GeneralInfoForm({ form, onNext }: GeneralInfoFormProps) {
           </div>
         </div>
         <div className="flex justify-end">
-          <Button type="button" className="w-full md:w-auto" onClick={handleNext}>
+          <Button 
+            type="button" 
+            className={`${isMobile ? 'w-full' : 'w-auto'}`} 
+            onClick={handleNext}
+          >
             Avançar
           </Button>
         </div>

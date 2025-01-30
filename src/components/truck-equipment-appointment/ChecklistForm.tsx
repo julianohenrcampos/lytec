@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChecklistFormProps {
   form: UseFormReturn<any>;
@@ -45,6 +46,8 @@ const checklistItems = [
 ];
 
 export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
+  const isMobile = useIsMobile();
+
   const handleSubmit = (data: any) => {
     const checklist = checklistItems.reduce((acc, item) => {
       acc[item] = data[`checklist.${item}`];
@@ -62,7 +65,7 @@ export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'md:grid-cols-2 gap-4'}`}>
           {checklistItems.map((item) => (
             <FormField
               key={item}
@@ -70,7 +73,7 @@ export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
               name={`checklist.${item}`}
               rules={{ required: "Este item precisa ser avaliado" }}
               render={({ field }) => (
-                <FormItem className="bg-white p-4 rounded-lg shadow-sm">
+                <FormItem className={`bg-white ${isMobile ? 'p-3' : 'p-4'} rounded-lg shadow-sm`}>
                   <FormLabel className="text-sm font-medium">{item}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
@@ -91,11 +94,19 @@ export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
           ))}
         </div>
 
-        <div className="flex gap-4 justify-end">
-          <Button type="button" variant="outline" onClick={onBack}>
+        <div className={`flex ${isMobile ? 'flex-col' : ''} gap-4 justify-end`}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onBack}
+            className={isMobile ? 'w-full' : ''}
+          >
             Voltar
           </Button>
-          <Button type="submit">
+          <Button 
+            type="submit"
+            className={isMobile ? 'w-full' : ''}
+          >
             Finalizar
           </Button>
         </div>
