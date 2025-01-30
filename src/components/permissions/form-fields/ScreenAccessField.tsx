@@ -1,5 +1,5 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { UseFormReturn } from "react-hook-form";
 import type { PermissionFormValues } from "../schema";
 
@@ -31,26 +31,36 @@ export function ScreenAccessField({ form }: ScreenAccessFieldProps) {
   return (
     <FormField
       control={form.control}
-      name="tela"
-      render={({ field }) => (
+      name="telas"
+      render={() => (
         <FormItem>
-          <FormLabel>Tela</FormLabel>
+          <FormLabel>Telas</FormLabel>
           <FormControl>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione uma tela" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableScreens.map((screen) => (
-                  <SelectItem key={screen.value} value={screen.value}>
-                    {screen.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-2 gap-4">
+              {availableScreens.map((screen) => (
+                <FormField
+                  key={screen.value}
+                  control={form.control}
+                  name={`telas.${screen.value}`}
+                  render={({ field }) => (
+                    <FormItem
+                      key={screen.value}
+                      className="flex flex-row items-start space-x-3 space-y-0"
+                    >
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>{screen.label}</FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              ))}
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>

@@ -4,9 +4,7 @@ export const permissionFormSchema = z.object({
   usuario_id: z.string({
     required_error: "Selecione um usuário",
   }),
-  tela: z.string({
-    required_error: "Selecione uma tela",
-  }),
+  telas: z.record(z.boolean()).default({}),
   acesso: z.boolean({
     required_error: "Selecione o tipo de acesso",
   }),
