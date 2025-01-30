@@ -27,19 +27,23 @@ export function PermissionForm() {
   });
 
   const handleSubmit = async (values: PermissionFormValues) => {
-    // Transform the telas object into an array of permission entries
-    const permissions = Object.entries(values.telas)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([screen]) => ({
-        usuario_id: values.usuario_id,
-        tela: screen,
-        acesso: values.acesso,
-        permissao_usuario: values.permissao_usuario,
-      }));
+    try {
+      // Transform the telas object into an array of permission entries
+      const permissions = Object.entries(values.telas)
+        .filter(([_, isSelected]) => isSelected)
+        .map(([screen]) => ({
+          usuario_id: values.usuario_id,
+          tela: screen,
+          acesso: values.acesso,
+          permissao_usuario: values.permissao_usuario,
+        }));
 
-    // Create a permission entry for each selected screen
-    for (const permission of permissions) {
-      await createPermission.mutateAsync(permission);
+      // Create a permission entry for each selected screen
+      for (const permission of permissions) {
+        await createPermission.mutateAsync(permission);
+      }
+    } catch (error) {
+      console.error('Error creating permissions:', error);
     }
   };
 

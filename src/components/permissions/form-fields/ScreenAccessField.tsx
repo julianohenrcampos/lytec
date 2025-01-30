@@ -36,7 +36,7 @@ export function ScreenAccessField({ form }: ScreenAccessFieldProps) {
         <FormItem>
           <FormLabel>Telas</FormLabel>
           <FormControl>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 max-h-[300px] overflow-y-auto p-2">
               {availableScreens.map((screen) => (
                 <FormField
                   key={screen.value}
@@ -54,7 +54,9 @@ export function ScreenAccessField({ form }: ScreenAccessFieldProps) {
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>{screen.label}</FormLabel>
+                        <FormLabel className="text-sm font-normal">
+                          {screen.label}
+                        </FormLabel>
                       </div>
                     </FormItem>
                   )}
