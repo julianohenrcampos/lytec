@@ -20,7 +20,7 @@ export function AdditionalFields({ form }: AdditionalFieldsProps) {
         control={form.control}
         name="abastecimento"
         render={({ field }) => (
-          <FormItem>
+          <FormItem className="mb-4">
             <FormLabel>Abastecimento</FormLabel>
             <FormControl>
               <Input type="number" step="0.01" {...field} />
@@ -37,7 +37,7 @@ export function AdditionalFields({ form }: AdditionalFieldsProps) {
           <FormItem>
             <FormLabel>Anotações</FormLabel>
             <FormControl>
-              <Textarea {...field} />
+              <Textarea className="resize-none" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

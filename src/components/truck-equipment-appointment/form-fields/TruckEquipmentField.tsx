@@ -39,7 +39,7 @@ export function TruckEquipmentField({ form }: TruckEquipmentFieldProps) {
       name="caminhao_equipamento_id"
       rules={{ required: "Caminhão/Equipamento é obrigatório" }}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className="mb-4">
           <FormLabel>Caminhão/Equipamento</FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
