@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { EmployeeFormValues } from "../types";
-import { format, addDays } from "date-fns";
+import { format, addDays, parseISO } from "date-fns";
 
 interface UseEmployeeFormSubmitProps {
   onSuccess?: () => void;
@@ -17,7 +17,17 @@ export const useEmployeeFormSubmit = ({ onSuccess, initialData }: UseEmployeeFor
     mutationFn: async (values: EmployeeFormValues) => {
       console.log("Submitting employee data:", values);
       
-      const ferias = format(addDays(new Date(values.admissao), 365), "yyyy-MM-dd");
+      // Only calculate ferias if admissao is provided
+      let ferias = null;
+      if (values.admissao) {
+        try {
+          const admissaoDate = parseISO(values.admissao);
+          ferias = format(addDays(admissaoDate, 365), "yyyy-MM-dd");
+        } catch (error) {
+          console.error("Error formatting date:", error);
+          throw new Error("Invalid admission date format");
+        }
+      }
       
       const employeeData = {
         nome: values.nome,
@@ -35,7 +45,7 @@ export const useEmployeeFormSubmit = ({ onSuccess, initialData }: UseEmployeeFor
         custo_passagem: values.custo_passagem ? Number(values.custo_passagem) : null,
         refeicao: values.refeicao ? Number(values.refeicao) : null,
         diarias: values.diarias ? Number(values.diarias) : null,
-        admissao: values.admissao,
+        admissao: values.admissao || null,
         demissao: values.demissao || null,
         ativo: values.ativo,
         aviso: values.aviso,
@@ -64,7 +74,9 @@ export const useEmployeeFormSubmit = ({ onSuccess, initialData }: UseEmployeeFor
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
       toast({
-        title: initialData ? "Funcionário atualizado com sucesso!" : "Funcionário cadastrado com sucesso!",
+        title: initialData 
+          ? "Funcionário atualizado com sucesso!" 
+          : "Funcionário cadastrado com sucesso!",
       });
       onSuccess?.();
     },
