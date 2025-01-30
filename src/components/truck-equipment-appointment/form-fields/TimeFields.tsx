@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 import {
   FormControl,
@@ -13,8 +14,15 @@ interface TimeFieldsProps {
 }
 
 export function TimeFields({ form }: TimeFieldsProps) {
+  useEffect(() => {
+    // Set current time on mount
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    form.setValue('hora_inicial', currentTime);
+  }, [form]);
+
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-2 gap-4">
       <FormField
         control={form.control}
         name="hora_inicial"

@@ -8,6 +8,7 @@ import { TruckEquipmentField } from "./form-fields/TruckEquipmentField";
 import { TimeFields } from "./form-fields/TimeFields";
 import { HourmeterFields } from "./form-fields/HourmeterFields";
 import { AdditionalFields } from "./form-fields/AdditionalFields";
+import { OperatorField } from "./form-fields/OperatorField";
 
 interface GeneralInfoFormProps {
   form: UseFormReturn<any>;
@@ -49,6 +50,7 @@ export function GeneralInfoForm({ form, onNext }: GeneralInfoFormProps) {
             <CostCenterField form={form} />
             <StatusField form={form} />
             <TimeFields form={form} />
+            <OperatorField form={form} />
           </div>
           <div className="space-y-4">
             <TruckEquipmentField form={form} />
