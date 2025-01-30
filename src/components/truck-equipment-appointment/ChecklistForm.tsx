@@ -61,7 +61,7 @@ export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {checklistItems.map((item) => (
             <FormField
@@ -70,11 +70,11 @@ export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
               name={`checklist.${item}`}
               rules={{ required: "Este item precisa ser avaliado" }}
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{item}</FormLabel>
+                <FormItem className="bg-white p-4 rounded-lg shadow-sm">
+                  <FormLabel className="text-sm font-medium">{item}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione uma opção" />
                       </SelectTrigger>
                     </FormControl>
@@ -91,11 +91,11 @@ export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
           ))}
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 justify-end">
           <Button type="button" variant="outline" onClick={onBack}>
             Voltar
           </Button>
-          <Button type="submit" className="flex-1">
+          <Button type="submit">
             Finalizar
           </Button>
         </div>

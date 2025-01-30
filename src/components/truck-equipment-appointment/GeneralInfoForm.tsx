@@ -30,28 +30,34 @@ export function GeneralInfoForm({ form, onNext }: GeneralInfoFormProps) {
     if (canProceed()) {
       onNext();
     } else {
-      form.trigger(["data", "centro_custo_id", "caminhao_equipamento_id", "hora_inicial", "horimetro_inicial"]);
+      form.trigger([
+        "data",
+        "centro_custo_id",
+        "caminhao_equipamento_id",
+        "hora_inicial",
+        "horimetro_inicial",
+      ]);
     }
   };
 
   return (
     <Form {...form}>
-      <form className="grid grid-cols-2 gap-4">
-        <div className="col-span-2 md:col-span-1">
-          <DateField form={form} />
-          <CostCenterField form={form} />
-          <StatusField form={form} />
+      <form className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <DateField form={form} />
+            <CostCenterField form={form} />
+            <StatusField form={form} />
+            <TimeFields form={form} />
+          </div>
+          <div className="space-y-4">
+            <TruckEquipmentField form={form} />
+            <HourmeterFields form={form} />
+            <AdditionalFields form={form} />
+          </div>
         </div>
-        <div className="col-span-2 md:col-span-1">
-          <TruckEquipmentField form={form} />
-          <TimeFields form={form} />
-          <HourmeterFields form={form} />
-        </div>
-        <div className="col-span-2">
-          <AdditionalFields form={form} />
-        </div>
-        <div className="col-span-2">
-          <Button type="button" className="w-full" onClick={handleNext}>
+        <div className="flex justify-end">
+          <Button type="button" className="w-full md:w-auto" onClick={handleNext}>
             Avançar
           </Button>
         </div>
