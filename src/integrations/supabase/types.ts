@@ -678,7 +678,15 @@ export type Database = {
     Enums: {
       checklist_status: "C" | "NC" | "NA"
       equipment_status: "Operando" | "Em Manutenção" | "Parado"
-      user_permission: "engenheiro" | "planejamento" | "balanca" | "apontador"
+      user_permission:
+        | "engenheiro"
+        | "planejamento"
+        | "balanca"
+        | "apontador"
+        | "admin"
+        | "rh"
+        | "transporte"
+        | "logistica"
     }
     CompositeTypes: {
       [_ in never]: never
