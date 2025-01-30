@@ -3,18 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { DateField } from "@/components/truck-equipment-appointment/form-fields/DateField";
-import { CostCenterField } from "@/components/truck-equipment-appointment/form-fields/CostCenterField";
-import { StatusField } from "@/components/truck-equipment-appointment/form-fields/StatusField";
-import { TruckEquipmentField } from "@/components/truck-equipment-appointment/form-fields/TruckEquipmentField";
-import { TimeFields } from "@/components/truck-equipment-appointment/form-fields/TimeFields";
-import { HourmeterFields } from "@/components/truck-equipment-appointment/form-fields/HourmeterFields";
-import { AdditionalFields } from "@/components/truck-equipment-appointment/form-fields/AdditionalFields";
+import { GeneralInfoForm } from "@/components/truck-equipment-appointment/GeneralInfoForm";
+import { ChecklistForm } from "@/components/truck-equipment-appointment/ChecklistForm";
 
 export default function InspectionChecklist() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
   const form = useForm();
 
   const handleSubmit = async (data: any) => {
@@ -41,6 +35,7 @@ export default function InspectionChecklist() {
 
       toast.success('Checklist salvo com sucesso!');
       form.reset();
+      setCurrentStep(1);
     } catch (error) {
       console.error('Error saving checklist:', error);
       toast.error('Erro ao salvar checklist');
@@ -49,37 +44,29 @@ export default function InspectionChecklist() {
     }
   };
 
-  const handleCancel = () => {
-    form.reset();
-  };
-
   return (
     <div className="container mx-auto py-6">
       <Card>
         <CardHeader>
-          <CardTitle>Apontamento de Caminhão/Equipamentos</CardTitle>
+          <CardTitle>
+            {currentStep === 1
+              ? "Apontamento de Caminhão/Equipamentos"
+              : "Checklist - Itens a Serem Inspecionados"}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-              <DateField form={form} />
-              <CostCenterField form={form} />
-              <StatusField form={form} />
-              <TruckEquipmentField form={form} />
-              <TimeFields form={form} />
-              <HourmeterFields form={form} />
-              <AdditionalFields form={form} />
-
-              <div className="flex space-x-2">
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Enviando..." : "Enviar"}
-                </Button>
-                <Button type="button" variant="outline" onClick={handleCancel}>
-                  Cancelar
-                </Button>
-              </div>
-            </form>
-          </Form>
+          {currentStep === 1 ? (
+            <GeneralInfoForm
+              form={form}
+              onNext={() => setCurrentStep(2)}
+            />
+          ) : (
+            <ChecklistForm
+              form={form}
+              onBack={() => setCurrentStep(1)}
+              onSubmit={handleSubmit}
+            />
+          )}
         </CardContent>
       </Card>
     </div>

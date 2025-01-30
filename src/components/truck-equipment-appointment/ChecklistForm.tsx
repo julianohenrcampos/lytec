@@ -62,32 +62,34 @@ export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        {checklistItems.map((item) => (
-          <FormField
-            key={item}
-            control={form.control}
-            name={`checklist.${item}`}
-            rules={{ required: "Este item precisa ser avaliado" }}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{item}</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma opção" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="C">Conforme (C)</SelectItem>
-                    <SelectItem value="NC">Não Conforme (NC)</SelectItem>
-                    <SelectItem value="NA">Não Aplicável (NA)</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {checklistItems.map((item) => (
+            <FormField
+              key={item}
+              control={form.control}
+              name={`checklist.${item}`}
+              rules={{ required: "Este item precisa ser avaliado" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{item}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma opção" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="C">Conforme (C)</SelectItem>
+                      <SelectItem value="NC">Não Conforme (NC)</SelectItem>
+                      <SelectItem value="NA">Não Aplicável (NA)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+        </div>
 
         <div className="flex gap-4">
           <Button type="button" variant="outline" onClick={onBack}>

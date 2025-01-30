@@ -15,20 +15,46 @@ interface GeneralInfoFormProps {
 }
 
 export function GeneralInfoForm({ form, onNext }: GeneralInfoFormProps) {
+  const canProceed = () => {
+    const values = form.getValues();
+    return (
+      values.data &&
+      values.centro_custo_id &&
+      values.caminhao_equipamento_id &&
+      values.hora_inicial &&
+      values.horimetro_inicial
+    );
+  };
+
+  const handleNext = () => {
+    if (canProceed()) {
+      onNext();
+    } else {
+      form.trigger(["data", "centro_custo_id", "caminhao_equipamento_id", "hora_inicial", "horimetro_inicial"]);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form className="space-y-4">
-        <DateField form={form} />
-        <CostCenterField form={form} />
-        <StatusField form={form} />
-        <TruckEquipmentField form={form} />
-        <TimeFields form={form} />
-        <HourmeterFields form={form} />
-        <AdditionalFields form={form} />
-
-        <Button type="button" className="w-full" onClick={onNext}>
-          Avançar
-        </Button>
+      <form className="grid grid-cols-2 gap-4">
+        <div className="col-span-2 md:col-span-1">
+          <DateField form={form} />
+          <CostCenterField form={form} />
+          <StatusField form={form} />
+        </div>
+        <div className="col-span-2 md:col-span-1">
+          <TruckEquipmentField form={form} />
+          <TimeFields form={form} />
+          <HourmeterFields form={form} />
+        </div>
+        <div className="col-span-2">
+          <AdditionalFields form={form} />
+        </div>
+        <div className="col-span-2">
+          <Button type="button" className="w-full" onClick={handleNext}>
+            Avançar
+          </Button>
+        </div>
       </form>
     </Form>
   );
