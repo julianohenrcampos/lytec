@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 const registerSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -20,10 +19,13 @@ const registerSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export function RegisterForm() {
+interface RegisterFormProps {
+  onSuccess?: () => void;
+}
+
+export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { signUp } = useAuth();
-  const navigate = useNavigate();
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -52,7 +54,8 @@ export function RegisterForm() {
       }
 
       toast.success("Conta criada com sucesso!");
-      navigate("/login");
+      onSuccess?.();
+      form.reset();
     } catch (error: any) {
       toast.error("Erro ao criar conta: " + error.message);
     } finally {
@@ -102,15 +105,13 @@ export function RegisterForm() {
             </FormItem>
           )}
         />
-        <div className="space-y-2">
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? "Criando conta..." : "Criar conta"}
-          </Button>
-        </div>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isLoading}
+        >
+          {isLoading ? "Criando conta..." : "Criar conta"}
+        </Button>
       </form>
     </Form>
   );

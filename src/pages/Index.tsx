@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const Index = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -22,6 +23,10 @@ const Index = () => {
 
   const handleBack = () => {
     setShowForgotPassword(false);
+  };
+
+  const handleRegistrationSuccess = () => {
+    toast.success("Conta criada com sucesso! Por favor, faça login.");
   };
 
   return (
@@ -46,7 +51,7 @@ const Index = () => {
                 <LoginForm onForgotPassword={handleForgotPassword} />
               </TabsContent>
               <TabsContent value="register">
-                <RegisterForm />
+                <RegisterForm onSuccess={handleRegistrationSuccess} />
               </TabsContent>
             </Tabs>
           )}

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -22,7 +22,6 @@ interface LoginFormProps {
 
 export function LoginForm({ onForgotPassword }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
@@ -43,26 +42,19 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
       });
 
       if (error) {
-        toast({
-          variant: "destructive",
-          title: "Erro ao fazer login",
-          description: error.message || "Email ou senha incorretos",
-        });
-        setIsLoading(false);
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Email ou senha incorretos");
+        } else {
+          toast.error("Erro ao fazer login: " + error.message);
+        }
         return;
       }
 
-      toast({
-        title: "Login realizado com sucesso!",
-      });
+      toast.success("Login realizado com sucesso!");
       navigate("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao fazer login",
-        description: "Ocorreu um erro inesperado ao tentar fazer login",
-      });
+      toast.error("Erro ao fazer login: " + error.message);
     } finally {
       setIsLoading(false);
     }
