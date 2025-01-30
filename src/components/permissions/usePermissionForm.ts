@@ -27,7 +27,12 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
   });
 
   const createPermission = useMutation({
-    mutationFn: async (values: PermissionFormValues) => {
+    mutationFn: async (values: {
+      usuario_id: string;
+      tela: string;
+      acesso: boolean;
+      permissao_usuario?: "admin" | "rh" | "transporte" | "logistica" | "motorista" | "operador" | "apontador" | "encarregado";
+    }) => {
       // First update the user's permission level
       if (values.permissao_usuario) {
         const { error: updateError } = await supabase
