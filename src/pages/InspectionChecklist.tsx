@@ -15,18 +15,17 @@ export default function InspectionChecklist() {
       
       const { error } = await supabase
         .from('bd_apontamentocaminhaoequipamento')
-        .insert([{
+        .insert({
           checklist: data.checklist,
           data: new Date().toISOString().split('T')[0],
-          status: 'pendente',
-          // These fields are required by the table schema, we'll need to add proper form fields for them later
+          status: "Operando", // Using a valid enum value
           centro_custo_id: '00000000-0000-0000-0000-000000000000', // Placeholder
           caminhao_equipamento_id: '00000000-0000-0000-0000-000000000000', // Placeholder
           hora_inicial: '00:00',
           hora_final: '00:00',
           horimetro_inicial: 0,
           horimetro_final: 0,
-        }]);
+        });
 
       if (error) throw error;
 
