@@ -23,6 +23,7 @@ import PermissionManagement from "./pages/PermissionManagement";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import InspectionChecklist from "./pages/InspectionChecklist";
+import ChecklistList from "./pages/ChecklistList";
 
 export function AppRoutes() {
   return (
@@ -53,6 +54,9 @@ export function AppRoutes() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/inspection-checklist" element={<InspectionChecklist />} />
+        <Route path="/checklist-list" element={<ChecklistList />} />
+        <Route path="/inspection-checklist/:id" element={<InspectionChecklist />} />
+        <Route path="/inspection-checklist/:id/edit" element={<InspectionChecklist />} />
       </Route>
     </Routes>
   );
