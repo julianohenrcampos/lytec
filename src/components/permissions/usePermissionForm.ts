@@ -10,6 +10,7 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
   const { data: users, isLoading: isLoadingUsers } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
+      console.log("Fetching users...");
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("id, nome")
@@ -19,6 +20,8 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
         console.error("Error fetching users:", error);
         throw error;
       }
+      
+      console.log("Users fetched:", data);
       return data;
     },
   });
