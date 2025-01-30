@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Building2 } from "lucide-react";
+import { Building2, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
@@ -9,9 +9,9 @@ const Dashboard = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <Button asChild>
-          <Link to="/departments" className="flex items-center gap-2">
-            <Building2 className="h-4 w-4" />
-            Departamentos
+          <Link to="/departments/new" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Novo Departamento
           </Link>
         </Button>
       </div>
