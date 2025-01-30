@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format, subHours } from "date-fns";
+import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -111,7 +111,7 @@ export default function ChecklistList() {
   });
 
   const canEditDelete = (checklist: any) => {
-    if (userPermission === "admin") return true;
+    if (userPermission === "planejamento") return true;
     
     const checklistDate = new Date(checklist.data);
     checklistDate.setHours(
