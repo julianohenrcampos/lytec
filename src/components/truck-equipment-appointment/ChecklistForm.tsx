@@ -65,7 +65,7 @@ export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'md:grid-cols-2 gap-4'}`}>
+        <div className="space-y-4">
           {checklistItems.map((item) => (
             <FormField
               key={item}
@@ -73,7 +73,7 @@ export function ChecklistForm({ form, onBack, onSubmit }: ChecklistFormProps) {
               name={`checklist.${item}`}
               rules={{ required: "Este item precisa ser avaliado" }}
               render={({ field }) => (
-                <FormItem className={`bg-white ${isMobile ? 'p-3' : 'p-4'} rounded-lg shadow-sm`}>
+                <FormItem className="bg-white p-4 rounded-lg shadow-sm">
                   <FormLabel className="text-sm font-medium">{item}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>

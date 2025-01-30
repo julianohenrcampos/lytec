@@ -47,8 +47,8 @@ export default function InspectionChecklist() {
   };
 
   return (
-    <div className={`${isMobile ? 'p-0' : 'container mx-auto py-6'}`}>
-      <Card className={`${isMobile ? 'rounded-none shadow-none border-0' : ''}`}>
+    <div className={`min-h-screen bg-background ${isMobile ? 'p-0' : 'container mx-auto py-6'}`}>
+      <Card className={`${isMobile ? 'rounded-none shadow-none border-0 min-h-screen' : ''}`}>
         <CardHeader className={`${isMobile ? 'px-4 py-3' : ''}`}>
           <CardTitle>
             {currentStep === 1
