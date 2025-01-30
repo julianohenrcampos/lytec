@@ -18,6 +18,7 @@ import {
   Boxes,
   CalendarRange,
   ChevronDown,
+  ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SidebarMenuItem } from "./SidebarMenuItem";
@@ -26,17 +27,28 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function DashboardLayout() {
   const { signOut } = useAuth();
   const location = useLocation();
   const [openGroups, setOpenGroups] = useState<string[]>([]);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const isMobile = useIsMobile();
 
   const isActive = (path: string) => {
     return location.pathname === path;
   };
+
+  useEffect(() => {
+    if (isMobile && location.pathname === "/inspection-checklist") {
+      setShowSidebar(false);
+    } else if (isMobile) {
+      setShowSidebar(true);
+    }
+  }, [location.pathname, isMobile]);
 
   const toggleGroup = (group: string) => {
     setOpenGroups(current =>
@@ -105,81 +117,98 @@ export function DashboardLayout() {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="flex h-screen">
-        <div className="w-64 bg-white shadow-lg flex-shrink-0">
-          <div className="flex flex-col h-full">
-            <div className="p-4">
-              <h1 className="text-xl font-bold">RH Asfalto</h1>
-            </div>
-            <nav className="flex-1 p-4">
-              <ul className="space-y-2">
-                {menuGroups.map((group) => (
-                  <li key={group.id}>
-                    {group.label ? (
-                      <Collapsible
-                        open={openGroups.includes(group.id)}
-                        onOpenChange={() => toggleGroup(group.id)}
-                      >
-                        <CollapsibleTrigger asChild>
-                          <button
-                            className={cn(
-                              "flex w-full items-center justify-between px-4 py-2 rounded-lg transition-colors hover:bg-gray-100",
-                              openGroups.includes(group.id) && "bg-gray-100"
-                            )}
-                          >
-                            <div className="flex items-center gap-2">
-                              {group.icon && <group.icon className="h-5 w-5" />}
-                              <span>{group.label}</span>
-                            </div>
-                            <ChevronDown
+        {showSidebar ? (
+          <div className={cn(
+            "w-64 bg-white shadow-lg flex-shrink-0",
+            isMobile && "fixed inset-0 w-full z-50"
+          )}>
+            <div className="flex flex-col h-full">
+              <div className="p-4">
+                <h1 className="text-xl font-bold">RH Asfalto</h1>
+              </div>
+              <nav className="flex-1 p-4">
+                <ul className="space-y-2">
+                  {menuGroups.map((group) => (
+                    <li key={group.id}>
+                      {group.label ? (
+                        <Collapsible
+                          open={openGroups.includes(group.id)}
+                          onOpenChange={() => toggleGroup(group.id)}
+                        >
+                          <CollapsibleTrigger asChild>
+                            <button
                               className={cn(
-                                "h-4 w-4 transition-transform",
-                                openGroups.includes(group.id) && "rotate-180"
+                                "flex w-full items-center justify-between px-4 py-2 rounded-lg transition-colors hover:bg-gray-100",
+                                openGroups.includes(group.id) && "bg-gray-100"
                               )}
-                            />
-                          </button>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="pl-4 space-y-1">
-                          {group.items.map((item) => (
-                            <SidebarMenuItem
-                              key={item.path}
-                              path={item.path}
-                              label={item.label}
-                              icon={item.icon}
-                              isActive={isActive(item.path)}
-                              action={item.action}
-                            />
-                          ))}
-                        </CollapsibleContent>
-                      </Collapsible>
-                    ) : (
-                      group.items.map((item) => (
-                        <SidebarMenuItem
-                          key={item.path}
-                          path={item.path}
-                          label={item.label}
-                          icon={item.icon}
-                          isActive={isActive(item.path)}
-                          action={item.action}
-                        />
-                      ))
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </nav>
-            <div className="p-4 border-t">
-              <Button
-                variant="outline"
-                className="w-full flex items-center space-x-2"
-                onClick={() => signOut()}
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Sair</span>
-              </Button>
+                            >
+                              <div className="flex items-center gap-2">
+                                {group.icon && <group.icon className="h-5 w-5" />}
+                                <span>{group.label}</span>
+                              </div>
+                              <ChevronDown
+                                className={cn(
+                                  "h-4 w-4 transition-transform",
+                                  openGroups.includes(group.id) && "rotate-180"
+                                )}
+                              />
+                            </button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="pl-4 space-y-1">
+                            {group.items.map((item) => (
+                              <SidebarMenuItem
+                                key={item.path}
+                                path={item.path}
+                                label={item.label}
+                                icon={item.icon}
+                                isActive={isActive(item.path)}
+                                action={item.action}
+                              />
+                            ))}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      ) : (
+                        group.items.map((item) => (
+                          <SidebarMenuItem
+                            key={item.path}
+                            path={item.path}
+                            label={item.label}
+                            icon={item.icon}
+                            isActive={isActive(item.path)}
+                            action={item.action}
+                          />
+                        ))
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <div className="p-4 border-t">
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center space-x-2"
+                  onClick={() => signOut()}
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sair</span>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex-1 overflow-auto">
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="fixed top-4 left-4 z-50"
+            onClick={() => setShowSidebar(true)}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+        )}
+        <div className={cn(
+          "flex-1 overflow-auto",
+          !showSidebar && "w-full"
+        )}>
           <main className="p-6">
             <Outlet />
           </main>
