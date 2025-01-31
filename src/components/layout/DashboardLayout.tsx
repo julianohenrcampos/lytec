@@ -56,7 +56,7 @@ export function DashboardLayout() {
   const [openGroups, setOpenGroups] = useState<string[]>([]);
   const [showSidebar, setShowSidebar] = useState(true);
   const isMobile = useIsMobile();
-  const { canAccessScreen } = usePermissions();
+  const { canAccessScreen, userPermissionLevel } = usePermissions();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -76,6 +76,11 @@ export function DashboardLayout() {
         ? current.filter(g => g !== group)
         : [...current, group]
     );
+  };
+
+  // Function to check if user should see menu item
+  const shouldShowMenuItem = (path: string) => {
+    return userPermissionLevel === 'admin' || canAccessScreen(path.substring(1));
   };
 
   const menuGroups: MenuGroup[] = [
@@ -166,7 +171,7 @@ export function DashboardLayout() {
           },
         },
         { path: "/permissions", label: "Permissões de Usuário", icon: UserCog },
-      ].filter(item => canAccessScreen(item.path.substring(1))),
+      ].filter(item => shouldShowMenuItem(item.path)),
     },
     {
       id: "equipment",
@@ -219,7 +224,7 @@ export function DashboardLayout() {
           },
         },
         { path: "/inspection-checklist", label: "Checklist de Inspeção", icon: ClipboardCheck },
-      ].filter(item => canAccessScreen(item.path.substring(1))),
+      ].filter(item => shouldShowMenuItem(item.path)),
     },
     {
       id: "mass-planning",
@@ -256,7 +261,7 @@ export function DashboardLayout() {
             },
           },
         },
-      ].filter(item => canAccessScreen(item.path.substring(1))),
+      ].filter(item => shouldShowMenuItem(item.path)),
     },
   ];
 

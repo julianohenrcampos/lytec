@@ -46,6 +46,7 @@ export function usePermissions() {
   });
 
   const canAccessScreen = (screenName: string) => {
+    if (userPermissionLevel === 'admin') return true;
     if (!screenPermissions) return false;
     const permission = screenPermissions.find(p => p.screen_name === screenName);
     return permission?.can_access ?? false;
