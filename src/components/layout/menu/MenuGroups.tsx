@@ -58,7 +58,7 @@ export function useMenuGroups(shouldShowMenuItem: (path: string) => boolean) {
           action: createNewItemAction("[data-new-cost-center]", "cost-centers"),
         },
         { path: "/permissions", label: "Permissões de Usuário", icon: UserCog },
-      ].filter(item => shouldShowMenuItem(item.path)),
+      ],
     },
     {
       id: "equipment",
@@ -84,7 +84,7 @@ export function useMenuGroups(shouldShowMenuItem: (path: string) => boolean) {
           action: createNewItemAction("[data-new-plant]", "plants"),
         },
         { path: "/inspection-checklist", label: "Checklist de Inspeção", icon: ClipboardCheck },
-      ].filter(item => shouldShowMenuItem(item.path)),
+      ],
     },
     {
       id: "mass-planning",
@@ -103,9 +103,13 @@ export function useMenuGroups(shouldShowMenuItem: (path: string) => boolean) {
           icon: Calendar,
           action: createNewItemAction("[data-new-mass-programming]", "mass-programming"),
         },
-      ].filter(item => shouldShowMenuItem(item.path)),
+      ],
     },
   ];
 
-  return menuGroups;
+  // Filter out menu groups where no items are visible
+  return menuGroups.filter(group => {
+    const visibleItems = group.items.filter(item => shouldShowMenuItem(item.path));
+    return visibleItems.length > 0;
+  });
 }

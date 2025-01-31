@@ -17,11 +17,14 @@ interface SidebarMenuItemProps {
 }
 
 export function SidebarMenuItem({ path, label, icon: Icon, isActive, action }: SidebarMenuItemProps) {
-  const { canPerformAction } = usePermissions();
+  const { canPerformAction, userPermissionLevel } = usePermissions();
   const screenName = path.substring(1); // Remove leading slash
 
-  // Only show action button if user has permission
-  const showActionButton = action && (!action.permission || canPerformAction(screenName, action.permission));
+  // Show action button if user is admin or has the required permission
+  const showActionButton = action && (
+    userPermissionLevel === 'admin' || 
+    (!action.permission || canPerformAction(screenName, action.permission))
+  );
 
   return (
     <li className="relative">
