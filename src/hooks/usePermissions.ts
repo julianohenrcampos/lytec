@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 export function usePermissions() {
   const { user } = useAuth();
@@ -25,14 +25,37 @@ export function usePermissions() {
     },
   });
 
+  const { data: screenPermissions } = useQuery({
+    queryKey: ["screenPermissions", userPermissionLevel],
+    queryFn: async () => {
+      if (!userPermissionLevel) return [];
+
+      const { data, error } = await supabase
+        .from("permission_screens")
+        .select("*")
+        .eq("permission_level", userPermissionLevel);
+
+      if (error) {
+        console.error("Error fetching screen permissions:", error);
+        return [];
+      }
+
+      return data || [];
+    },
+    enabled: !!userPermissionLevel,
+  });
+
   const canAccessScreen = (screenName: string) => {
     if (userPermissionLevel === 'admin') return true;
+    if (!screenPermissions) return false;
     
-    return true; // Temporary return true for testing - will be replaced with actual permission check
+    const permission = screenPermissions.find(p => p.screen_name === screenName);
+    return permission?.can_access ?? false;
   };
 
   return {
     userPermissionLevel,
+    screenPermissions,
     canAccessScreen,
   };
 }
