@@ -20,7 +20,8 @@ export function usePermissions() {
         console.error("Error fetching user permission level:", error);
         return null;
       }
-      
+
+      console.log("User permission level data:", data); // Debug log
       return data?.permissao_usuario || null;
     },
     enabled: !!user?.id,
@@ -31,6 +32,19 @@ export function usePermissions() {
     queryFn: async () => {
       if (!userPermissionLevel) return [];
 
+      // If user is admin, return all screens with access granted
+      if (userPermissionLevel === 'admin') {
+        const { data: allScreens } = await supabase
+          .from("permission_screens")
+          .select("screen_name")
+          .distinct();
+        
+        return allScreens?.map(screen => ({
+          screen_name: screen.screen_name,
+          can_access: true
+        })) || [];
+      }
+
       const { data, error } = await supabase
         .from("permission_screens")
         .select("*")
@@ -40,21 +54,31 @@ export function usePermissions() {
         console.error("Error fetching screen permissions:", error);
         return [];
       }
-      
+
+      console.log("Screen permissions data:", data); // Debug log
       return data || [];
     },
     enabled: !!userPermissionLevel,
   });
 
   const canAccessScreen = (screenName: string) => {
+    console.log("Checking access for screen:", screenName, "User level:", userPermissionLevel); // Debug log
+    
     // Admin users always have access
-    if (userPermissionLevel === 'admin') return true;
+    if (userPermissionLevel === 'admin') {
+      console.log("User is admin, granting access"); // Debug log
+      return true;
+    }
     
     // If permissions aren't loaded yet or there are no permissions, deny access
-    if (!screenPermissions) return false;
+    if (!screenPermissions) {
+      console.log("No screen permissions found, denying access"); // Debug log
+      return false;
+    }
     
     // Find the specific screen permission
     const permission = screenPermissions.find(p => p.screen_name === screenName);
+    console.log("Found permission:", permission); // Debug log
     
     // Return the permission status or false if not found
     return permission?.can_access ?? false;
