@@ -32,6 +32,24 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePermissions } from "@/hooks/usePermissions";
 
+interface MenuItem {
+  path: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  action?: {
+    icon: typeof Plus;
+    label: string;
+    onClick: () => void;
+  };
+}
+
+interface MenuGroup {
+  id: string;
+  label?: string;
+  icon?: typeof HardHat;
+  items: MenuItem[];
+}
+
 export function DashboardLayout() {
   const { signOut } = useAuth();
   const location = useLocation();
@@ -60,7 +78,7 @@ export function DashboardLayout() {
     );
   };
 
-  const menuGroups = [
+  const menuGroups: MenuGroup[] = [
     {
       id: "main",
       items: [
