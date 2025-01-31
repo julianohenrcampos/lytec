@@ -34,14 +34,19 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
 
   const createPermission = useMutation({
     mutationFn: async (values: CreatePermissionParams) => {
-      // First update the user's permission level
+      console.log("Creating permission with values:", values);
+      
+      // First update the user's permission level if provided
       if (values.permissao_usuario) {
         const { error: updateError } = await supabase
           .from("bd_rhasfalto")
           .update({ permissao_usuario: values.permissao_usuario })
           .eq("id", values.usuario_id);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error("Error updating user permission level:", updateError);
+          throw updateError;
+        }
       }
 
       // Then create the screen-level permission
@@ -54,7 +59,12 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
         }])
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error creating permission:", error);
+        throw error;
+      }
+
+      console.log("Permission created successfully:", data);
       return data;
     },
     onSuccess: () => {
@@ -62,7 +72,7 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
       onSuccess();
     },
     onError: (error) => {
-      console.error("Error creating permission:", error);
+      console.error("Error in mutation:", error);
       toast({
         title: "Erro",
         description: "Erro ao criar permissão",

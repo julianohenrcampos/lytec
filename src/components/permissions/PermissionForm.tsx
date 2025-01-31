@@ -26,6 +26,10 @@ export function PermissionForm() {
 
   const { users, isLoadingUsers, createPermission } = usePermissionForm({
     onSuccess: () => {
+      toast({
+        title: "Sucesso",
+        description: "Permissões criadas com sucesso",
+      });
       setOpen(false);
       form.reset();
     },
@@ -42,9 +46,22 @@ export function PermissionForm() {
     }
 
     try {
+      console.log("Form values:", values);
+      
+      if (!values.usuario_id) {
+        toast({
+          title: "Erro",
+          description: "Selecione um usuário",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const selectedScreens = Object.entries(values.telas)
         .filter(([_, isSelected]) => isSelected)
         .map(([screen]) => screen);
+
+      console.log("Selected screens:", selectedScreens);
 
       if (selectedScreens.length === 0) {
         toast({
@@ -64,11 +81,6 @@ export function PermissionForm() {
           permissao_usuario: values.permissao_usuario,
         });
       }
-
-      toast({
-        title: "Sucesso",
-        description: "Permissões criadas com sucesso",
-      });
     } catch (error) {
       console.error('Error creating permissions:', error);
       toast({
