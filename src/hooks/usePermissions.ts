@@ -1,17 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
 import { supabase } from "@/integrations/supabase/client";
-
-interface ScreenPermission {
-  screen_name: string;
-  can_access: boolean;
-  can_create: boolean;
-  can_edit: boolean;
-  can_delete: boolean;
-  created_at?: string;
-  id?: string;
-  permission_level?: string;
-}
+import { checkScreenAccess, checkActionPermission } from "@/utils/permissionUtils";
+import type { ScreenPermission, PermissionAction, UserPermissionLevel } from "@/types/permissions";
 
 export function usePermissions() {
   const { user } = useAuth();
@@ -33,7 +24,7 @@ export function usePermissions() {
       }
 
       console.log("User permission level data:", data);
-      return data?.permissao_usuario || null;
+      return data?.permissao_usuario as UserPermissionLevel | null;
     },
     enabled: !!user?.id,
   });
@@ -77,52 +68,14 @@ export function usePermissions() {
     enabled: !!userPermissionLevel,
   });
 
-  const canAccessScreen = (screenName: string) => {
+  const canAccessScreen = (screenName: string): boolean => {
     console.log("Checking access for screen:", screenName, "User level:", userPermissionLevel);
-    
-    // Admin users always have access
-    if (userPermissionLevel === 'admin') {
-      console.log("User is admin, granting access");
-      return true;
-    }
-    
-    // If permissions aren't loaded yet or there are no permissions, deny access
-    if (!screenPermissions) {
-      console.log("No screen permissions found, denying access");
-      return false;
-    }
-    
-    // Find the specific screen permission
-    const permission = screenPermissions.find(p => p.screen_name === screenName);
-    console.log("Found permission:", permission);
-    
-    return permission?.can_access ?? false;
+    return checkScreenAccess(screenName, userPermissionLevel, screenPermissions);
   };
 
-  const canPerformAction = (screenName: string, action: 'create' | 'edit' | 'delete') => {
+  const canPerformAction = (screenName: string, action: PermissionAction): boolean => {
     console.log(`Checking ${action} permission for screen:`, screenName);
-    
-    // Admin users can perform all actions
-    if (userPermissionLevel === 'admin') {
-      return true;
-    }
-
-    if (!screenPermissions) {
-      return false;
-    }
-
-    const permission = screenPermissions.find(p => p.screen_name === screenName) as ScreenPermission;
-    
-    switch (action) {
-      case 'create':
-        return permission?.can_create ?? false;
-      case 'edit':
-        return permission?.can_edit ?? false;
-      case 'delete':
-        return permission?.can_delete ?? false;
-      default:
-        return false;
-    }
+    return checkActionPermission(screenName, action, userPermissionLevel, screenPermissions);
   };
 
   return {
