@@ -10,18 +10,23 @@ export function usePermissions() {
     queryFn: async () => {
       if (!user?.id) return null;
 
-      const { data, error } = await supabase
-        .from("bd_rhasfalto")
-        .select("permissao_usuario")
-        .eq("id", user.id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("bd_rhasfalto")
+          .select("permissao_usuario")
+          .eq("id", user.id)
+          .limit(1);
 
-      if (error) {
-        console.error("Error fetching user permission level:", error);
+        if (error) {
+          console.error("Error fetching user permission level:", error);
+          return null;
+        }
+
+        return data?.[0]?.permissao_usuario || null;
+      } catch (error) {
+        console.error("Error in permission level query:", error);
         return null;
       }
-
-      return data?.permissao_usuario;
     },
   });
 
