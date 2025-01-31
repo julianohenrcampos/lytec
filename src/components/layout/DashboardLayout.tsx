@@ -14,7 +14,6 @@ import {
   Plus,
   UserCog,
   ClipboardCheck,
-  HardHat,
   Boxes,
   CalendarRange,
   ChevronDown,
@@ -105,10 +104,66 @@ export function DashboardLayout() {
             },
           },
         },
-        { path: "/functions", label: "Funções", icon: Briefcase },
-        { path: "/teams", label: "Equipes", icon: Users },
-        { path: "/companies", label: "Empresas", icon: Building2 },
-        { path: "/cost-centers", label: "Centros de Custo", icon: CircleDollarSign },
+        { 
+          path: "/functions", 
+          label: "Funções", 
+          icon: Briefcase,
+          action: {
+            icon: Plus,
+            label: "Nova Função",
+            onClick: () => {
+              const newButton = document.querySelector("[data-new-function]");
+              if (newButton instanceof HTMLButtonElement) {
+                newButton.click();
+              }
+            },
+          },
+        },
+        { 
+          path: "/teams", 
+          label: "Equipes", 
+          icon: Users,
+          action: {
+            icon: Plus,
+            label: "Nova Equipe",
+            onClick: () => {
+              const newButton = document.querySelector("[data-new-team]");
+              if (newButton instanceof HTMLButtonElement) {
+                newButton.click();
+              }
+            },
+          },
+        },
+        { 
+          path: "/companies", 
+          label: "Empresas", 
+          icon: Building2,
+          action: {
+            icon: Plus,
+            label: "Nova Empresa",
+            onClick: () => {
+              const newButton = document.querySelector("[data-new-company]");
+              if (newButton instanceof HTMLButtonElement) {
+                newButton.click();
+              }
+            },
+          },
+        },
+        { 
+          path: "/cost-centers", 
+          label: "Centros de Custo", 
+          icon: CircleDollarSign,
+          action: {
+            icon: Plus,
+            label: "Novo Centro de Custo",
+            onClick: () => {
+              const newButton = document.querySelector("[data-new-cost-center]");
+              if (newButton instanceof HTMLButtonElement) {
+                newButton.click();
+              }
+            },
+          },
+        },
         { path: "/permissions", label: "Permissões de Usuário", icon: UserCog },
       ].filter(item => canAccessScreen(item.path.substring(1))),
     },
@@ -117,9 +172,51 @@ export function DashboardLayout() {
       label: "Cadastro CAM/EQUI",
       icon: Truck,
       items: [
-        { path: "/trucks-equipment", label: "Caminhões/Equipamentos", icon: Truck },
-        { path: "/fleets", label: "Frotas", icon: Boxes },
-        { path: "/plants", label: "Usinas", icon: Factory },
+        { 
+          path: "/trucks-equipment", 
+          label: "Caminhões/Equipamentos", 
+          icon: Truck,
+          action: {
+            icon: Plus,
+            label: "Novo Caminhão/Equipamento",
+            onClick: () => {
+              const newButton = document.querySelector("[data-new-truck-equipment]");
+              if (newButton instanceof HTMLButtonElement) {
+                newButton.click();
+              }
+            },
+          },
+        },
+        { 
+          path: "/fleets", 
+          label: "Frotas", 
+          icon: Boxes,
+          action: {
+            icon: Plus,
+            label: "Nova Frota",
+            onClick: () => {
+              const newButton = document.querySelector("[data-new-fleet]");
+              if (newButton instanceof HTMLButtonElement) {
+                newButton.click();
+              }
+            },
+          },
+        },
+        { 
+          path: "/plants", 
+          label: "Usinas", 
+          icon: Factory,
+          action: {
+            icon: Plus,
+            label: "Nova Usina",
+            onClick: () => {
+              const newButton = document.querySelector("[data-new-plant]");
+              if (newButton instanceof HTMLButtonElement) {
+                newButton.click();
+              }
+            },
+          },
+        },
         { path: "/inspection-checklist", label: "Checklist de Inspeção", icon: ClipboardCheck },
       ].filter(item => canAccessScreen(item.path.substring(1))),
     },
@@ -128,8 +225,36 @@ export function DashboardLayout() {
       label: "Planejamento",
       icon: CalendarRange,
       items: [
-        { path: "/mass-requests", label: "Requisição de Massa", icon: FileText },
-        { path: "/mass-programming", label: "Programação de Massa", icon: Calendar },
+        { 
+          path: "/mass-requests", 
+          label: "Requisição de Massa", 
+          icon: FileText,
+          action: {
+            icon: Plus,
+            label: "Nova Requisição",
+            onClick: () => {
+              const newButton = document.querySelector("[data-new-mass-request]");
+              if (newButton instanceof HTMLButtonElement) {
+                newButton.click();
+              }
+            },
+          },
+        },
+        { 
+          path: "/mass-programming", 
+          label: "Programação de Massa", 
+          icon: Calendar,
+          action: {
+            icon: Plus,
+            label: "Nova Programação",
+            onClick: () => {
+              const newButton = document.querySelector("[data-new-mass-programming]");
+              if (newButton instanceof HTMLButtonElement) {
+                newButton.click();
+              }
+            },
+          },
+        },
       ].filter(item => canAccessScreen(item.path.substring(1))),
     },
   ];
