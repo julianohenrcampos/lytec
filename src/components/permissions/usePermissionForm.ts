@@ -16,7 +16,6 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
   const { data: users, isLoading: isLoadingUsers } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      console.log("Fetching users...");
       const { data, error } = await supabase
         .from("bd_rhasfalto")
         .select("id, nome")
@@ -27,45 +26,58 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
         throw error;
       }
       
-      console.log("Users fetched:", data);
       return data;
     },
   });
 
   const createPermission = useMutation({
-    mutationFn: async (values: CreatePermissionParams) => {
-      console.log("Creating permission with values:", values);
-      
-      // First update the user's permission level if provided
-      if (values.permissao_usuario) {
-        const { error: updateError } = await supabase
-          .from("bd_rhasfalto")
-          .update({ permissao_usuario: values.permissao_usuario })
-          .eq("id", values.usuario_id);
+    mutationFn: async ({ usuario_id, tela, acesso, permissao_usuario }: CreatePermissionParams) => {
+      try {
+        // First update the user's permission level if provided
+        if (permissao_usuario) {
+          const { error: updateError } = await supabase
+            .from("bd_rhasfalto")
+            .update({ permissao_usuario: permissao_usuario })
+            .eq("id", usuario_id);
 
-        if (updateError) {
-          console.error("Error updating user permission level:", updateError);
-          throw updateError;
+          if (updateError) {
+            console.error("Error updating user permission level:", updateError);
+            throw updateError;
+          }
         }
-      }
 
-      // Then create the screen-level permission
-      const { data, error } = await supabase
-        .from("bd_permissoes")
-        .insert([{
-          usuario_id: values.usuario_id,
-          tela: values.tela,
-          acesso: values.acesso,
-        }])
-        .select();
+        // Delete existing permissions for this user and screen
+        const { error: deleteError } = await supabase
+          .from("bd_permissoes")
+          .delete()
+          .eq("usuario_id", usuario_id)
+          .eq("tela", tela);
 
-      if (error) {
-        console.error("Error creating permission:", error);
+        if (deleteError) {
+          console.error("Error deleting existing permission:", deleteError);
+          throw deleteError;
+        }
+
+        // Create new permission
+        const { data, error: insertError } = await supabase
+          .from("bd_permissoes")
+          .insert([{
+            usuario_id,
+            tela,
+            acesso,
+          }])
+          .select();
+
+        if (insertError) {
+          console.error("Error creating permission:", insertError);
+          throw insertError;
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Error in createPermission:", error);
         throw error;
       }
-
-      console.log("Permission created successfully:", data);
-      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["permissions"] });

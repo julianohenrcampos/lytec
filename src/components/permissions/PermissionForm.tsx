@@ -28,7 +28,7 @@ export function PermissionForm() {
     onSuccess: () => {
       toast({
         title: "Sucesso",
-        description: "Permissões criadas com sucesso",
+        description: "Permissões atualizadas com sucesso",
       });
       setOpen(false);
       form.reset();
@@ -39,53 +39,54 @@ export function PermissionForm() {
     if (!user) {
       toast({
         title: "Erro",
-        description: "Você precisa estar logado para criar permissões",
+        description: "Você precisa estar logado para gerenciar permissões",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!values.usuario_id) {
+      toast({
+        title: "Erro",
+        description: "Selecione um usuário",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      console.log("Form values:", values);
-      
-      if (!values.usuario_id) {
-        toast({
-          title: "Erro",
-          description: "Selecione um usuário",
-          variant: "destructive",
-        });
-        return;
-      }
-
+      // Get all selected screens (true values)
       const selectedScreens = Object.entries(values.telas)
         .filter(([_, isSelected]) => isSelected)
         .map(([screen]) => screen);
 
-      console.log("Selected screens:", selectedScreens);
-
-      if (selectedScreens.length === 0) {
-        toast({
-          title: "Erro",
-          description: "Selecione pelo menos uma tela",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Create a permission entry for each selected screen
-      for (const screen of selectedScreens) {
-        await createPermission.mutateAsync({
+      // If no screens are selected, that's okay - the user won't have access to any screens
+      // Create permission entries for each selected screen
+      const promises = selectedScreens.map(screen => 
+        createPermission.mutateAsync({
           usuario_id: values.usuario_id,
           tela: screen,
           acesso: values.acesso,
           permissao_usuario: values.permissao_usuario,
+        })
+      );
+
+      await Promise.all(promises);
+      
+      // If no screens were selected but a permission level was set, update just the user's permission level
+      if (selectedScreens.length === 0 && values.permissao_usuario) {
+        await createPermission.mutateAsync({
+          usuario_id: values.usuario_id,
+          tela: "none",
+          acesso: false,
+          permissao_usuario: values.permissao_usuario,
         });
       }
     } catch (error) {
-      console.error('Error creating permissions:', error);
+      console.error('Error managing permissions:', error);
       toast({
         title: "Erro",
-        description: "Erro ao criar permissões",
+        description: "Erro ao gerenciar permissões",
         variant: "destructive",
       });
     }
@@ -114,7 +115,7 @@ export function PermissionForm() {
               className="w-full"
               disabled={createPermission.isPending}
             >
-              {createPermission.isPending ? "Criando..." : "Criar Permissão"}
+              {createPermission.isPending ? "Salvando..." : "Criar Permissão"}
             </Button>
           </form>
         </Form>
