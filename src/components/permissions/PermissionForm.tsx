@@ -9,10 +9,12 @@ import { permissionFormSchema, type PermissionFormValues } from "./schema";
 import { usePermissionForm } from "./usePermissionForm";
 import { PermissionFormFields } from "./PermissionFormFields";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 export function PermissionForm() {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
   
   const form = useForm<PermissionFormValues>({
     resolver: zodResolver(permissionFormSchema),
@@ -30,6 +32,15 @@ export function PermissionForm() {
   });
 
   const handleSubmit = async (values: PermissionFormValues) => {
+    if (!user) {
+      toast({
+        title: "Erro",
+        description: "Você precisa estar logado para criar permissões",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const selectedScreens = Object.entries(values.telas)
         .filter(([_, isSelected]) => isSelected)
@@ -53,8 +64,18 @@ export function PermissionForm() {
           permissao_usuario: values.permissao_usuario,
         });
       }
+
+      toast({
+        title: "Sucesso",
+        description: "Permissões criadas com sucesso",
+      });
     } catch (error) {
       console.error('Error creating permissions:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao criar permissões",
+        variant: "destructive",
+      });
     }
   };
 

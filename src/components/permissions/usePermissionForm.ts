@@ -59,10 +59,6 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["permissions"] });
-      toast({
-        title: "Sucesso",
-        description: "Permissão criada com sucesso",
-      });
       onSuccess();
     },
     onError: (error) => {
