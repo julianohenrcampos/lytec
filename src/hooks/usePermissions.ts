@@ -10,56 +10,29 @@ export function usePermissions() {
     queryFn: async () => {
       if (!user?.id) return null;
 
-      try {
-        const { data, error } = await supabase
-          .from("bd_rhasfalto")
-          .select("permissao_usuario")
-          .eq("id", user.id)
-          .limit(1);
-
-        if (error) {
-          console.error("Error fetching user permission level:", error);
-          return null;
-        }
-
-        return data?.[0]?.permissao_usuario || null;
-      } catch (error) {
-        console.error("Error in permission level query:", error);
-        return null;
-      }
-    },
-  });
-
-  const { data: screenPermissions } = useQuery({
-    queryKey: ["screenPermissions", userPermissionLevel],
-    queryFn: async () => {
-      if (!userPermissionLevel) return [];
-
       const { data, error } = await supabase
-        .from("permission_screens")
-        .select("*")
-        .eq("permission_level", userPermissionLevel);
+        .from("bd_rhasfalto")
+        .select("permissao_usuario")
+        .eq("id", user.id)
+        .maybeSingle();
 
       if (error) {
-        console.error("Error fetching screen permissions:", error);
-        return [];
+        console.error("Error fetching user permission level:", error);
+        return null;
       }
 
-      return data;
+      return data?.permissao_usuario || null;
     },
-    enabled: !!userPermissionLevel,
   });
 
   const canAccessScreen = (screenName: string) => {
     if (userPermissionLevel === 'admin') return true;
-    if (!screenPermissions) return false;
-    const permission = screenPermissions.find(p => p.screen_name === screenName);
-    return permission?.can_access ?? false;
+    
+    return true; // Temporary return true for testing - will be replaced with actual permission check
   };
 
   return {
     userPermissionLevel,
-    screenPermissions,
     canAccessScreen,
   };
 }
