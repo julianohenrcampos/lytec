@@ -2,6 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
+interface ScreenPermission {
+  screen_name: string;
+  can_access: boolean;
+  can_create: boolean;
+  can_edit: boolean;
+  can_delete: boolean;
+  created_at?: string;
+  id?: string;
+  permission_level?: string;
+}
+
 export function usePermissions() {
   const { user } = useAuth();
 
@@ -21,7 +32,7 @@ export function usePermissions() {
         return null;
       }
 
-      console.log("User permission level data:", data); // Debug log
+      console.log("User permission level data:", data);
       return data?.permissao_usuario || null;
     },
     enabled: !!user?.id,
@@ -47,7 +58,7 @@ export function usePermissions() {
           can_create: true,
           can_edit: true,
           can_delete: true
-        }));
+        } as ScreenPermission));
       }
 
       const { data, error } = await supabase
@@ -60,36 +71,36 @@ export function usePermissions() {
         return [];
       }
 
-      console.log("Screen permissions data:", data); // Debug log
-      return data || [];
+      console.log("Screen permissions data:", data);
+      return (data || []) as ScreenPermission[];
     },
     enabled: !!userPermissionLevel,
   });
 
   const canAccessScreen = (screenName: string) => {
-    console.log("Checking access for screen:", screenName, "User level:", userPermissionLevel); // Debug log
+    console.log("Checking access for screen:", screenName, "User level:", userPermissionLevel);
     
     // Admin users always have access
     if (userPermissionLevel === 'admin') {
-      console.log("User is admin, granting access"); // Debug log
+      console.log("User is admin, granting access");
       return true;
     }
     
     // If permissions aren't loaded yet or there are no permissions, deny access
     if (!screenPermissions) {
-      console.log("No screen permissions found, denying access"); // Debug log
+      console.log("No screen permissions found, denying access");
       return false;
     }
     
     // Find the specific screen permission
     const permission = screenPermissions.find(p => p.screen_name === screenName);
-    console.log("Found permission:", permission); // Debug log
+    console.log("Found permission:", permission);
     
     return permission?.can_access ?? false;
   };
 
   const canPerformAction = (screenName: string, action: 'create' | 'edit' | 'delete') => {
-    console.log(`Checking ${action} permission for screen:`, screenName); // Debug log
+    console.log(`Checking ${action} permission for screen:`, screenName);
     
     // Admin users can perform all actions
     if (userPermissionLevel === 'admin') {
@@ -100,7 +111,7 @@ export function usePermissions() {
       return false;
     }
 
-    const permission = screenPermissions.find(p => p.screen_name === screenName);
+    const permission = screenPermissions.find(p => p.screen_name === screenName) as ScreenPermission;
     
     switch (action) {
       case 'create':
