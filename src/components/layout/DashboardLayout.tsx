@@ -25,7 +25,12 @@ export function DashboardLayout() {
   }, [location.pathname, isMobile]);
 
   const shouldShowMenuItem = (path: string) => {
-    return userPermissionLevel === 'admin' || canAccessScreen(path.substring(1));
+    // Admin can see everything
+    if (userPermissionLevel === 'admin') {
+      return true;
+    }
+    // For other users, check specific permissions
+    return canAccessScreen(path.substring(1));
   };
 
   const menuGroups = useMenuGroups(shouldShowMenuItem);
