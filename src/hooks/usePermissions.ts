@@ -14,7 +14,7 @@ export function usePermissions() {
         .from("bd_rhasfalto")
         .select("permissao_usuario")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching user permission level:", error);
