@@ -32,17 +32,19 @@ export function usePermissions() {
     queryFn: async () => {
       if (!userPermissionLevel) return [];
 
-      // If user is admin, return all screens with access granted
+      // If user is admin, get all screens and set access to true
       if (userPermissionLevel === 'admin') {
-        const { data: allScreens } = await supabase
+        const { data } = await supabase
           .from("permission_screens")
-          .select("screen_name")
-          .distinct();
+          .select("screen_name");
         
-        return allScreens?.map(screen => ({
-          screen_name: screen.screen_name,
+        // Use Set to get unique screen names
+        const uniqueScreens = [...new Set(data?.map(screen => screen.screen_name) || [])];
+        
+        return uniqueScreens.map(screen_name => ({
+          screen_name,
           can_access: true
-        })) || [];
+        }));
       }
 
       const { data, error } = await supabase
