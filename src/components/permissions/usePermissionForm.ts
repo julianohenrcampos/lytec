@@ -4,9 +4,8 @@ import { useToast } from "@/hooks/use-toast";
 
 interface CreatePermissionParams {
   usuario_id: string;
-  tela: string;
-  acesso: boolean;
-  permissao_usuario?: "admin" | "rh" | "transporte" | "logistica" | "motorista" | "operador" | "apontador" | "encarregado";
+  permissao_usuario: "admin" | "rh" | "transporte" | "logistica" | "planejamento";
+  screens: string[];
 }
 
 export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
@@ -31,39 +30,29 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
   });
 
   const createPermission = useMutation({
-    mutationFn: async ({ usuario_id, tela, acesso, permissao_usuario }: CreatePermissionParams) => {
+    mutationFn: async ({ usuario_id, permissao_usuario, screens }: CreatePermissionParams) => {
       try {
-        // First update the user's permission level if provided
-        if (permissao_usuario) {
-          const { error: updateError } = await supabase
-            .from("bd_rhasfalto")
-            .update({ permissao_usuario })
-            .eq("id", usuario_id);
+        // Update user's permission level
+        const { error: updateError } = await supabase
+          .from("bd_rhasfalto")
+          .update({ permissao_usuario })
+          .eq("id", usuario_id);
 
-          if (updateError) throw updateError;
-        }
+        if (updateError) throw updateError;
 
-        // Delete existing permission for this user and screen
-        const { error: deleteError } = await supabase
-          .from("bd_permissoes")
-          .delete()
-          .eq("usuario_id", usuario_id)
-          .eq("tela", tela);
+        // Update screen permissions
+        const { error: screenError } = await supabase
+          .from("permission_screens")
+          .upsert(
+            screens.map(screen => ({
+              permission_level: permissao_usuario,
+              screen_name: screen,
+              can_access: true,
+            })),
+            { onConflict: 'permission_level,screen_name' }
+          );
 
-        if (deleteError) throw deleteError;
-
-        // Create new permission if access is granted
-        if (acesso || tela === "none") {
-          const { error: insertError } = await supabase
-            .from("bd_permissoes")
-            .insert([{
-              usuario_id,
-              tela,
-              acesso,
-            }]);
-
-          if (insertError) throw insertError;
-        }
+        if (screenError) throw screenError;
 
         return { success: true };
       } catch (error) {
@@ -73,6 +62,7 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["permissions"] });
+      queryClient.invalidateQueries({ queryKey: ["screenPermissions"] });
       onSuccess();
     },
     onError: (error) => {

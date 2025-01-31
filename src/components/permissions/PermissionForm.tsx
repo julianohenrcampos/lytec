@@ -21,6 +21,7 @@ export function PermissionForm() {
     defaultValues: {
       telas: {},
       acesso: true,
+      permissao_usuario: "rh",
     },
   });
 
@@ -55,31 +56,14 @@ export function PermissionForm() {
     }
 
     try {
-      // Get selected screens (true values)
-      const selectedScreens = Object.entries(values.telas)
-        .filter(([_, isSelected]) => isSelected)
-        .map(([screen]) => screen);
-
-      // Create a "none" permission entry to store the user's permission level
+      // Update user's permission level
       await createPermission.mutateAsync({
         usuario_id: values.usuario_id,
-        tela: "none",
-        acesso: false,
         permissao_usuario: values.permissao_usuario,
+        screens: Object.entries(values.telas)
+          .filter(([_, isSelected]) => isSelected)
+          .map(([screen]) => screen),
       });
-
-      // If there are selected screens, create permissions for them
-      if (selectedScreens.length > 0) {
-        const promises = selectedScreens.map(screen => 
-          createPermission.mutateAsync({
-            usuario_id: values.usuario_id,
-            tela: screen,
-            acesso: values.acesso,
-            permissao_usuario: values.permissao_usuario,
-          })
-        );
-        await Promise.all(promises);
-      }
     } catch (error) {
       console.error('Error managing permissions:', error);
       toast({

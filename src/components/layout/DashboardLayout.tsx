@@ -30,6 +30,7 @@ import {
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePermissions } from "@/hooks/usePermissions";
 
 export function DashboardLayout() {
   const { signOut } = useAuth();
@@ -37,6 +38,7 @@ export function DashboardLayout() {
   const [openGroups, setOpenGroups] = useState<string[]>([]);
   const [showSidebar, setShowSidebar] = useState(true);
   const isMobile = useIsMobile();
+  const { canAccessScreen } = usePermissions();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -90,7 +92,7 @@ export function DashboardLayout() {
         { path: "/companies", label: "Empresas", icon: Building2 },
         { path: "/cost-centers", label: "Centros de Custo", icon: CircleDollarSign },
         { path: "/permissions", label: "Permissões de Usuário", icon: UserCog },
-      ],
+      ].filter(item => canAccessScreen(item.path.substring(1))),
     },
     {
       id: "equipment",
@@ -101,7 +103,7 @@ export function DashboardLayout() {
         { path: "/fleets", label: "Frotas", icon: Boxes },
         { path: "/plants", label: "Usinas", icon: Factory },
         { path: "/inspection-checklist", label: "Checklist de Inspeção", icon: ClipboardCheck },
-      ],
+      ].filter(item => canAccessScreen(item.path.substring(1))),
     },
     {
       id: "mass-planning",
@@ -110,7 +112,7 @@ export function DashboardLayout() {
       items: [
         { path: "/mass-requests", label: "Requisição de Massa", icon: FileText },
         { path: "/mass-programming", label: "Programação de Massa", icon: Calendar },
-      ],
+      ].filter(item => canAccessScreen(item.path.substring(1))),
     },
   ];
 
