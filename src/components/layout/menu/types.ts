@@ -8,6 +8,7 @@ export interface MenuItem {
     icon: LucideIcon;
     label: string;
     onClick: () => void;
+    permission?: 'create' | 'edit' | 'delete';
   };
 }
 

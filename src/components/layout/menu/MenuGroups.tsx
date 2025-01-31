@@ -3,9 +3,10 @@ import { HardHat, LayoutDashboard, Users, Building2, Briefcase, CircleDollarSign
 import { MenuItem, MenuGroup } from "./types";
 
 export function useMenuGroups(shouldShowMenuItem: (path: string) => boolean) {
-  const createNewItemAction = (selector: string) => ({
+  const createNewItemAction = (selector: string, screenName: string) => ({
     icon: Plus,
     label: "Novo Item",
+    permission: 'create' as const,
     onClick: () => {
       const newButton = document.querySelector(selector);
       if (newButton instanceof HTMLButtonElement) {
@@ -30,31 +31,31 @@ export function useMenuGroups(shouldShowMenuItem: (path: string) => boolean) {
           path: "/employees",
           label: "Funcionários",
           icon: Users,
-          action: createNewItemAction("[data-new-employee]"),
+          action: createNewItemAction("[data-new-employee]", "employees"),
         },
         { 
           path: "/functions", 
           label: "Funções", 
           icon: Briefcase,
-          action: createNewItemAction("[data-new-function]"),
+          action: createNewItemAction("[data-new-function]", "functions"),
         },
         { 
           path: "/teams", 
           label: "Equipes", 
           icon: Users,
-          action: createNewItemAction("[data-new-team]"),
+          action: createNewItemAction("[data-new-team]", "teams"),
         },
         { 
           path: "/companies", 
           label: "Empresas", 
           icon: Building2,
-          action: createNewItemAction("[data-new-company]"),
+          action: createNewItemAction("[data-new-company]", "companies"),
         },
         { 
           path: "/cost-centers", 
           label: "Centros de Custo", 
           icon: CircleDollarSign,
-          action: createNewItemAction("[data-new-cost-center]"),
+          action: createNewItemAction("[data-new-cost-center]", "cost-centers"),
         },
         { path: "/permissions", label: "Permissões de Usuário", icon: UserCog },
       ].filter(item => shouldShowMenuItem(item.path)),
@@ -68,19 +69,19 @@ export function useMenuGroups(shouldShowMenuItem: (path: string) => boolean) {
           path: "/trucks-equipment", 
           label: "Caminhões/Equipamentos", 
           icon: Truck,
-          action: createNewItemAction("[data-new-truck-equipment]"),
+          action: createNewItemAction("[data-new-truck-equipment]", "trucks-equipment"),
         },
         { 
           path: "/fleets", 
           label: "Frotas", 
           icon: Boxes,
-          action: createNewItemAction("[data-new-fleet]"),
+          action: createNewItemAction("[data-new-fleet]", "fleets"),
         },
         { 
           path: "/plants", 
           label: "Usinas", 
           icon: Factory,
-          action: createNewItemAction("[data-new-plant]"),
+          action: createNewItemAction("[data-new-plant]", "plants"),
         },
         { path: "/inspection-checklist", label: "Checklist de Inspeção", icon: ClipboardCheck },
       ].filter(item => shouldShowMenuItem(item.path)),
@@ -94,13 +95,13 @@ export function useMenuGroups(shouldShowMenuItem: (path: string) => boolean) {
           path: "/mass-requests", 
           label: "Requisição de Massa", 
           icon: FileText,
-          action: createNewItemAction("[data-new-mass-request]"),
+          action: createNewItemAction("[data-new-mass-request]", "mass-requests"),
         },
         { 
           path: "/mass-programming", 
           label: "Programação de Massa", 
           icon: Calendar,
-          action: createNewItemAction("[data-new-mass-programming]"),
+          action: createNewItemAction("[data-new-mass-programming]", "mass-programming"),
         },
       ].filter(item => shouldShowMenuItem(item.path)),
     },

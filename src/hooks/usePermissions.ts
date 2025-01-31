@@ -43,7 +43,10 @@ export function usePermissions() {
         
         return uniqueScreens.map(screen_name => ({
           screen_name,
-          can_access: true
+          can_access: true,
+          can_create: true,
+          can_edit: true,
+          can_delete: true
         }));
       }
 
@@ -82,14 +85,40 @@ export function usePermissions() {
     const permission = screenPermissions.find(p => p.screen_name === screenName);
     console.log("Found permission:", permission); // Debug log
     
-    // Return the permission status or false if not found
     return permission?.can_access ?? false;
+  };
+
+  const canPerformAction = (screenName: string, action: 'create' | 'edit' | 'delete') => {
+    console.log(`Checking ${action} permission for screen:`, screenName); // Debug log
+    
+    // Admin users can perform all actions
+    if (userPermissionLevel === 'admin') {
+      return true;
+    }
+
+    if (!screenPermissions) {
+      return false;
+    }
+
+    const permission = screenPermissions.find(p => p.screen_name === screenName);
+    
+    switch (action) {
+      case 'create':
+        return permission?.can_create ?? false;
+      case 'edit':
+        return permission?.can_edit ?? false;
+      case 'delete':
+        return permission?.can_delete ?? false;
+      default:
+        return false;
+    }
   };
 
   return {
     userPermissionLevel,
     screenPermissions,
     canAccessScreen,
+    canPerformAction,
     isLoading: isUserLoading || isScreenLoading,
   };
 }

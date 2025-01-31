@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LucideIcon } from "lucide-react";
+import { usePermissions } from "@/hooks/usePermissions";
 
 interface SidebarMenuItemProps {
   path: string;
@@ -11,10 +12,17 @@ interface SidebarMenuItemProps {
     icon: LucideIcon;
     label: string;
     onClick: () => void;
+    permission?: 'create' | 'edit' | 'delete';
   };
 }
 
 export function SidebarMenuItem({ path, label, icon: Icon, isActive, action }: SidebarMenuItemProps) {
+  const { canPerformAction } = usePermissions();
+  const screenName = path.substring(1); // Remove leading slash
+
+  // Only show action button if user has permission
+  const showActionButton = action && (!action.permission || canPerformAction(screenName, action.permission));
+
   return (
     <li className="relative">
       <Link
@@ -26,7 +34,7 @@ export function SidebarMenuItem({ path, label, icon: Icon, isActive, action }: S
         <Icon className="w-5 h-5" />
         <span>{label}</span>
       </Link>
-      {action && isActive && (
+      {showActionButton && isActive && (
         <Button
           variant="ghost"
           size="icon"
