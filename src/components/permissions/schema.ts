@@ -6,7 +6,7 @@ export const permissionFormSchema = z.object({
   }),
   telas: z.record(z.boolean()).default({}),
   acesso: z.boolean().default(true),
-  permissao_usuario: z.enum(['admin', 'rh', 'transporte', 'logistica', 'motorista', 'operador', 'apontador', 'encarregado']).optional(),
+  permissao_usuario: z.enum(['admin', 'rh', 'transporte', 'logistica', 'motorista', 'operador', 'apontador', 'encarregado']),
 });
 
 export type PermissionFormValues = z.infer<typeof permissionFormSchema>;

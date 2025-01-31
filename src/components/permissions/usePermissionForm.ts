@@ -37,43 +37,35 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
         if (permissao_usuario) {
           const { error: updateError } = await supabase
             .from("bd_rhasfalto")
-            .update({ permissao_usuario: permissao_usuario })
+            .update({ permissao_usuario })
             .eq("id", usuario_id);
 
-          if (updateError) {
-            console.error("Error updating user permission level:", updateError);
-            throw updateError;
-          }
+          if (updateError) throw updateError;
         }
 
-        // Delete existing permissions for this user and screen
+        // Delete existing permission for this user and screen
         const { error: deleteError } = await supabase
           .from("bd_permissoes")
           .delete()
           .eq("usuario_id", usuario_id)
           .eq("tela", tela);
 
-        if (deleteError) {
-          console.error("Error deleting existing permission:", deleteError);
-          throw deleteError;
+        if (deleteError) throw deleteError;
+
+        // Create new permission if access is granted
+        if (acesso || tela === "none") {
+          const { error: insertError } = await supabase
+            .from("bd_permissoes")
+            .insert([{
+              usuario_id,
+              tela,
+              acesso,
+            }]);
+
+          if (insertError) throw insertError;
         }
 
-        // Create new permission
-        const { data, error: insertError } = await supabase
-          .from("bd_permissoes")
-          .insert([{
-            usuario_id,
-            tela,
-            acesso,
-          }])
-          .select();
-
-        if (insertError) {
-          console.error("Error creating permission:", insertError);
-          throw insertError;
-        }
-
-        return data;
+        return { success: true };
       } catch (error) {
         console.error("Error in createPermission:", error);
         throw error;

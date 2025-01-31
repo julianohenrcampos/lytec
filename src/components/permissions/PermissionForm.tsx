@@ -55,32 +55,30 @@ export function PermissionForm() {
     }
 
     try {
-      // Get all selected screens (true values)
+      // Get selected screens (true values)
       const selectedScreens = Object.entries(values.telas)
         .filter(([_, isSelected]) => isSelected)
         .map(([screen]) => screen);
 
-      // If no screens are selected, that's okay - the user won't have access to any screens
-      // Create permission entries for each selected screen
-      const promises = selectedScreens.map(screen => 
-        createPermission.mutateAsync({
-          usuario_id: values.usuario_id,
-          tela: screen,
-          acesso: values.acesso,
-          permissao_usuario: values.permissao_usuario,
-        })
-      );
+      // Create a "none" permission entry to store the user's permission level
+      await createPermission.mutateAsync({
+        usuario_id: values.usuario_id,
+        tela: "none",
+        acesso: false,
+        permissao_usuario: values.permissao_usuario,
+      });
 
-      await Promise.all(promises);
-      
-      // If no screens were selected but a permission level was set, update just the user's permission level
-      if (selectedScreens.length === 0 && values.permissao_usuario) {
-        await createPermission.mutateAsync({
-          usuario_id: values.usuario_id,
-          tela: "none",
-          acesso: false,
-          permissao_usuario: values.permissao_usuario,
-        });
+      // If there are selected screens, create permissions for them
+      if (selectedScreens.length > 0) {
+        const promises = selectedScreens.map(screen => 
+          createPermission.mutateAsync({
+            usuario_id: values.usuario_id,
+            tela: screen,
+            acesso: values.acesso,
+            permissao_usuario: values.permissao_usuario,
+          })
+        );
+        await Promise.all(promises);
       }
     } catch (error) {
       console.error('Error managing permissions:', error);
