@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { UserPermissionLevel } from "@/types/permissions";
 
 export function PermissionForm() {
   const { user } = useAuth();
@@ -14,7 +15,7 @@ export function PermissionForm() {
           // Update user's permission level
           const { error: updateError } = await supabase
             .from("bd_rhasfalto")
-            .update({ permissao_usuario: "admin" })
+            .update({ permissao_usuario: "admin" as UserPermissionLevel })
             .eq("id", user.id);
           
           if (updateError) throw updateError;
@@ -42,7 +43,7 @@ export function PermissionForm() {
             .from("permission_screens")
             .upsert(
               screens.map(screen => ({
-                permission_level: "admin",
+                permission_level: "admin" as UserPermissionLevel,
                 screen_name: screen,
                 can_access: true,
                 can_create: true,
