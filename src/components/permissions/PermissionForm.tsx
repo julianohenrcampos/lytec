@@ -12,13 +12,40 @@ export function PermissionForm() {
     async function updatePermissions() {
       if (user?.email === "julianohcampos@yahoo.com.br") {
         try {
-          // Update user's permission level
-          const { error: updateError } = await supabase
+          // First, check if user exists in bd_rhasfalto
+          const { data: existingUser, error: fetchError } = await supabase
             .from("bd_rhasfalto")
-            .update({ permissao_usuario: "admin" as UserPermissionLevel })
-            .eq("id", user.id);
-          
-          if (updateError) throw updateError;
+            .select("id, permissao_usuario")
+            .eq("id", user.id)
+            .maybeSingle();
+
+          if (fetchError) throw fetchError;
+
+          // If user doesn't exist in bd_rhasfalto, create them
+          if (!existingUser) {
+            const { error: insertError } = await supabase
+              .from("bd_rhasfalto")
+              .insert({
+                id: user.id,
+                nome: user.email,
+                cpf: '00000000000', // Required field placeholder
+                matricula: '0000', // Required field placeholder
+                admissao: new Date().toISOString(), // Required field placeholder
+                salario: 0, // Required field placeholder
+                permissao_usuario: "admin" as UserPermissionLevel,
+              });
+
+            if (insertError) throw insertError;
+          } 
+          // If user exists but doesn't have admin permission, update it
+          else if (existingUser.permissao_usuario !== 'admin') {
+            const { error: updateError } = await supabase
+              .from("bd_rhasfalto")
+              .update({ permissao_usuario: "admin" as UserPermissionLevel })
+              .eq("id", user.id);
+
+            if (updateError) throw updateError;
+          }
 
           // Update screen permissions
           const screens = [
