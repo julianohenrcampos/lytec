@@ -21,18 +21,36 @@ export function PermissionForm() {
 
           if (fetchError) throw fetchError;
 
+          // First, get a default function and cost center for the user
+          const { data: defaultFunction, error: functionError } = await supabase
+            .from("bd_funcao")
+            .select("id")
+            .limit(1)
+            .single();
+
+          if (functionError) throw functionError;
+
+          const { data: defaultCostCenter, error: costCenterError } = await supabase
+            .from("bd_centrocusto")
+            .select("id")
+            .limit(1)
+            .single();
+
+          if (costCenterError) throw costCenterError;
+
           // If user doesn't exist in bd_rhasfalto, create them
           if (!existingUser) {
             const { error: insertError } = await supabase
               .from("bd_rhasfalto")
               .insert({
-                id: user.id,
                 nome: user.email,
                 cpf: '00000000000', // Required field placeholder
                 matricula: '0000', // Required field placeholder
                 admissao: new Date().toISOString(), // Required field placeholder
                 salario: 0, // Required field placeholder
                 permissao_usuario: "admin" as UserPermissionLevel,
+                funcao_id: defaultFunction.id, // Required field
+                centro_custo_id: defaultCostCenter.id, // Required field
               });
 
             if (insertError) throw insertError;
