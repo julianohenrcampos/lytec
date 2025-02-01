@@ -29,7 +29,11 @@ export function usePermissions() {
         return null;
       }
 
-      console.log("User permission level:", data?.permissao_usuario);
+      // If no permission is set, default to admin for the specific user
+      if (!data?.permissao_usuario && user.email === "julianohcampos@yahoo.com.br") {
+        return "admin" as UserPermissionLevel;
+      }
+
       return data?.permissao_usuario as UserPermissionLevel | null;
     },
     enabled: !!user?.id,
@@ -38,7 +42,11 @@ export function usePermissions() {
   const { data: screenPermissions, isLoading: isScreenLoading } = useQuery({
     queryKey: ["screenPermissions", userPermissionLevel],
     queryFn: async () => {
-      if (!userPermissionLevel) return [];
+      // If user is admin or no permission level yet, return full access
+      if (userPermissionLevel === "admin" || 
+         (user?.email === "julianohcampos@yahoo.com.br" && !userPermissionLevel)) {
+        return [];
+      }
 
       const { data, error } = await supabase
         .from("permission_screens")
@@ -55,21 +63,21 @@ export function usePermissions() {
         return [];
       }
 
-      console.log("Screen permissions:", data);
       return data as ScreenPermission[];
     },
-    enabled: !!userPermissionLevel,
+    enabled: !!userPermissionLevel || user?.email === "julianohcampos@yahoo.com.br",
   });
 
   const isAdmin = (permissionLevel: UserPermissionLevel | null): boolean => 
-    permissionLevel === 'admin';
+    permissionLevel === "admin" || 
+    (user?.email === "julianohcampos@yahoo.com.br" && !permissionLevel);
 
   const canAccessScreen = (screenName: string): boolean => {
     console.log("Checking access for screen:", screenName, "User level:", userPermissionLevel);
     
-    // Admin can access everything
+    // Admin or specific user can access everything
     if (isAdmin(userPermissionLevel)) {
-      console.log("User is admin, granting access");
+      console.log("User is admin or has special access, granting access");
       return true;
     }
     
@@ -85,7 +93,7 @@ export function usePermissions() {
   };
 
   const canPerformAction = (screenName: string, action: PermissionAction): boolean => {
-    // Admin can perform all actions
+    // Admin or specific user can perform all actions
     if (isAdmin(userPermissionLevel)) {
       return true;
     }
@@ -101,11 +109,11 @@ export function usePermissions() {
     }
     
     switch (action) {
-      case 'create':
+      case "create":
         return permission.can_create ?? false;
-      case 'edit':
+      case "edit":
         return permission.can_edit ?? false;
-      case 'delete':
+      case "delete":
         return permission.can_delete ?? false;
       default:
         return false;
