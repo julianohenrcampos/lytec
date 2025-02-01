@@ -63,6 +63,7 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
 
         // Only insert new permissions if there are selected screens
         if (screens.length > 0) {
+          // Insert into permission_screens table
           const permissionsToInsert = screens.map(screen => ({
             permission_level: permissao_usuario,
             screen_name: screen,
@@ -71,17 +72,32 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
 
           console.log("Attempting to insert permissions:", permissionsToInsert);
 
-          const { data: insertedData, error: insertError } = await supabase
+          const { error: insertError } = await supabase
             .from("permission_screens")
-            .insert(permissionsToInsert)
-            .select();
+            .insert(permissionsToInsert);
 
           if (insertError) {
             console.error("Error inserting screen permissions:", insertError);
             throw insertError;
           }
 
-          console.log("Successfully inserted permissions:", insertedData);
+          // Insert into bd_permissoes table
+          const userPermissionsToInsert = screens.map(screen => ({
+            usuario_id,
+            tela: screen,
+            acesso: true,
+          }));
+
+          const { error: userPermError } = await supabase
+            .from("bd_permissoes")
+            .insert(userPermissionsToInsert);
+
+          if (userPermError) {
+            console.error("Error inserting user permissions:", userPermError);
+            throw userPermError;
+          }
+
+          console.log("Successfully inserted all permissions");
         } else {
           console.log("No screens selected, skipping permission insertion");
         }
