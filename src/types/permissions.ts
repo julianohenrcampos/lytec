@@ -12,3 +12,9 @@ export interface ScreenPermission {
 }
 
 export type PermissionAction = 'create' | 'edit' | 'delete';
+
+export interface UpdatePermissionParams {
+  userId: string;
+  newPermissionLevel: UserPermissionLevel;
+  screens: string[];
+}

@@ -647,6 +647,9 @@ export type Database = {
       permission_screens: {
         Row: {
           can_access: boolean | null
+          can_create: boolean | null
+          can_delete: boolean | null
+          can_edit: boolean | null
           created_at: string
           id: string
           permission_level: Database["public"]["Enums"]["user_permission"]
@@ -654,6 +657,9 @@ export type Database = {
         }
         Insert: {
           can_access?: boolean | null
+          can_create?: boolean | null
+          can_delete?: boolean | null
+          can_edit?: boolean | null
           created_at?: string
           id?: string
           permission_level: Database["public"]["Enums"]["user_permission"]
@@ -661,6 +667,9 @@ export type Database = {
         }
         Update: {
           can_access?: boolean | null
+          can_create?: boolean | null
+          can_delete?: boolean | null
+          can_edit?: boolean | null
           created_at?: string
           id?: string
           permission_level?: Database["public"]["Enums"]["user_permission"]
