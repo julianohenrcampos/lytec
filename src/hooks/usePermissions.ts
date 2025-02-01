@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "./use-toast";
+import { useToast } from "@/hooks/use-toast";
 import type { UserPermissionLevel, ScreenPermission, PermissionAction, UpdatePermissionParams } from "@/types/permissions";
+import { checkScreenAccess, checkActionPermission } from "@/utils/permissionUtils";
 
 export function usePermissions() {
   const { user } = useAuth();
@@ -80,40 +81,14 @@ export function usePermissions() {
     enabled: !!userPermissionLevel,
   });
 
-  const isAdmin = userPermissionLevel === 'admin';
-
   const canAccessScreen = (screenName: string): boolean => {
     console.log("Checking access for screen:", screenName, "User level:", userPermissionLevel);
-    
-    if (isAdmin) return true;
-    if (!screenPermissions) return false;
-    
-    const permission = screenPermissions.find(p => p.screen_name === screenName);
-    const hasAccess = permission?.can_access ?? false;
-    
-    console.log("Permission found:", permission, "Has access:", hasAccess);
-    return hasAccess;
+    return checkScreenAccess(screenName, userPermissionLevel, screenPermissions);
   };
 
   const canPerformAction = (screenName: string, action: PermissionAction): boolean => {
     console.log(`Checking ${action} permission for screen:`, screenName);
-    
-    if (isAdmin) return true;
-    if (!screenPermissions) return false;
-    
-    const permission = screenPermissions.find(p => p.screen_name === screenName);
-    if (!permission) return false;
-
-    switch (action) {
-      case 'create':
-        return permission.can_create;
-      case 'edit':
-        return permission.can_edit;
-      case 'delete':
-        return permission.can_delete;
-      default:
-        return false;
-    }
+    return checkActionPermission(screenName, action, userPermissionLevel, screenPermissions);
   };
 
   const updateUserPermission = useMutation({
