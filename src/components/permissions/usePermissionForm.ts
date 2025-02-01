@@ -33,13 +33,18 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
   const createPermission = useMutation({
     mutationFn: async ({ usuario_id, permissao_usuario, screens }: CreatePermissionParams) => {
       try {
+        console.log("Creating permission with:", { usuario_id, permissao_usuario, screens });
+        
         // Update user's permission level
         const { error: updateError } = await supabase
           .from("bd_rhasfalto")
           .update({ permissao_usuario })
           .eq("id", usuario_id);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error("Error updating user permission:", updateError);
+          throw updateError;
+        }
 
         // Delete existing screen permissions for this permission level
         const { error: deleteError } = await supabase
@@ -47,22 +52,29 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
           .delete()
           .eq("permission_level", permissao_usuario);
 
-        if (deleteError) throw deleteError;
+        if (deleteError) {
+          console.error("Error deleting existing permissions:", deleteError);
+          throw deleteError;
+        }
 
         // Only insert new permissions if there are selected screens
         if (screens.length > 0) {
+          const permissionsToInsert = screens.map(screen => ({
+            permission_level: permissao_usuario,
+            screen_name: screen,
+            can_access: true,
+          }));
+
+          console.log("Inserting permissions:", permissionsToInsert);
+
           const { error: screenError } = await supabase
             .from("permission_screens")
-            .upsert(
-              screens.map(screen => ({
-                permission_level: permissao_usuario,
-                screen_name: screen,
-                can_access: true,
-              })),
-              { onConflict: 'permission_level,screen_name' }
-            );
+            .insert(permissionsToInsert);
 
-          if (screenError) throw screenError;
+          if (screenError) {
+            console.error("Error inserting screen permissions:", screenError);
+            throw screenError;
+          }
         }
 
         return { success: true };
