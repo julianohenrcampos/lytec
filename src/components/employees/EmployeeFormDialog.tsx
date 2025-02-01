@@ -43,14 +43,6 @@ export function EmployeeFormDialog({ open, onOpenChange, initialData }: Employee
       ativo: true,
       aviso: false,
       escolaridade: "Médio",
-      permissoes: [
-        { tela: "funcionarios", acesso: false },
-        { tela: "equipes", acesso: false },
-        { tela: "programacao", acesso: false },
-        { tela: "requisicoes", acesso: false },
-        { tela: "frota", acesso: false },
-        { tela: "usinas", acesso: false },
-      ],
     },
   });
 
