@@ -27,10 +27,6 @@ export const employeeSchema = z.object({
   imagem: z.string().optional(),
   escolaridade: z.enum(["Fundamental", "Médio", "Técnico", "Superior"]).default("Médio"),
   genero: z.boolean().default(true),
-  permissoes: z.array(z.object({
-    tela: z.string(),
-    acesso: z.boolean()
-  })).optional(),
 });
 
 export type EmployeeFormValues = z.infer<typeof employeeSchema>;

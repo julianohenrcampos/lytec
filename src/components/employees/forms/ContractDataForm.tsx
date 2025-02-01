@@ -1,7 +1,6 @@
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { EmployeeFormValues } from "../types";
-import { PermissionsForm } from "./PermissionsForm";
 import {
   FormField,
   FormItem,
@@ -80,7 +79,6 @@ export const ContractDataForm: React.FC<ContractDataFormProps> = ({
           />
         </div>
       </div>
-      <PermissionsForm form={form} />
     </div>
   );
 };
