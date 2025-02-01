@@ -59,6 +59,16 @@ export function PermissionForm() {
               });
 
             if (insertError) throw insertError;
+
+            // Fetch the newly created user to confirm admin status
+            const { data: newUser, error: newUserError } = await supabase
+              .from("bd_rhasfalto")
+              .select("id, permissao_usuario")
+              .eq("id", user.id)
+              .single();
+
+            if (newUserError) throw newUserError;
+            if (newUser.permissao_usuario !== 'admin') throw new Error('Failed to set admin permission');
           } 
           // If user exists but doesn't have admin permission, update it
           else if (existingUser.permissao_usuario !== 'admin') {
@@ -68,9 +78,19 @@ export function PermissionForm() {
               .eq("id", user.id);
 
             if (updateError) throw updateError;
+
+            // Verify the update was successful
+            const { data: updatedUser, error: verifyError } = await supabase
+              .from("bd_rhasfalto")
+              .select("permissao_usuario")
+              .eq("id", user.id)
+              .single();
+
+            if (verifyError) throw verifyError;
+            if (updatedUser.permissao_usuario !== 'admin') throw new Error('Failed to update to admin permission');
           }
 
-          // Update screen permissions
+          // Now that we're sure the user is admin, update screen permissions
           const screens = [
             "dashboard",
             "employees",
