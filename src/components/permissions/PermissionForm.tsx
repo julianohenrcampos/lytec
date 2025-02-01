@@ -14,9 +14,10 @@ interface PermissionFormProps {
     permissao_usuario: UserPermissionLevel | null;
   } | null;
   onSuccess: () => void;
+  onCancel: () => void;  // Added this prop to the interface
 }
 
-export function PermissionForm({ selectedUser, onSuccess }: PermissionFormProps) {
+export function PermissionForm({ selectedUser, onSuccess, onCancel }: PermissionFormProps) {
   const { users, isLoadingUsers, createPermission } = usePermissionForm({ onSuccess });
 
   const form = useForm<PermissionFormValues>({
@@ -54,7 +55,7 @@ export function PermissionForm({ selectedUser, onSuccess }: PermissionFormProps)
           <Button
             type="button"
             variant="outline"
-            onClick={onSuccess}
+            onClick={onCancel}
           >
             Cancelar
           </Button>
