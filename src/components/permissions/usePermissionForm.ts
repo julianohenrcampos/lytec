@@ -33,7 +33,7 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
   const createPermission = useMutation({
     mutationFn: async ({ usuario_id, permissao_usuario, screens }: CreatePermissionParams) => {
       try {
-        console.log("Creating permission with:", { usuario_id, permissao_usuario, screens });
+        console.log("Starting permission creation with:", { usuario_id, permissao_usuario, screens });
         
         // Update user's permission level
         const { error: updateError } = await supabase
@@ -46,6 +46,8 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
           throw updateError;
         }
 
+        console.log("Successfully updated user permission level");
+
         // Delete existing screen permissions for this permission level
         const { error: deleteError } = await supabase
           .from("permission_screens")
@@ -57,6 +59,8 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
           throw deleteError;
         }
 
+        console.log("Successfully deleted existing permissions");
+
         // Only insert new permissions if there are selected screens
         if (screens.length > 0) {
           const permissionsToInsert = screens.map(screen => ({
@@ -65,16 +69,21 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
             can_access: true,
           }));
 
-          console.log("Inserting permissions:", permissionsToInsert);
+          console.log("Attempting to insert permissions:", permissionsToInsert);
 
-          const { error: screenError } = await supabase
+          const { data: insertedData, error: insertError } = await supabase
             .from("permission_screens")
-            .insert(permissionsToInsert);
+            .insert(permissionsToInsert)
+            .select();
 
-          if (screenError) {
-            console.error("Error inserting screen permissions:", screenError);
-            throw screenError;
+          if (insertError) {
+            console.error("Error inserting screen permissions:", insertError);
+            throw insertError;
           }
+
+          console.log("Successfully inserted permissions:", insertedData);
+        } else {
+          console.log("No screens selected, skipping permission insertion");
         }
 
         return { success: true };
@@ -96,7 +105,7 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
       console.error("Error in mutation:", error);
       toast({
         title: "Erro",
-        description: "Erro ao criar permissão",
+        description: "Erro ao criar permissão. Por favor, verifique os logs para mais detalhes.",
         variant: "destructive",
       });
     },

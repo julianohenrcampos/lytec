@@ -31,12 +31,12 @@ export function PermissionForm({ selectedUser, onSuccess }: PermissionFormProps)
 
   const onSubmit = async (data: PermissionFormValues) => {
     try {
+      console.log("Form submission data:", data);
       await createPermission.mutateAsync({
         usuario_id: data.usuario_id,
         permissao_usuario: data.permissao_usuario,
-        screens: data.telas,
+        screens: data.telas || [],
       });
-      onSuccess();
     } catch (error) {
       console.error("Error submitting form:", error);
     }
