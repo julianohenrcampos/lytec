@@ -1,4 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { UserPermissionLevel } from "@/types/permissions";
 
 interface Permission {
   id: string;
@@ -7,16 +8,17 @@ interface Permission {
   acesso: boolean;
   usuario?: {
     nome: string;
-    permissao_usuario: string;
+    permissao_usuario: UserPermissionLevel;
   };
 }
 
 interface PermissionTableProps {
   permissions: Permission[];
+  onEdit?: (user: { id: string; nome: string; permissao_usuario: UserPermissionLevel }) => void;
 }
 
-export function PermissionTable({ permissions }: PermissionTableProps) {
-  const formatPermissionLevel = (level: string) => {
+export function PermissionTable({ permissions, onEdit }: PermissionTableProps) {
+  const formatPermissionLevel = (level: UserPermissionLevel) => {
     const levels = {
       admin: "Administrador",
       rh: "RH",
@@ -27,7 +29,7 @@ export function PermissionTable({ permissions }: PermissionTableProps) {
       apontador: "Apontador",
       encarregado: "Encarregado"
     };
-    return levels[level as keyof typeof levels] || level;
+    return levels[level] || level;
   };
 
   return (

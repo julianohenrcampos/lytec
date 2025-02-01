@@ -46,13 +46,21 @@ export function PermissionTypeForm({
       if (permissionType) {
         const { error } = await supabase
           .from("permission_types")
-          .update(values)
+          .update({
+            name: values.name,
+            label: values.label,
+            description: values.description
+          })
           .eq("id", permissionType.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from("permission_types")
-          .insert([values]);
+          .insert({
+            name: values.name,
+            label: values.label,
+            description: values.description
+          });
         if (error) throw error;
       }
     },

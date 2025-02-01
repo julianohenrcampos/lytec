@@ -2,13 +2,14 @@ import { PermissionForm } from "@/components/permissions/PermissionForm";
 import { PermissionTable } from "@/components/permissions/PermissionTable";
 import { PermissionTypeTable } from "@/components/permissions/types/PermissionTypeTable";
 import { useState } from "react";
+import type { UserPermissionLevel } from "@/types/permissions";
 
 export default function PermissionManagement() {
   const [showForm, setShowForm] = useState(false);
   const [selectedUser, setSelectedUser] = useState<{
     id: string;
     nome: string;
-    permissao_usuario: string | null;
+    permissao_usuario: UserPermissionLevel | null;
   } | null>(null);
 
   const handleSuccess = () => {
@@ -28,12 +29,7 @@ export default function PermissionManagement() {
       ) : (
         <>
           <PermissionTypeTable />
-          <PermissionTable
-            onEdit={(user) => {
-              setSelectedUser(user);
-              setShowForm(true);
-            }}
-          />
+          <PermissionTable permissions={[]} />
         </>
       )}
     </div>
