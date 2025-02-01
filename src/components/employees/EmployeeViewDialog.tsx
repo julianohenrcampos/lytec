@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EmployeeWithRelations } from "./types";
+import { Button } from "@/components/ui/button";
 
 interface EmployeeViewDialogProps {
   employee: Partial<EmployeeWithRelations> | undefined;
@@ -34,8 +35,18 @@ export const EmployeeViewDialog: React.FC<EmployeeViewDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+        <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Detalhes do Funcionário</DialogTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              // Navigate to permissions management with this employee
+              window.location.href = `/permissions?employee=${employee.id}`;
+            }}
+          >
+            Ver Permissões
+          </Button>
         </DialogHeader>
 
         <div className="space-y-6">

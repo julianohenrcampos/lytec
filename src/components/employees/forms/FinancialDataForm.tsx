@@ -29,11 +29,15 @@ export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form, onSu
           <FormItem>
             <FormLabel>Salário</FormLabel>
             <FormControl>
-              <Input
-                type="number"
-                step="0.01"
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                value={field.value}
+              <Input 
+                type="text" 
+                inputMode="numeric" 
+                pattern="[0-9]*"
+                {...field} 
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  field.onChange(value ? Number(value) : '');
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -48,11 +52,15 @@ export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form, onSu
           <FormItem>
             <FormLabel>Insalubridade</FormLabel>
             <FormControl>
-              <Input
-                type="number"
-                step="0.01"
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                value={field.value}
+              <Input 
+                type="text" 
+                inputMode="numeric" 
+                pattern="[0-9]*"
+                {...field} 
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  field.onChange(value ? Number(value) : '');
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -67,11 +75,15 @@ export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form, onSu
           <FormItem>
             <FormLabel>Periculosidade</FormLabel>
             <FormControl>
-              <Input
-                type="number"
-                step="0.01"
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                value={field.value}
+              <Input 
+                type="text" 
+                inputMode="numeric" 
+                pattern="[0-9]*"
+                {...field} 
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  field.onChange(value ? Number(value) : '');
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -86,11 +98,15 @@ export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form, onSu
           <FormItem>
             <FormLabel>Gratificação</FormLabel>
             <FormControl>
-              <Input
-                type="number"
-                step="0.01"
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                value={field.value}
+              <Input 
+                type="text" 
+                inputMode="numeric" 
+                pattern="[0-9]*"
+                {...field} 
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  field.onChange(value ? Number(value) : '');
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -105,11 +121,15 @@ export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form, onSu
           <FormItem>
             <FormLabel>Adicional Noturno</FormLabel>
             <FormControl>
-              <Input
-                type="number"
-                step="0.01"
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                value={field.value}
+              <Input 
+                type="text" 
+                inputMode="numeric" 
+                pattern="[0-9]*"
+                {...field} 
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  field.onChange(value ? Number(value) : '');
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -122,13 +142,17 @@ export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form, onSu
         name="custo_passagem"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Custo de Passagem</FormLabel>
+            <FormLabel>Custo Passagem</FormLabel>
             <FormControl>
-              <Input
-                type="number"
-                step="0.01"
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                value={field.value}
+              <Input 
+                type="text" 
+                inputMode="numeric" 
+                pattern="[0-9]*"
+                {...field} 
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  field.onChange(value ? Number(value) : '');
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -143,11 +167,15 @@ export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form, onSu
           <FormItem>
             <FormLabel>Refeição</FormLabel>
             <FormControl>
-              <Input
-                type="number"
-                step="0.01"
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                value={field.value}
+              <Input 
+                type="text" 
+                inputMode="numeric" 
+                pattern="[0-9]*"
+                {...field} 
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  field.onChange(value ? Number(value) : '');
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -162,11 +190,15 @@ export const FinancialDataForm: React.FC<FinancialDataFormProps> = ({ form, onSu
           <FormItem>
             <FormLabel>Diárias</FormLabel>
             <FormControl>
-              <Input
-                type="number"
-                step="0.01"
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                value={field.value}
+              <Input 
+                type="text" 
+                inputMode="numeric" 
+                pattern="[0-9]*"
+                {...field} 
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  field.onChange(value ? Number(value) : '');
+                }}
               />
             </FormControl>
             <FormMessage />

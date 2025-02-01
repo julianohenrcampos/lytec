@@ -64,19 +64,6 @@ export const ContractDataForm: React.FC<ContractDataFormProps> = ({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="salario"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Salário</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
       </div>
     </div>
