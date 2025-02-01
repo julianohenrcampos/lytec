@@ -45,12 +45,12 @@ export function usePermissions() {
 
       // If user is admin, return all screens with full permissions
       if (userPermissionLevel === 'admin') {
-        const { data: allScreens } = await supabase
+        const { data: screens } = await supabase
           .from("permission_screens")
           .select("screen_name")
-          .distinct();
+          .eq("permission_level", userPermissionLevel);
 
-        return (allScreens || []).map(({ screen_name }) => ({
+        return (screens || []).map(({ screen_name }) => ({
           screen_name,
           can_access: true,
           can_create: true,
