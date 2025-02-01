@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PermissionForm } from "@/components/permissions/PermissionForm";
-import { PermissionTable } from "@/components/permissions/PermissionTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -41,6 +40,26 @@ export default function PermissionManagement() {
       return data as User[];
     },
   });
+
+  const formatPermissionLevel = (level: UserPermissionLevel | null) => {
+    if (!level) return "Não definido";
+    
+    const levels: Record<UserPermissionLevel, string> = {
+      admin: "Administrador",
+      rh: "RH",
+      transporte: "Transporte",
+      logistica: "Logística",
+      planejamento: "Planejamento",
+      motorista: "Motorista",
+      operador: "Operador",
+      apontador: "Apontador",
+      encarregado: "Encarregado",
+      engenheiro: "Engenheiro",
+      balanca: "Balança"
+    };
+    
+    return levels[level] || level;
+  };
 
   const handleEditPermissions = (user: User) => {
     setSelectedUser(user);
@@ -92,7 +111,7 @@ export default function PermissionManagement() {
                 {users?.map((user) => (
                   <tr key={user.id} className="border-b">
                     <td className="p-4">{user.nome}</td>
-                    <td className="p-4">{user.permissao_usuario || "Não definido"}</td>
+                    <td className="p-4">{formatPermissionLevel(user.permissao_usuario)}</td>
                     <td className="p-4">
                       <Button
                         variant="outline"

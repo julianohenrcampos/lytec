@@ -8,6 +8,20 @@ interface PermissionLevelFieldProps {
 }
 
 export function PermissionLevelField({ form }: PermissionLevelFieldProps) {
+  const permissionLevels = [
+    { value: "admin", label: "Administrador" },
+    { value: "rh", label: "RH" },
+    { value: "transporte", label: "Transporte" },
+    { value: "logistica", label: "Logística" },
+    { value: "planejamento", label: "Planejamento" },
+    { value: "motorista", label: "Motorista" },
+    { value: "operador", label: "Operador" },
+    { value: "apontador", label: "Apontador" },
+    { value: "encarregado", label: "Encarregado" },
+    { value: "engenheiro", label: "Engenheiro" },
+    { value: "balanca", label: "Balança" },
+  ];
+
   return (
     <FormField
       control={form.control}
@@ -24,14 +38,11 @@ export function PermissionLevelField({ form }: PermissionLevelFieldProps) {
                 <SelectValue placeholder="Selecione o nível de permissão" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="admin">Administrador</SelectItem>
-                <SelectItem value="rh">RH</SelectItem>
-                <SelectItem value="transporte">Transporte</SelectItem>
-                <SelectItem value="logistica">Logística</SelectItem>
-                <SelectItem value="motorista">Motorista</SelectItem>
-                <SelectItem value="operador">Operador</SelectItem>
-                <SelectItem value="apontador">Apontador</SelectItem>
-                <SelectItem value="encarregado">Encarregado</SelectItem>
+                {permissionLevels.map((level) => (
+                  <SelectItem key={level.value} value={level.value}>
+                    {level.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </FormControl>

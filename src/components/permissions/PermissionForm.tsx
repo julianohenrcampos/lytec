@@ -1,4 +1,10 @@
-import { useAdminPermissions } from "@/hooks/useAdminPermissions";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { usePermissionForm } from "./usePermissionForm";
+import { PermissionFormFields } from "./PermissionFormFields";
+import { permissionFormSchema } from "./schema";
 import type { UserPermissionLevel } from "@/types/permissions";
 
 interface PermissionFormProps {
@@ -11,6 +17,57 @@ interface PermissionFormProps {
 }
 
 export function PermissionForm({ selectedUser, onSuccess }: PermissionFormProps) {
-  useAdminPermissions({ selectedUser, onSuccess });
-  return null;
+  const { users, isLoadingUsers, createPermission } = usePermissionForm({ onSuccess });
+
+  const form = useForm({
+    resolver: zodResolver(permissionFormSchema),
+    defaultValues: {
+      usuario_id: selectedUser?.id || "",
+      permissao_usuario: selectedUser?.permissao_usuario || undefined,
+      telas: {},
+      acesso: true,
+    },
+  });
+
+  const onSubmit = async (data: any) => {
+    try {
+      await createPermission.mutateAsync({
+        usuario_id: data.usuario_id,
+        permissao_usuario: data.permissao_usuario,
+        screens: Object.entries(data.telas)
+          .filter(([, value]) => value)
+          .map(([key]) => key),
+      });
+      onSuccess();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <PermissionFormFields
+          form={form}
+          users={users}
+          isLoadingUsers={isLoadingUsers}
+        />
+        <div className="flex justify-end space-x-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onSuccess}
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            disabled={createPermission.isPending}
+          >
+            {createPermission.isPending ? "Salvando..." : "Salvar"}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
 }
