@@ -7,7 +7,6 @@ interface ScreenAccessFieldProps {
   form: UseFormReturn<PermissionFormValues>;
 }
 
-// This array should be updated whenever new routes are added
 const availableScreens = [
   { value: "dashboard", label: "Dashboard" },
   { value: "employees", label: "Funcionários" },
@@ -32,35 +31,34 @@ export function ScreenAccessField({ form }: ScreenAccessFieldProps) {
     <FormField
       control={form.control}
       name="telas"
-      render={() => (
+      render={({ field }) => (
         <FormItem>
           <FormLabel>Telas</FormLabel>
           <FormControl>
             <div className="grid grid-cols-2 gap-4 max-h-[300px] overflow-y-auto p-2">
               {availableScreens.map((screen) => (
-                <FormField
+                <FormItem
                   key={screen.value}
-                  control={form.control}
-                  name={`telas.${screen.value}`}
-                  render={({ field }) => (
-                    <FormItem
-                      key={screen.value}
-                      className="flex flex-row items-start space-x-3 space-y-0"
-                    >
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel className="text-sm font-normal">
-                          {screen.label}
-                        </FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
+                  className="flex flex-row items-start space-x-3 space-y-0"
+                >
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value.includes(screen.value)}
+                      onCheckedChange={(checked) => {
+                        const currentValue = field.value || [];
+                        const newValue = checked
+                          ? [...currentValue, screen.value]
+                          : currentValue.filter((value) => value !== screen.value);
+                        form.setValue("telas", newValue, { shouldValidate: true });
+                      }}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-normal">
+                      {screen.label}
+                    </FormLabel>
+                  </div>
+                </FormItem>
               ))}
             </div>
           </FormControl>

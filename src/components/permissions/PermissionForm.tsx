@@ -24,7 +24,7 @@ export function PermissionForm({ selectedUser, onSuccess }: PermissionFormProps)
     defaultValues: {
       usuario_id: selectedUser?.id || "",
       permissao_usuario: selectedUser?.permissao_usuario || undefined,
-      telas: {},
+      telas: [],
       acesso: true,
     },
   });
@@ -34,9 +34,7 @@ export function PermissionForm({ selectedUser, onSuccess }: PermissionFormProps)
       await createPermission.mutateAsync({
         usuario_id: data.usuario_id,
         permissao_usuario: data.permissao_usuario,
-        screens: Object.entries(data.telas)
-          .filter(([, value]) => value)
-          .map(([key]) => key),
+        screens: data.telas,
       });
       onSuccess();
     } catch (error) {

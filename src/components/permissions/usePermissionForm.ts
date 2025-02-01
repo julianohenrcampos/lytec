@@ -41,19 +41,29 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
 
         if (updateError) throw updateError;
 
-        // Update screen permissions
-        const { error: screenError } = await supabase
+        // Delete existing screen permissions for this permission level
+        const { error: deleteError } = await supabase
           .from("permission_screens")
-          .upsert(
-            screens.map(screen => ({
-              permission_level: permissao_usuario,
-              screen_name: screen,
-              can_access: true,
-            })),
-            { onConflict: 'permission_level,screen_name' }
-          );
+          .delete()
+          .eq("permission_level", permissao_usuario);
 
-        if (screenError) throw screenError;
+        if (deleteError) throw deleteError;
+
+        // Only insert new permissions if there are selected screens
+        if (screens.length > 0) {
+          const { error: screenError } = await supabase
+            .from("permission_screens")
+            .upsert(
+              screens.map(screen => ({
+                permission_level: permissao_usuario,
+                screen_name: screen,
+                can_access: true,
+              })),
+              { onConflict: 'permission_level,screen_name' }
+            );
+
+          if (screenError) throw screenError;
+        }
 
         return { success: true };
       } catch (error) {
@@ -65,6 +75,10 @@ export function usePermissionForm({ onSuccess }: { onSuccess: () => void }) {
       queryClient.invalidateQueries({ queryKey: ["permissions"] });
       queryClient.invalidateQueries({ queryKey: ["screenPermissions"] });
       onSuccess();
+      toast({
+        title: "Sucesso",
+        description: "Permissões atualizadas com sucesso",
+      });
     },
     onError: (error) => {
       console.error("Error in mutation:", error);
