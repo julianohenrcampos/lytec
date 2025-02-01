@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { UserPermissionLevel } from "@/types/permissions";
 
 interface CreatePermissionParams {
   usuario_id: string;
-  permissao_usuario: "admin" | "rh" | "transporte" | "logistica" | "planejamento";
+  permissao_usuario: UserPermissionLevel;
   screens: string[];
 }
 

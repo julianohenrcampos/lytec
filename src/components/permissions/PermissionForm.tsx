@@ -4,7 +4,7 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { usePermissionForm } from "./usePermissionForm";
 import { PermissionFormFields } from "./PermissionFormFields";
-import { permissionFormSchema } from "./schema";
+import { permissionFormSchema, type PermissionFormValues } from "./schema";
 import type { UserPermissionLevel } from "@/types/permissions";
 
 interface PermissionFormProps {
@@ -19,7 +19,7 @@ interface PermissionFormProps {
 export function PermissionForm({ selectedUser, onSuccess }: PermissionFormProps) {
   const { users, isLoadingUsers, createPermission } = usePermissionForm({ onSuccess });
 
-  const form = useForm({
+  const form = useForm<PermissionFormValues>({
     resolver: zodResolver(permissionFormSchema),
     defaultValues: {
       usuario_id: selectedUser?.id || "",
@@ -29,7 +29,7 @@ export function PermissionForm({ selectedUser, onSuccess }: PermissionFormProps)
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: PermissionFormValues) => {
     try {
       await createPermission.mutateAsync({
         usuario_id: data.usuario_id,
