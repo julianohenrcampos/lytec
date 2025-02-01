@@ -1,4 +1,4 @@
-import type { ScreenPermission, PermissionAction, UserPermissionLevel } from "@/types/permissions";
+import type { UserPermissionLevel, ScreenPermission, PermissionAction } from "@/types/permissions";
 
 export const isAdmin = (permissionLevel: UserPermissionLevel | null): boolean => 
   permissionLevel === 'admin';

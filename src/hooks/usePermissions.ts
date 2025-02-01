@@ -44,22 +44,6 @@ export function usePermissions() {
     queryFn: async () => {
       if (!userPermissionLevel) return [];
 
-      // If user is admin, return all screens with full permissions
-      if (userPermissionLevel === 'admin') {
-        const { data: screens } = await supabase
-          .from("permission_screens")
-          .select("screen_name")
-          .eq("permission_level", userPermissionLevel);
-
-        return (screens || []).map(({ screen_name }) => ({
-          screen_name,
-          can_access: true,
-          can_create: true,
-          can_edit: true,
-          can_delete: true,
-        }));
-      }
-
       const { data, error } = await supabase
         .from("permission_screens")
         .select("*")
