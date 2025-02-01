@@ -82,7 +82,7 @@ export function PermissionTypeForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((values) => savePermissionType(values))}
-        className="space-y-4 bg-gray-50 p-4 rounded-lg"
+        className="space-y-4"
       >
         <h3 className="text-lg font-semibold">
           {permissionType ? "Editar" : "Novo"} Tipo de Permissão

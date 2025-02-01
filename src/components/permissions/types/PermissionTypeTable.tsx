@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface PermissionType {
   id: string;
@@ -23,8 +24,12 @@ interface PermissionType {
   active: boolean;
 }
 
-export function PermissionTypeTable() {
-  const [showForm, setShowForm] = useState(false);
+interface PermissionTypeTableProps {
+  showForm: boolean;
+  onCloseForm: () => void;
+}
+
+export function PermissionTypeTable({ showForm, onCloseForm }: PermissionTypeTableProps) {
   const [selectedType, setSelectedType] = useState<PermissionType | null>(null);
 
   const { data: permissionTypes, refetch } = useQuery({
@@ -59,35 +64,28 @@ export function PermissionTypeTable() {
 
   const handleEdit = (type: PermissionType) => {
     setSelectedType(type);
-    setShowForm(true);
   };
 
   const handleSuccess = () => {
-    setShowForm(false);
     setSelectedType(null);
+    onCloseForm();
     refetch();
   };
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Tipos de Permissão</h2>
-        <Button onClick={() => setShowForm(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Tipo
-        </Button>
-      </div>
-
-      {showForm && (
-        <PermissionTypeForm
-          permissionType={selectedType}
-          onSuccess={handleSuccess}
-          onCancel={() => {
-            setShowForm(false);
-            setSelectedType(null);
-          }}
-        />
-      )}
+      <Dialog open={showForm} onOpenChange={(open) => !open && onCloseForm()}>
+        <DialogContent className="sm:max-w-[600px]">
+          <PermissionTypeForm
+            permissionType={selectedType}
+            onSuccess={handleSuccess}
+            onCancel={() => {
+              setSelectedType(null);
+              onCloseForm();
+            }}
+          />
+        </DialogContent>
+      </Dialog>
 
       <Table>
         <TableHeader>
