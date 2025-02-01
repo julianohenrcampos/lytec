@@ -40,11 +40,16 @@ export function PermissionForm() {
 
           // If user doesn't exist in bd_rhasfalto, create them
           if (!existingUser) {
+            // Generate a unique CPF based on timestamp and random numbers
+            const timestamp = Date.now().toString().slice(-8);
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            const uniqueCpf = `${timestamp}${random}`;
+
             const { error: insertError } = await supabase
               .from("bd_rhasfalto")
               .insert({
                 nome: user.email,
-                cpf: '00000000000', // Required field placeholder
+                cpf: uniqueCpf, // Using generated unique CPF
                 matricula: '0000', // Required field placeholder
                 admissao: new Date().toISOString(), // Required field placeholder
                 salario: 0, // Required field placeholder
