@@ -7,6 +7,8 @@ export const permissionTypeSchema = z.object({
     .regex(/^[a-z_]+$/, "Use apenas letras minúsculas e underscores"),
   label: z.string().min(1, "O nome é obrigatório"),
   description: z.string().optional(),
+  active: z.boolean().default(true),
+  screens: z.array(z.string()).default([]),
 });
 
 export type PermissionTypeFormValues = z.infer<typeof permissionTypeSchema>;

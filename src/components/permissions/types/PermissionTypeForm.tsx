@@ -13,8 +13,28 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { permissionTypeSchema, type PermissionTypeFormValues } from "./schema";
+
+const AVAILABLE_SCREENS = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'employees', label: 'Funcionários' },
+  { id: 'teams', label: 'Equipes' },
+  { id: 'companies', label: 'Empresas' },
+  { id: 'functions', label: 'Funções' },
+  { id: 'cost-centers', label: 'Centros de Custo' },
+  { id: 'fleets', label: 'Frotas' },
+  { id: 'trucks-equipment', label: 'Caminhões e Equipamentos' },
+  { id: 'plants', label: 'Usinas' },
+  { id: 'mass-requests', label: 'Requisições de Massa' },
+  { id: 'mass-programming', label: 'Programação de Massa' },
+  { id: 'permissions', label: 'Permissões' },
+  { id: 'profile', label: 'Perfil' },
+  { id: 'settings', label: 'Configurações' },
+  { id: 'inspection-checklist', label: 'Checklist de Inspeção' },
+  { id: 'checklist-list', label: 'Lista de Checklists' }
+];
 
 interface PermissionTypeFormProps {
   permissionType?: {
@@ -22,6 +42,8 @@ interface PermissionTypeFormProps {
     name: string;
     label: string;
     description: string | null;
+    active: boolean;
+    screens: string[];
   } | null;
   onSuccess: () => void;
   onCancel: () => void;
@@ -38,6 +60,8 @@ export function PermissionTypeForm({
       name: permissionType?.name || "",
       label: permissionType?.label || "",
       description: permissionType?.description || "",
+      active: permissionType?.active ?? true,
+      screens: permissionType?.screens || [],
     },
   });
 
@@ -49,7 +73,9 @@ export function PermissionTypeForm({
           .update({
             name: values.name,
             label: values.label,
-            description: values.description
+            description: values.description,
+            active: values.active,
+            screens: values.screens,
           })
           .eq("id", permissionType.id);
         if (error) throw error;
@@ -59,7 +85,9 @@ export function PermissionTypeForm({
           .insert({
             name: values.name,
             label: values.label,
-            description: values.description
+            description: values.description,
+            active: values.active,
+            screens: values.screens,
           });
         if (error) throw error;
       }
@@ -132,6 +160,51 @@ export function PermissionTypeForm({
                   placeholder="Descreva as responsabilidades deste tipo de permissão"
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="active"
+          render={({ field }) => (
+            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel>Ativo</FormLabel>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="screens"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Telas com Acesso</FormLabel>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                {AVAILABLE_SCREENS.map((screen) => (
+                  <div key={screen.id} className="flex items-center space-x-2">
+                    <Switch
+                      checked={field.value.includes(screen.id)}
+                      onCheckedChange={(checked) => {
+                        const newScreens = checked
+                          ? [...field.value, screen.id]
+                          : field.value.filter((s) => s !== screen.id);
+                        field.onChange(newScreens);
+                      }}
+                    />
+                    <span>{screen.label}</span>
+                  </div>
+                ))}
+              </div>
               <FormMessage />
             </FormItem>
           )}

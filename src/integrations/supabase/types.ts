@@ -685,6 +685,7 @@ export type Database = {
           id: string
           label: string
           name: string
+          screens: string[] | null
         }
         Insert: {
           active?: boolean
@@ -693,6 +694,7 @@ export type Database = {
           id?: string
           label: string
           name: string
+          screens?: string[] | null
         }
         Update: {
           active?: boolean
@@ -701,6 +703,7 @@ export type Database = {
           id?: string
           label?: string
           name?: string
+          screens?: string[] | null
         }
         Relationships: []
       }

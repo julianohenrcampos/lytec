@@ -12,8 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface PermissionType {
@@ -22,6 +20,7 @@ interface PermissionType {
   label: string;
   description: string | null;
   active: boolean;
+  screens: string[];
 }
 
 interface PermissionTypeTableProps {
@@ -44,23 +43,6 @@ export function PermissionTypeTable({ showForm, onCloseForm }: PermissionTypeTab
       return data as PermissionType[];
     },
   });
-
-  const handleToggleActive = async (type: PermissionType) => {
-    try {
-      const { error } = await supabase
-        .from("permission_types")
-        .update({ active: !type.active })
-        .eq("id", type.id);
-
-      if (error) throw error;
-
-      toast.success("Status atualizado com sucesso");
-      refetch();
-    } catch (error) {
-      console.error("Error toggling active status:", error);
-      toast.error("Erro ao atualizar status");
-    }
-  };
 
   const handleEdit = (type: PermissionType) => {
     setSelectedType(type);
@@ -93,7 +75,6 @@ export function PermissionTypeTable({ showForm, onCloseForm }: PermissionTypeTab
             <TableHead>Nome</TableHead>
             <TableHead>Identificador</TableHead>
             <TableHead>Descrição</TableHead>
-            <TableHead>Ativo</TableHead>
             <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -103,12 +84,6 @@ export function PermissionTypeTable({ showForm, onCloseForm }: PermissionTypeTab
               <TableCell>{type.label}</TableCell>
               <TableCell>{type.name}</TableCell>
               <TableCell>{type.description || "-"}</TableCell>
-              <TableCell>
-                <Switch
-                  checked={type.active}
-                  onCheckedChange={() => handleToggleActive(type)}
-                />
-              </TableCell>
               <TableCell>
                 <Button
                   variant="ghost"
