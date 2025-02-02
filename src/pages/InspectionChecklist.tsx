@@ -48,51 +48,29 @@ export default function InspectionChecklist() {
 
   return (
     <div className={`min-h-screen bg-background ${isMobile ? 'p-0' : 'container mx-auto py-6'}`}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className={`${isMobile ? 'rounded-none shadow-none border-0' : ''}`}>
-          <CardHeader className={`${isMobile ? 'px-4 py-3' : ''}`}>
-            <CardTitle>
-              {currentStep === 1
-                ? "Informações Gerais"
-                : "Checklist - Itens a Serem Inspecionados"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className={`${isMobile ? 'p-4' : ''}`}>
-            {currentStep === 1 ? (
-              <GeneralInfoForm
-                form={form}
-                onNext={() => setCurrentStep(2)}
-              />
-            ) : (
-              <ChecklistForm
-                form={form}
-                onBack={() => setCurrentStep(1)}
-                onSubmit={handleSubmit}
-              />
-            )}
-          </CardContent>
-        </Card>
-
-        <div className="hidden md:block">
-          <Card>
-            <CardHeader>
-              <CardTitle>Instruções</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Preencha todos os campos obrigatórios e siga as instruções para realizar a inspeção do equipamento.
-                Certifique-se de verificar cada item com atenção antes de submeter o checklist.
-              </p>
-              <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                <li>1. Preencha as informações gerais do equipamento</li>
-                <li>2. Avance para o checklist de inspeção</li>
-                <li>3. Verifique cada item cuidadosamente</li>
-                <li>4. Submeta o formulário após completar a inspeção</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <Card className={`${isMobile ? 'rounded-none shadow-none border-0 min-h-screen' : ''}`}>
+        <CardHeader className={`${isMobile ? 'px-4 py-3' : ''}`}>
+          <CardTitle>
+            {currentStep === 1
+              ? "Apontamento de Caminhão/Equipamentos"
+              : "Checklist - Itens a Serem Inspecionados"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className={`${isMobile ? 'p-4' : ''}`}>
+          {currentStep === 1 ? (
+            <GeneralInfoForm
+              form={form}
+              onNext={() => setCurrentStep(2)}
+            />
+          ) : (
+            <ChecklistForm
+              form={form}
+              onBack={() => setCurrentStep(1)}
+              onSubmit={handleSubmit}
+            />
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
